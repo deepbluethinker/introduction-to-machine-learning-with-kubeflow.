@@ -1,0 +1,3 @@
+[submodule "intro-to-ml-with-kubeflow-examples"]
+	path = intro-to-ml-with-kubeflow-examples
+	url = git@github.com:intro-to-ml-with-kubeflow/intro-to-ml-with-kubeflow-examples.git
