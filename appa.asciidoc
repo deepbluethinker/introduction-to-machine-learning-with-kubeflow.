@@ -1,4 +1,28 @@
-[appendix]
-== Appendix Title
+[[appendix]]
+[appendix_installing]
+== Setting Kubeflow up on your provider(s) of choice
 
-An appendix is generally used for extra material that supplements your main book content.
+While you can do much of your development locally on minikube, once you're ready to start training and predicting real production workloads you'll want to go beyond what can be accomplished on a single machine. This doesn't mean you _shouldn't_ set up minikube, it's an amazing resource for developing and testing locally.
+
+If you don't have a Kubernetes cluster set up in your cloud simply jump to the provider(s) of your choice bellow and see how to set up a Kubeflow cluster. If you're in a multi-cloud deployment, don't fret we can set up Kubeflow to run on multiple clouds by configuring different environments.
+
+=== Google Kubernetes Engine (GKE)
+
+
+
+=== IBM Cloud
+
+Setting Kubeflow up on IBM cloud is relatively simple and much of the set up can be accomplished in the command line or web-interface. Since web interfaces change more frequently than CLI tool's we've focused on using the CLI in this installation guide.
+
+
+One of the first pre-set-up steps is configuring IBM's S3 compatible storage.
+
+=== Azure
+
+=== AWS
+
+=== On-prem / different provider
+
+== Multi-cloud deployments
+
+== Try to not burn down the world / Pointers to avoid reinforcing biases
