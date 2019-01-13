@@ -37,6 +37,8 @@ This element signifies a general note.
 This element indicates a warning or caution.
 ====
 
+We will use warnings to indicate any situations where the resulting pipeline is likely to be non-portable and call out portable alternatives that you can use.
+
 === Using Code Examples
 ++++
 <!--PROD: Please reach out to author to find out if they will be uploading code examples to oreilly.com or their own site (e.g., GitHub). If there is no code download, delete this whole section. If there is, when you email digidist with the link, let them know what you filled in for title_title (should be as close to book title as possible, i.e., learning_python_2e). This info will determine where digidist loads the files.-->
