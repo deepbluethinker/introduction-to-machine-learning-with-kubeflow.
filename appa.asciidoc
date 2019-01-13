@@ -49,9 +49,8 @@ However it does have limitations which can make it more challenging to work with
 development environment or tools you feel more comfortable with.
 
 
-.Root click to deploy page
+.Home page of the click to deploy service
 [1_click_to_deploy_root]
-[caption="Home page of the click to deploy service"]
 image::images/1_click_to_deploy_root.png[Home page of the click to deploy service]
 
 
