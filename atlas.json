@@ -1,14 +1,26 @@
 {
   "branch": "master",
   "files": [
-    "cover.html",
-    "titlepage.html",
-    "copyright.html",
-    "toc.html",
-    "preface.asciidoc",
-    "ch01.asciidoc",
-    "appa.asciidoc",
-    "ix.html"
+      "cover.html",
+      "titlepage.html",
+      "copyright.html",
+      "toc.html",
+      "preface.asciidoc",
+      "ch01.asciidoc",
+      "ch02.asciidoc",
+      "ch03.asciidoc",
+      "ch04.asciidoc",
+      "ch05.asciidoc",
+      "ch06.asciidoc",
+      "ch07.asciidoc",
+      "ch08.asciidoc",
+      "ch09.asciidoc",
+      "ch10.asciidoc",
+      "ch11.asciidoc",
+      "ch12.asciidoc",
+      "ch13.asciidoc",
+      "appa.asciidoc",
+      "ix.html"
   ],
   "formats": {
     "pdf": {

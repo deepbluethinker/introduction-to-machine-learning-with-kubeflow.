@@ -1,0 +1,2 @@
+[[simple_training_ch]]
+== Training & Serving a simple linear regression model w/scikit on pre-built data 

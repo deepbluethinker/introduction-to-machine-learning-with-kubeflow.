@@ -1,0 +1,4 @@
+[[expensive_ch]]
+== Accelerating training with specialized hardware
+
+=== Utilizing Tensor Processing Units (TPUs) with Kubeflow
