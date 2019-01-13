@@ -64,8 +64,8 @@ Click-to-deploy will create a new Kubernetes cluster matching the name you provi
 Click-to-deploy Kubeflow attempts to enable some services on GCP which require billing to be enabled. This does not necessarily mean a credit card has to be on file, e.g. educational accounts _may_ work, but purely free accounts are unlikely to work. If you get the error "" shown in <<3_iap_no_billing_failure>> then you will need to enable billing or do manual setup.
 ====
 
-[[3_iap_no_billing_failure]]
 .Attempt to click-to-deploy Kubeflow into a project without billing set up
+[3_iap_no_billing_failure]
 image::images/3b_iap_no_billing_failure.png["Click to deploy billing failure with error message Deployment Error programmerboo@gmail.com: Error trying to enable this required service: container.googleapis.com. Error: Errors enabling service: Operation does not satisfy the following requirements: billing-enabled {Billing must be enabled for activation of service '' in project 'kf-click-to-delpoy-no-iap' to proceed., link:$$https://console.developers.google.com/project/kf-click-to-delpoy-no-iap/settings$$}"]
 
 
@@ -87,8 +87,9 @@ From there you just press "Create Deployment" and grab a cup of coffee/tea/La Cr
 
 Once your deployment has succeeded you should see the message "Status of kubeflow: RUNNING" at the bottom of the deployment console as in <<4_noiap_success>>
 
-[[4_noiap_success]]
+
 .Successful click to deploy without a proxy
+[4_noiap_success]
 image::images/4_noiap_success.png["Successful click-to-deploy without IAP"]
 
 //TODO(holden): Footnote or link jumphost?
