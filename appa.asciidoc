@@ -14,7 +14,7 @@ If you don't have a Kubernetes cluster set up in your cloud simply jump to the p
 
 Setting Kubeflow up on IBM cloud is relatively simple and much of the set up can be accomplished in the command line or web-interface. Since web interfaces change more frequently than CLI tool's we've focused on using the CLI in this installation guide.
 
-The first step is downloading the IBM cloud tools. The current release has a self install link at curl -sL https://ibm.biz/idt-installer which downloads the necessary components system wide (requires sudo). There is a manual installation guide as well at link:$$https://console.bluemix.net/docs/cli/ts_createapps.html#appendix$$.
+The first step is downloading the IBM cloud tools. The current release has a self install link at link::$https://ibm.biz/idt-installer$ which downloads the necessary components system wide (requires sudo). If you're the trusting sort you can run it directly with <<download_ibm_clooud_cli>>. There is a manual installation guide as well at link:$$https://console.bluemix.net/docs/cli/ts_createapps.html#appendix$$.
 
 [[download_ibm_clooud_cli]]
 .Download IBM Cloud CLI tool
@@ -25,8 +25,38 @@ include::ibm-install-guide/setup-ibm.sh
 ----
 ====
 
+After that you'll need to authenticate the command line tools <<ibm_cloud_cli_login>>:
 
-One of the first pre-set-up steps is configuring IBM's S3 compatible storage.
+[[ibm_cloud_cli_login]]
+.Login to your IBM cloud account from the command line
+====
+[source, shell]
+----
+ibmcloud login
+----
+====
+
+
+If you don't have a Kubernetes cluster running already (or you want a separate one for your Kubeflow explorations) you can launch a new cluster from the command line. Starting completely fresh (new cluster, new VLANs) is the simplest as in <<ibm_cloud_create_cluster_and_vlans>>. Otherwise figure out the existing your VLAN ids and specify it as in <<>>.
+
+[[ibm_cloud_create_cluster_and_vlans]]
+.IBM Cloud create cluster and VLANs
+====
+[source, shell]
+----
+include::ibm-install-guide/create-k8s-cluster.sh[tags=createClusterAndVLANS]
+----
+====
+
+[[ibm_cloud_create_cluster_in_vlan]]
+.IBM Cloud create cluster in VLAN
+====
+[source, shell]
+----
+include::ibm-install-guide/create-k8s-cluster.sh[tags=createClusterInVLAN]
+----
+====
+
 
 === Azure
 
