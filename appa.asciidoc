@@ -42,9 +42,18 @@ Pick a project name which is easy to type and doesn't require shell escaping, yo
 
 [[gcp_click_to_deploy]]
 ==== Click To Deploy
+
 Click-to-deploy is by far the fastest way to get started with Kubeflow in the cloud.
+The click to deploy web UI is located at link:$$https://deploy.kubeflow.cloud/$$ and allows you to deploy Kubeflow entirely from your web browser, as shown in <<1_click_to_deploy_root>>.
 However it does have limitations which can make it more challenging to work with if, especially you have a local
 development environment or tools you feel more comfortable with.
+
+
+
+[[1_click_to_deploy_root]]
+.Root click to deploy page
+image::images/1_click_to_deploy_root.png["Home page of the click to deploy service"]
+
 
 [TIP]
 ====
@@ -73,10 +82,6 @@ Regardless of the deployment method you chose, you start the process at link:$$h
 
 If you choose to skip IAP mode you can be up and running inside the matter of minutes. Navigate your browser to the click to deploy service at link:$$https://deploy.kubeflow.cloud/$$ and select the account you wish to use, and selecting "Skip IAP" <<1_click_to_deploy_root>>.
 
-
-[[1_click_to_deploy_root]]
-.Root click to deploy page
-image::images/1_click_to_deploy_root.png["Home page of the click to deploy service"]
 
 From there you just press "Create Deployment" and grab a cup of coffee/tea/La Croix or Bud light lime.
 
