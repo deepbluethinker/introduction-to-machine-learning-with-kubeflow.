@@ -10,9 +10,20 @@ If you don't have a Kubernetes cluster set up in your cloud simply jump to the p
 
 
 
-=== IBM Cloud
+=== IBM Cloud (Bluemix)
 
 Setting Kubeflow up on IBM cloud is relatively simple and much of the set up can be accomplished in the command line or web-interface. Since web interfaces change more frequently than CLI tool's we've focused on using the CLI in this installation guide.
+
+The first step is downloading the IBM cloud tools. The current release has a self install link at curl -sL https://ibm.biz/idt-installer which downloads the necessary components system wide (requires sudo). There is a manual installation guide as well at link:$$https://console.bluemix.net/docs/cli/ts_createapps.html#appendix$$.
+
+[[download_ibm_clooud_cli]]
+.Download IBM Cloud CLI tool
+====
+[source, shell]
+----
+include::ibm-install-guide/setup-ibm.sh
+----
+====
 
 
 One of the first pre-set-up steps is configuring IBM's S3 compatible storage.
