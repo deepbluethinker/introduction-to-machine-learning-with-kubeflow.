@@ -65,7 +65,7 @@ Click-to-deploy Kubeflow attempts to enable some services on GCP which require b
 ====
 
 .Attempt to click-to-deploy Kubeflow into a project without billing set up
-[3_iap_no_billing_failure]
+[#3_iap_no_billing_failure]
 image::images/3b_iap_no_billing_failure.png["Click to deploy billing failure with error message Deployment Error programmerboo@gmail.com: Error trying to enable this required service: container.googleapis.com. Error: Errors enabling service: Operation does not satisfy the following requirements: billing-enabled {Billing must be enabled for activation of service '' in project 'kf-click-to-delpoy-no-iap' to proceed., link:$$https://console.developers.google.com/project/kf-click-to-delpoy-no-iap/settings$$}"]
 
 
@@ -89,7 +89,7 @@ Once your deployment has succeeded you should see the message "Status of kubeflo
 
 
 .Successful click to deploy without a proxy
-[4_noiap_success]
+[#4_noiap_success]
 image::images/4_noiap_success.png["Successful click-to-deploy without IAP"]
 
 //TODO(holden): Footnote or link jumphost?
