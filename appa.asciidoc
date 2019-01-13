@@ -6,19 +6,21 @@ While you can do much of your development locally on minikube, once you're ready
 
 If you don't have a Kubernetes cluster set up in your cloud simply jump to the provider(s) of your choice bellow and see how to set up a Kubeflow cluster. If you're in a multi-cloud deployment, don't fret we can set up Kubeflow to run on multiple clouds by configuring different environments.
 
+[TIP]
+====
+While you don't need to deploy Kubeflow to it's own cluster, while you are in the process of learning we recommend having a separate cluster you can experiment with.
+====
+
+
 [[gcp_install]]
 === Google Cloud Platform (GCP) w/ Google Kubernetes Engine (GKE)
 
 Kubeflow can be easily deployed on Google Cloud Platform (GCP), using the Google Kubernetes Engine (GKE) & storage Google Cloud Storage (GCS). Other tools like Dataflow can be used, although doing so will reduce the portability of your Kubeflow pipelines so we will call out any such instances along with portable alternatives. Specialized resources, like Tensor-Processing-Units (TPUs) can also be accessed, and while not available on other providers do not reduce portability since they primarily accelerate your standard workflow.
 
-[WARNING]
-====
-Kubeflow requires some services on GCP which require billing to be enabled. This does not necessarily mean a credit card has to be on file, e.g. educational accounts _may_ work, but purely free accounts are unlikely to work.
-====
 
 There are two primary ways to get started with Kubeflow on, one is the standard command line tools, and an even easier link:$$https://deploy.kubeflow.cloud/$[$"click-to-deploy"] system.
 // TODO(holden): Verify is this the recommendation we want to give? It's the one I want -- I don't trust GUIs
-Click-to-deploy is recommended for users on locked down corporate machines, tutorials, and getting started. For longer term and portable deployments the authors have found the traditional command line tools give them more flexibility.
+Click-to-deploy is recommended for users on locked down corporate machines, tutorials, and getting started. For longer term and portable deployments the authors have found the traditional command line tools give them more flexibility and reduced dependence on magic.
 
 // TODO(holden): Put a tip similar to this around the point of setting up Minikube incase folks get frustrated at that point
 
@@ -44,28 +46,65 @@ Click-to-deploy is by far the fastest way to get started with Kubeflow in the cl
 However it does have limitations which can make it more challenging to work with if, especially you have a local
 development environment or tools you feel more comfortable with.
 
-To get started with click-to-deploy we recommend first setting up an IAP Oauth Client ID to simplify your access to the cluster. The instructions on how to do so are at link:$$https://www.kubeflow.org/docs/started/getting-started-gke/#create-oauth-client-credentials$$
-
-[WARNING]
+[TIP]
 ====
-If you use multiple google accounts, click-to-deploy assumes that the account you are using Google cloud with is also the first Google account (in priority order) as signed in on your browser (.e.g it is `/u/0`). While it will let you choose the account during initial set up, the links for IAP and Cloudshell may be broken. This is a known issue and is tracked in link:$$https://github.com/kubeflow/kubeflow/issues/2267$$.
+Click-to-deploy will create a new Kubernetes cluster matching the name you provide for the deployment during setup.
 ====
 
 [WARNING]
 ====
-If you click-to-deploy Kubeflow without IAP mode you will need to use the cloud shell to access it, or set up another VPN.
+Click-to-deploy Kubeflow attempts to enable some services on GCP which require billing to be enabled. This does not necessarily mean a credit card has to be on file, e.g. educational accounts _may_ work, but purely free accounts are unlikely to work. If you get the error "" shown in <<3_iap_no_billing_failure>> then you will need to enable billing or do manual setup.
 ====
 
-Once your deployment has succeeded, regardless of if you configure IAP or not, you should see the message "Status of kubeflow: RUNNING" at the bottom of the deployment console as in <<4_noiap_success>>
+[[3_iap_no_billing_failure]]
+.Attempt to click-to-deploy Kubeflow into a project without billing set up
+image::images/3_iap_no_billing_failure.png["Click to deploy billing failure with error message Deployment Error programmerboo@gmail.com: Error trying to enable this required service: container.googleapis.com. Error: Errors enabling service: Operation does not satisfy the following requirements: billing-enabled {Billing must be enabled for activation of service '' in project 'kf-click-to-delpoy-no-iap' to proceed., https://console.developers.google.com/project/kf-click-to-delpoy-no-iap/settings}"]
+
+
+Click-to-deploy has two different access modes available, identity aware proxy (IAP) and non-AIP modes. In IAP mode, click-to-deploy creates a gateway you can use to access your cluster with oauth, and in non-IAP mode you access your cluster through cloud shell or other means footnote:[Personally I often use a jump host along with sshuttle, but it is a matter of personal preference.]. If you are in a hurry to get started you may find that skipping IAP deployment mode makes it easier to get started. If you find your self wanting IAP access later on, you can always deploy the IAP component to your cluster at a later date.
+
+
+Regardless of the deployment method you chose, you start the process at link:$$https://deploy.kubeflow.cloud/$$.
+
+
+[[google_click_to_deploy_cloudshell]]
+===== No identity aware proxy (IAP) mode (simplest)
+
+
+If you choose to skip IAP mode you can be up and running inside the matter of minutes. Navigate your browser to the click to deploy service at link:$$https://deploy.kubeflow.cloud/$$ and select the account you wish to use, and selecting "Skip IAP" <<1_click_to_deploy_root>>.
+
+
+[[1_click_to_deploy_root]]
+.Root click to deploy page
+image::images/1_click_to_deploy_root.png["Home page of the click to deploy service"]
+
+From there you just press "Create Deployment" and grab a cup of coffee/tea/La Croix or Bud light lime.
+
+
+Once your deployment has succeeded you should see the message "Status of kubeflow: RUNNING" at the bottom of the deployment console as in <<4_noiap_success>>
 
 image::images/4_noiap_success.png["Successful click-to-deploy without IAP"]
 
-Once you have your deployment you can then access it using the cloudshell button next to 
+//TODO(holden): Footnote or link jumphost?
+Once you have your Kubeflow cluster up and running you can go ahead and connect by clicking on the "Cloud shell" button in <<4_noiap_success>>.
 
-[TIP]
+[WARNING]
 ====
-If you use cloudshell through the Google Cloud console, you will want to enable link:$$https://cloud.google.com/shell/docs/features#boost_mode$$[boost mode] to provide sufficient resources.
+If you use multiple google accounts, click-to-deploy assumes that the account you are using Google cloud with is also the first Google account (in priority order) as signed in on your browser (.e.g it is `/u/0`). This is a known issue and is tracked in link:$$https://github.com/kubeflow/kubeflow/issues/2267$$.
 ====
+
+If the automatic launching of cloud-shell did not work for you, you can run the command <<cloudshell_connect_to_project>>. If you launched your Kubeflow cluster with IAP enabled hhowever, the repo will not exist.
+
+[[cloudshell_connect_to_project]]
+.Command to run in cloudshell to connect to a click-to-deploy Kubeflow cluster
+[source, shell]
+----
+include::intro-to-ml-with-kubeflow-examples/gcp-setup/cloudshell_script.sh[tags=cloudshell_script]
+----
+
+If later on you find your self wishing you had a proxy to simplify access, you can check out the section on setting up IAP <<setup_iap>>.
+
+Congratulations, you now have Kubeflow deployed!
 
 [WARNING]
 ====
@@ -73,18 +112,34 @@ As awesome and amazing as cloudshell can be for getting started, it does not per
 ====
 
 
+[[gogole_click_to_deploy_iap]]
+===== Identity Aware Proxy Mode
+
+Using click-to-deploy to set up Kubeflow with identity aware proxy mode will allow you to skip having to interact with Google Cloud shell and directly access the Kubeflow UI using your Google credentials. However, doing so may be challenging, especially for accounts without custom domains configured which involve configuring restricted scope.
+
+
 [WARNING]
 ====
-If you are deploying into a project which does not have access to the required APIs, you may see a a failure message similar to "Billing must be enabled for activation of service" like in <<3_iap_no_billing_failure>>
+IAP access can take some time to set up, the guide says "20 minutes", if it takes longer you may need to double check your oauth tokens and possibly submit them for verification if they access restricted scopes.
 ====
 
-[[3_iap_no_billing_failure]]
-.Attempt to click-to-deploy Kubeflow into a project without billing set up
-image::images/3_iap_no_billing_failure.png["Click to deploy billing failure with error message Deployment Error programmerboo@gmail.com: Error trying to enable this required service: container.googleapis.com. Error: Errors enabling service: Operation does not satisfy the following requirements: billing-enabled {Billing must be enabled for activation of service '' in project 'kf-click-to-delpoy-no-iap' to proceed., https://console.developers.google.com/project/kf-click-to-delpoy-no-iap/settings}"]
+[TIP]
+====
+If you use cloudshell through the Google Cloud console, you will want to enable link:$$https://cloud.google.com/shell/docs/features#boost_mode$$[boost mode] to provide sufficient resources.
+====
+
+
+
 
 [[gcp_cli_deploy]]
 ==== Command line Deployment
-The command line deployment of Kubeflow on Google cloud is very standard.
+
+The command line deployment of Kubeflow on Google cloud is fairly simple. You will need to enable Google's Kubernetes Engine (GKE) in your account, if you have not already done so before, which you can do by visiting link:$$https://console.cloud.google.com/kubernetes$$.
+
+
+After you have GKE enabled you will want to install the command line Google cloud tools so you can create, modify, and delete your clusters from the command line. Many users can install the "google cloud sdk" package or some variant from their package manager <<instal-gcloud-ubuntu>>.
+However if you don't have sudo permissions or want a different version installed you can install gcloud using the installation script at <<install-gcloud-general>>.
+
 
 
 [[ibm_install]]
