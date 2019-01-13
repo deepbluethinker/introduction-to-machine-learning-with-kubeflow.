@@ -178,7 +178,7 @@ Once you have the Google Cloud SDK installed you will want to go ahead and creat
 [[using_your_gke_cluster]]
 ===== Using your GKE cluster with Kubeflow
 
-While you can use your GKE cluster like any generic Kubernetes cluster, there are some extra bits of magic to simplify your life available.
+While you can use your GKE cluster like any generic Kubernetes cluster, there are some extra bits of magic to simplify your life available. To be able to use Kubeflow on your machine you going to need to install the Kubeflow dependencies mentioned in <<setting_up_kubeflow_dependencies>>.
 
 
 
