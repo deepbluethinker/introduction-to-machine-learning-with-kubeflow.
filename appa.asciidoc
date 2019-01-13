@@ -6,11 +6,89 @@ While you can do much of your development locally on minikube, once you're ready
 
 If you don't have a Kubernetes cluster set up in your cloud simply jump to the provider(s) of your choice bellow and see how to set up a Kubeflow cluster. If you're in a multi-cloud deployment, don't fret we can set up Kubeflow to run on multiple clouds by configuring different environments.
 
-=== Google Kubernetes Engine (GKE)
+[[gcp_install]]
+=== Google Cloud Platform (GCP) w/ Google Kubernetes Engine (GKE)
+
+Kubeflow can be easily deployed on Google Cloud Platform (GCP), using the Google Kubernetes Engine (GKE) & storage Google Cloud Storage (GCS). Other tools like Dataflow can be used, although doing so will reduce the portability of your Kubeflow pipelines so we will call out any such instances along with portable alternatives. Specialized resources, like Tensor-Processing-Units (TPUs) can also be accessed, and while not available on other providers do not reduce portability since they primarily accelerate your standard workflow.
+
+[WARNING]
+====
+Kubeflow requires some services on GCP which require billing to be enabled. This does not necessarily mean a credit card has to be on file, e.g. educational accounts _may_ work, but purely free accounts are unlikely to work.
+====
+
+There are two primary ways to get started with Kubeflow on, one is the standard command line tools, and an even easier link:$$https://deploy.kubeflow.cloud/$[$"click-to-deploy"] system.
+// TODO(holden): Verify is this the recommendation we want to give? It's the one I want -- I don't trust GUIs
+Click-to-deploy is recommended for users on locked down corporate machines, tutorials, and getting started. For longer term and portable deployments the authors have found the traditional command line tools give them more flexibility.
+
+// TODO(holden): Put a tip similar to this around the point of setting up Minikube incase folks get frustrated at that point
+
+[TIP]
+====
+You can use click-to-deploy even if you don't have kubernetes installed locally, which means it can often be even faster than starting with minikube (although, long term, we do recommend having a local deployment you can debug, as discussed in <<debugging>>).
+====
 
 
 
-=== IBM Cloud (Bluemix)
+Regardless of which deployment you go with you will want a GCP project to deploy Kubeflow into. This does not need to be a separate project, however there are benefits to isolating your exploration work from your regular work. If you decide to create a separate project, the current steps are described at link:$$https://cloud.google.com/resource-manager/docs/creating-managing-projects$$.
+
+[TIP]
+====
+Pick a project name which is easy to type and doesn't require shell escaping, you will thank yourself later.
+====
+
+
+
+[[gcp_click_to_deploy]]
+==== Click To Deploy
+Click-to-deploy is by far the fastest way to get started with Kubeflow in the cloud.
+However it does have limitations which can make it more challenging to work with if, especially you have a local
+development environment or tools you feel more comfortable with.
+
+To get started with click-to-deploy we recommend first setting up an IAP Oauth Client ID to simplify your access to the cluster. The instructions on how to do so are at link:$$https://www.kubeflow.org/docs/started/getting-started-gke/#create-oauth-client-credentials$$
+
+[WARNING]
+====
+If you use multiple google accounts, click-to-deploy assumes that the account you are using Google cloud with is also the first Google account (in priority order) as signed in on your browser (.e.g it is `/u/0`). While it will let you choose the account during initial set up, the links for IAP and Cloudshell may be broken. This is a known issue and is tracked in link:$$https://github.com/kubeflow/kubeflow/issues/2267$$.
+====
+
+[WARNING]
+====
+If you click-to-deploy Kubeflow without IAP mode you will need to use the cloud shell to access it, or set up another VPN.
+====
+
+Once your deployment has succeeded, regardless of if you configure IAP or not, you should see the message "Status of kubeflow: RUNNING" at the bottom of the deployment console as in <<4_noiap_success>>
+
+image::images/4_noiap_success.png["Successful click-to-deploy without IAP"]
+
+Once you have your deployment you can then access it using the cloudshell button next to 
+
+[TIP]
+====
+If you use cloudshell through the Google Cloud console, you will want to enable link:$$https://cloud.google.com/shell/docs/features#boost_mode$$[boost mode] to provide sufficient resources.
+====
+
+[WARNING]
+====
+As awesome and amazing as cloudshell can be for getting started, it does not persist items outside of your home directory, so system packages installed may disappear between access.
+====
+
+
+[WARNING]
+====
+If you are deploying into a project which does not have access to the required APIs, you may see a a failure message similar to "Billing must be enabled for activation of service" like in <<3_iap_no_billing_failure>>
+====
+
+[[3_iap_no_billing_failure]]
+.Attempt to click-to-deploy Kubeflow into a project without billing set up
+image::images/3_iap_no_billing_failure.png["Click to deploy billing failure with error message Deployment Error programmerboo@gmail.com: Error trying to enable this required service: container.googleapis.com. Error: Errors enabling service: Operation does not satisfy the following requirements: billing-enabled {Billing must be enabled for activation of service '' in project 'kf-click-to-delpoy-no-iap' to proceed., https://console.developers.google.com/project/kf-click-to-delpoy-no-iap/settings}"]
+
+[[gcp_cli_deploy]]
+==== Command line Deployment
+The command line deployment of Kubeflow on Google cloud is very standard.
+
+
+[[ibm_install]]
+=== IBM Cloud (Bluemix) w/IBM Cloud Kubernetes Service
 
 Setting Kubeflow up on IBM cloud is relatively simple and much of the set up can be accomplished in the command line or web-interface. Since web interfaces change more frequently than CLI tool's we've focused on using the CLI in this installation guide.
 
@@ -37,7 +115,7 @@ ibmcloud login
 ====
 
 
-If you don't have a Kubernetes cluster running already (or you want a separate one for your Kubeflow explorations) you can launch a new cluster from the command line. Starting completely fresh (new cluster, new VLANs) is the simplest as in <<ibm_cloud_create_cluster_and_vlans>>. Otherwise figure out the existing your VLAN ids and specify it as in <<>>.
+If you don't have a Kubernetes cluster running already (or you want a separate one for your Kubeflow explorations) you can launch a new cluster from the command line. Starting completely fresh (new cluster, new VLANs) is the simplest as in <<ibm_cloud_create_cluster_and_vlans>>. Otherwise figure out the existing your VLAN ids and specify it as in <<ibm_cloud_create_cluster_in_vlan>>.
 
 [[ibm_cloud_create_cluster_and_vlans]]
 .IBM Cloud create cluster and VLANs
@@ -65,5 +143,13 @@ include::ibm-install-guide/create-k8s-cluster.sh[tags=createClusterInVLAN]
 === On-prem / different provider
 
 == Multi-cloud deployments
+
+== Cloud specific Debugging
+
+Once you starting working with a project it's only a matter of time time before you need to start debugging it. We talk about general debugging tools in [[debugging]], but there are some additional tools available on different commercial cloud offerings which may also be of use.
+
+=== Google cloud: stack driver
+
+
 
 == Try to not burn down the world / Pointers to avoid reinforcing biases

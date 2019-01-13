@@ -40,6 +40,7 @@ sub process_file {
     $text =~ s/\[source, [Jj]ava\s+\]/[source, java]/gi;
     $text =~ s/([Ee])cho [Ss]ystem/$1cho system/gi;
     #Done
+    $text =~ s/(c)hallanging/$1hallenging/gi;
     $text =~ s/corse/coarse/gi;
     $text =~ s/footenote/footnote/gi;
     $text =~ s/(\s+[Aa])ss(\s+)/$1s$2/gi;
