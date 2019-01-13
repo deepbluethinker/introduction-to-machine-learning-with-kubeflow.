@@ -48,6 +48,7 @@ The click to deploy web UI is located at link:$$https://deploy.kubeflow.cloud/$$
 However it does have limitations which can make it more challenging to work with if, especially you have a local
 development environment or tools you feel more comfortable with.
 
+image::images/1_click_to_deploy_root.png[Base image]
 
 
 [[1_click_to_deploy_root]]
