@@ -102,6 +102,9 @@ sub process_file {
     $text =~ s/(i)nstalation/$1nstallation/gi;
     $text =~ s/kubernetes/Kubernetes/gi;
     $text =~ s/kuberntes/Kubernetes/gi;
+    # Include's slightly off
+    $text =~ s/include::intro-to-ml-with-kubeflow-examples/include::examples/g;
+    $text =~ s/include::introduction-to-ml-with-kubeflow-examples/include::examples/g;
 
     open (my $out, ">$file");
     print $out $text;

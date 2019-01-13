@@ -99,7 +99,7 @@ If the automatic launching of cloud-shell did not work for you, you can run the 
 .Command to run in cloudshell to connect to a click-to-deploy Kubeflow cluster
 [source, shell]
 ----
-include::intro-to-ml-with-kubeflow-examples/gcp-setup/cloudshell_script.sh[tags=cloudshell_script]
+include::examples/gcp-setup/cloudshell_script.sh[tags=cloudshell_script]
 ----
 
 If later on you find your self wishing you had a proxy to simplify access, you can check out the section on setting up IAP <<setup_iap>>.
