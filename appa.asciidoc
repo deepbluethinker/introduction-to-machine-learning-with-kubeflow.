@@ -51,8 +51,8 @@ development environment or tools you feel more comfortable with.
 image::images/1_click_to_deploy_root.png[Base image]
 
 
-[[1_click_to_deploy_root]]
 .Root click to deploy page
+[[1_click_to_deploy_root]]
 image::images/1_click_to_deploy_root.png["Home page of the click to deploy service"]
 
 
