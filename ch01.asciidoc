@@ -1,9 +1,47 @@
 [[who_is_kubeflow_for_ch]]
-== What does Kubeflow solve & who’s it for, and how does it work?
+== What does Kubeflow solve & who’s it for, and how to get started
 
 
 Put some introductory text here.
 
-=== Your First Section Heading Here
+=== Who is this for?
 
 Put more content here.
+
+=== Brief Alternatives to Kubeflow
+
+[[breif_kubeflow_design_and_core_components]]
+=== Brief Kubeflow’s design & core components
+
+=== Getting Started with Kubeflow locally
+
+One of the great things about Kubeflow is the ability to do our initial development and exploration locally, moving into more powerful and distributed tools later on.
+Deploying Kubeflow locally can be a great way to get started, and gives us access to a few debugging cheats we can use during our initial exploration. That being said,
+while you can get started with Kubeflow locally, you don't have to, you can just as easily do your initial work with one of the cloud providers or on prem Kubernetes clusters covered in <<appendix_installing>>.
+
+[TIP]
+====
+Probably the fastest way to get started with Kubeflow is using the simplified click-to-deploy on Google Cloud Platform (GCP). If you're in a rush to get started go ahead and jump to <<gcp_click_to_deploy>>.
+====
+
+==== Installing Kubeflow's core dependencies
+
+==== Setting up Minikube
+
+[TIP]
+====
+If you get stuck here, or if your permissions/policies don't allow you to use minikube, just jump on over to <<appendix_installing>> and you can deploy your Kubeflow app's against 
+====
+
+=== Getting Help / Community Resources
+
+We are so glad you've decided to use this book to start your adventures into Kubeflow.
+However, like all adventures, there may come a point when your guide book isn't enough to carry you through.
+Thankfully there are a collection of community resources where you can interact with others on similar adventures to your own.
+We encourage you to sign up for the link:$$http://kubeflow.slack.com$$[Kubeflow slack at http://kubeflow.slack.com], one of the more active areas of discussion, now since account approval is semi-manual.
+The link:$$https://www.kubeflow.org/$$[kubeflow project page is at https://www.kubeflow.org/].
+
+=== Conclusion
+
+At this point you have everything you need to get started on your Kubeflow adventure: a Kubernetes cluster, Kubeflow and it's core dependencies, and a desire to have fun.
+In the next chapter <<simple_training_ch>>, we'll train and serve a simple machine learning model together
