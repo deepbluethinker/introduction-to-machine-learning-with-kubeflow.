@@ -141,11 +141,44 @@ If you use cloudshell through the Google Cloud console, you will want to enable 
 [[gcp_cli_deploy]]
 ==== Command line Deployment
 
-The command line deployment of Kubeflow on Google cloud is fairly simple. You will need to enable Google's Kubernetes Engine (GKE) in your account, if you have not already done so before, which you can do by visiting link:$$https://console.cloud.google.com/kubernetes$$.
+The command line deployment of Kubeflow on Google cloud is fairly simple. If you already have a Google Kubernetes Engine (GKE) cluster up and running you, and local SDK tools installed, can skip ahead to <<using_gke_cluster>>.
+
+[[set_up_gke_cluster_cli]]
+===== Setting up your GKE cluster
+You will need to enable Google's Kubernetes Engine (GKE) in your account, if you have not already done so before, which you can do by visiting link:$$https://console.cloud.google.com/kubernetes$$.
 
 
-After you have GKE enabled you will want to install the command line Google cloud tools so you can create, modify, and delete your clusters from the command line. Many users can install the "google cloud sdk" package or some variant from their package manager <<instal-gcloud-ubuntu>>.
+After you have GKE enabled you will want to install the command line Google cloud tools so you can create, modify, and delete your clusters from the command line. Many users can install the "Google Cloud SDK" package or some variant from their package manager <<install-gcloud-ubuntu>>.
 However if you don't have sudo permissions or want a different version installed you can install gcloud using the installation script at <<install-gcloud-general>>.
+
+[[install-gcloud-ubuntu]]
+.Install gcloud SDK on Ubuntu/Debian
+====
+[source, shell]
+----
+include::examples/gcp/setup-gcp.sh[tags=ubuntu]
+----
+====
+
+[[install-gcloud-general]]
+.Install gcloud SDK in general without sudo
+====
+[source, shell]
+----
+include::examples/gcp/setup-gcp.sh[tags=general]
+----
+====
+
+Once you have the Google Cloud SDK installed you will want to go ahead and create your cluster. For initial explorations you will only need a small cluster, and we can use either dynamic scaling or make a larger cluster later on.
+
+//TODO(holden): Include tip with error message for not enabled GKE
+
+
+
+[[using_your_gke_cluster]]
+===== Using your GKE cluster with Kubeflow
+
+While you can use your GKE cluster like any generic Kubernetes cluster, there are some extra bits of magic to simplify your life available.
 
 
 
