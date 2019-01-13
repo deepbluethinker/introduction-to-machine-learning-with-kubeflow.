@@ -53,7 +53,7 @@ image::images/1_click_to_deploy_root.png[Base image]
 
 .Root click to deploy page
 [[1_click_to_deploy_root]]
-image::images/1_click_to_deploy_root.png["Home page of the click to deploy service"]
+image::images/1_click_to_deploy_root.png[Home page of the click to deploy service]
 
 
 [TIP]
