@@ -13,22 +13,100 @@ Put more content here.
 [[breif_kubeflow_design_and_core_components]]
 === Brief Kubeflow’s design & core components
 
-=== Getting Started with Kubeflow (Locally)
+=== Getting Set Up with Kubeflow
 
 One of the great things about Kubeflow is the ability to do our initial development and exploration locally, moving into more powerful and distributed tools later on.
-Deploying Kubeflow locally can be a great way to get started, and gives us access to a few debugging cheats we can use during our initial exploration. That being said,
-while you can get started with Kubeflow locally, you don't have to, you can just as easily do your initial work with one of the cloud providers or on prem Kubernetes clusters covered in <<appendix_installing>>.
+Deploying Kubeflow locally can be a great way to get started, and gives us access to a few debugging cheats we can use during our initial exploration.
+While you can get started with Kubeflow locally, you don't have to, you can just as easily do your initial work with one of the cloud providers or on prem Kubernetes clusters covered in <<appendix_installing>>, although for all but click-to-deploy.
 
 [TIP]
 ====
 Probably the fastest way to get started with Kubeflow is using the simplified click-to-deploy on Google Cloud Platform (GCP). If you're in a rush to get started go ahead and jump to <<gcp_click_to_deploy>>.
 ====
 
-The Kubeflow project has a link:$$https://www.kubeflow.org/docs/started/getting-started-minikube/$$[frequently updated guide on how to install Kubeflow with Minikube at https://www.kubeflow.org/docs/started/getting-started-minikube/]. You may wish to follow this guide instead
 
-==== Installing Kubeflow dependencies
+==== Installing Kubeflow & it's dependencies
 
-Kubeflow has relatively few dependencies, most of the heavy lifting is done inside of containers which ship with their requirements. Thankfully, even the minimal Kubeflow dependencies can be automatically installed along with Kubeflow by running X/Y/Z.
+Kubeflow has relatively few dependencies, most of the heavy lifting is done inside of containers which ship with their requirements.
+Thankfully, Kubeflow's dependencies can be automatically installed along with the optional Minikube by running the install shell script <<mini_kube_setup_sh>>. Even if you don't plan on using Minikube this script simplifies the rest of the set up.
+
+[[mini_kube_setup_sh]]
+.Automatically install Kubeflow's dependencies & Minikube
+[source, shell]
+----
+include::examples/dev-setup/install-kf-and-minikube.sh[tags=work]
+----
+
+[TIP]
+====
+If this fails to X/Y/Z, don't worry we'll cover how to fix that up in <<setting_up_minikube>>.
+====
+
+
+
+[WARNING]
+====
+This will modify your system packages installing and require root/super user permissions. If you wish you can instead run these commands on another host (e.g. dedicated KF development enviroment).
+====
+
+If you don't want to install Minikube, you can manually install Kubeflow's dependencies: ksonnet and kubectl. Even if you have these installed, you will want to check that you have the right versions installed for your version of Kubeflow.
+// TODO(holden): Where? Release notes?
+Ksonnet is on github, with it's release posted at link:$$https://github.com/ksonnet/ksonnet/releases$$[https://github.com/ksonnet/ksonnet/releases], and you can install it with <<install_ksonnet_sh>>.
+
+[[install_ksonnet_sh]]
+.Install ksonnet
+[source, shell]
+----
+include::examples/dev-setup/install-ksonnet-and-kubectl.sh[tags=ksonnet]
+----
+
+
+
+Kubectl is more widely packaged, with the different installation options covered in the link:$$https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl$$[kubernetes documentation https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl]. Ubuntu (snap) <<install_kubectl_snap>> and Homebrew users can install Kubectl <install_kubectl_homebrew>> the simplest with package manager, with others covered in the guide.
+Kubectl can also be installed outside of your package manager <<install_kubectl_curl>>, although this requires manual updating.
+
+[[install_kubectl_snap]]
+.Install kubectl with snap
+[source, shell]
+----
+include::examples/dev-setup/install-ksonnet-and-kubectl.sh[tags=ubuntu-kubectl]
+----
+
+[[install_kubectl_homebrew]]
+.Install kubectl with homebrew
+[source, shell]
+----
+include::examples/dev-setup/install-ksonnet-and-kubectl.sh[tags=osx-kubectl]
+----
+
+[[install_kubectl_curl]]
+.Install kubectl without a package manager
+[source, shell]
+----
+include::examples/dev-setup/install-ksonnet-and-kubectl.sh[tags=no-pkg-manager-kubectl]
+----
+
+
+
+
+Once you have the dependencies installed, you can now install Kubeflow with <<install_kf_sh>>, and optionally add it to your path.
+
+[[install_kf]]
+.Install Kubeflow
+[source, shell]
+----
+include::examples/dev-setup/install-kf.sh[tags=no-pkg-manager-install]
+----
+
+You now have Kubeflow installed! There are some additional optional tools you can set up to make the rest of this book easier we will cover next.
+
+[[setting_up_minikube]]
+==== Finishing setting up Kubeflow on Minikube (optional)
+
+The Kubeflow project has a link:$$https://www.kubeflow.org/docs/started/getting-started-minikube/$$[frequently updated guide on how to install Kubeflow with Minikube at https://www.kubeflow.org/docs/started/getting-started-minikube/].
+You don't need to have a local Kubernetes cluster, but many data scientists and developers find having a local cluster to test with (be it Minikube or other).
+// TODO: other local k8s options
+
 
 
 ==== Setting up your Kubeflow development enviroment
@@ -73,15 +151,14 @@ If you use a different IDE don't throw it away just for better ksonnet editing b
 
 
 
-==== Setting up Minikube
+
 
 
 [TIP]
 ====
-If you get stuck here, or if your permissions/policies don't allow you to use minikube, just jump on over to <<appendix_installing>> and you can deploy your Kubeflow app's against 
+If you get stuck here, or if your permissions/policies don't allow you to use minikube, just jump on over to <<appendix_installing>> and you can deploy your Kubeflow app's against your remote K8s cluster. 
 ====
 
-==== Alternatives
 
 === Getting Help / Community Resources
 
