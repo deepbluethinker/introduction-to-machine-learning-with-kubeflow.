@@ -13,7 +13,7 @@ Put more content here.
 [[breif_kubeflow_design_and_core_components]]
 === Brief Kubeflow’s design & core components
 
-=== Getting Started with Kubeflow locally
+=== Getting Started with Kubeflow (Locally)
 
 One of the great things about Kubeflow is the ability to do our initial development and exploration locally, moving into more powerful and distributed tools later on.
 Deploying Kubeflow locally can be a great way to get started, and gives us access to a few debugging cheats we can use during our initial exploration. That being said,
@@ -24,14 +24,64 @@ while you can get started with Kubeflow locally, you don't have to, you can just
 Probably the fastest way to get started with Kubeflow is using the simplified click-to-deploy on Google Cloud Platform (GCP). If you're in a rush to get started go ahead and jump to <<gcp_click_to_deploy>>.
 ====
 
-==== Installing Kubeflow's core dependencies
+The Kubeflow project has a link:$$https://www.kubeflow.org/docs/started/getting-started-minikube/$$[frequently updated guide on how to install Kubeflow with Minikube at https://www.kubeflow.org/docs/started/getting-started-minikube/]. You may wish to follow this guide instead
+
+==== Installing Kubeflow dependencies
+
+Kubeflow has relatively few dependencies, most of the heavy lifting is done inside of containers which ship with their requirements. Thankfully, even the minimal Kubeflow dependencies can be automatically installed along with Kubeflow by running X/Y/Z.
+
+
+==== Setting up your Kubeflow development enviroment
+
+In addition to the core dependencies you may find some additional tools useful.
+Much of Kubernets and Kubeflow is configured with
+either link:$$https://yaml.org/$$[YAML Ain't Markup Language (YAML)]
+or link:$$https://ksonnet.io/$$[ksonnet] (which is an extension of link:$$https://jsonnet.org/$$[Jsonnet]).
+
+[TIP]
+====
+This part is optional, if it ends up being frustrating or slowing you down feel free to skip ahead.
+====
+
+
+Inside of the Kubeflow project, the Jsonnet library is used to automatically format Ksonnet into a standard layout. This autoformatter can also catch syntax errors or other simple errors earlier on in the deploy. The jsonnet package link:$$https://github.com/google/jsonnet/releases$$[releases are available on GitHub] <<jsonnet_manual>>, link:$$https://snapcraft.io/$$[Snap] <<jsonnet_snap>> (from Canonical). It is also listed on PyPi, but currently does not install the command line tools. Some of the IDE tools for Jsonnet depend on the command line binary.
+
+[[jsonnet_snap]]
+.Install jsonnet with snap (Ubuntu)
+====
+[source, shell]
+----
+include::examples/dev-setup/jsonnet.sh[tags=snap]
+----
+====
+
+[[jsonnet_manual]]
+.Install jsonnet manually (everyone else)
+====
+[source, shell]
+----
+include::examples/dev-setup/jsonnet.sh[tags=manual]
+----
+====
+
+
+Most Integrated Development Enviroments (IDEs) offer some sort of tooling for editing YAML and Jsonnet, but you may have to install these seperately.
+For InteliJ //TODO(trevor)
+For emacs there are many modes available for YAML editing, as well as the link:$$jsonnet-mode$$[jsonnet] (which is installable from link:$https://melpa.org/$$[Milkypostman’s Emacs Lisp Package Archive (MELPA)]).
+Atom has syntax highlighting available as packages for both link:$$https://atom.io/packages/language-yaml$$[YAML] and link:$$https://atom.io/packages/language-jsonnet$$[Jsonnet].
+If you use a different IDE don't throw it away just for better ksonnet editing before you explore the plugin available.
+
+
 
 ==== Setting up Minikube
+
 
 [TIP]
 ====
 If you get stuck here, or if your permissions/policies don't allow you to use minikube, just jump on over to <<appendix_installing>> and you can deploy your Kubeflow app's against 
 ====
+
+==== Alternatives
 
 === Getting Help / Community Resources
 
@@ -40,6 +90,11 @@ However, like all adventures, there may come a point when your guide book isn't 
 Thankfully there are a collection of community resources where you can interact with others on similar adventures to your own.
 We encourage you to sign up for the link:$$http://kubeflow.slack.com$$[Kubeflow slack at http://kubeflow.slack.com], one of the more active areas of discussion, now since account approval is semi-manual.
 The link:$$https://www.kubeflow.org/$$[kubeflow project page is at https://www.kubeflow.org/].
+
+[TIP]
+====
+If you want to quickly explore Kubeflow end-to-end there are some link:$$https://codelabs.developers.google.com/$$[Google codelabs] with Kubeflow as well.
+====
 
 === Conclusion
 
