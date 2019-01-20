@@ -252,7 +252,7 @@ Finally, ensure that you can launch at least two GPU instances in your cluster.
 Once you have an EKS cluster with at least two worker nodes, run the following command to install Nvidia driver daemonsets:
 [source, shell]
 ----
-kubectl create -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/v1.10/nvidia-device-plugin.yml
+$ kubectl create -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/v1.10/nvidia-device-plugin.yml
 ----
 
 Verify that the daemonsets are properly installed:
@@ -271,7 +271,7 @@ nvidia-device-plugin-daemonset   2         2         2         2            2   
 The easiest way to install Kubeflow on an EKS cluster is by using Ksonnet. The tool can be downloaded here: link:$$https://ksonnet.io/#get-started$$. 
 Next, create a local directory and download the installation files:
 [source, shell]
----
+----
 mkdir ${KUBEFLOW_SRC}
 cd ${KUBEFLOW_SRC}
 export KUBEFLOW_TAG=v0.4.0
