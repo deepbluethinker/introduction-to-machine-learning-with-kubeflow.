@@ -1,7 +1,7 @@
 
 = IBM Install Guide
 
-:imagesdir: assets/images
+:imagesdir: ibm-install-guide/assets/images
 
 [.lead]
 
@@ -56,15 +56,15 @@ available on IBMCloud at the time of writing. Next you will need to choose  your
 available machines you can run `ibmcloud ks machine-types $ZONE` (replace `$ZONE` with your zone).  For the tutorial however,
 we are going to use the smallest cheapest machines `u2c.2x4`.
 
-include::create-k8s-cluster.sh[tag=setClusterName]
-include::create-k8s-cluster.sh[tag=setZoneAndV]
-include::create-k8s-cluster.sh[tag=setMachineType]
+include::ibm-install-guide/create-k8s-cluster.sh[tag=setClusterName]
+include::ibm-install-guide/create-k8s-cluster.sh[tag=setZoneAndV]
+include::ibm-install-guide/create-k8s-cluster.sh[tag=setMachineType]
 
 Next you may need to create new VLANs.  If you have already set up a Kubernetes cluster in this zone however, you won't
 need to create them.  To find out if VLANs exist in the zone run `ibmcloud ks vlans $ZONE`. If that command returns an
 empty list, then you can create the cluster (and the VLANs automatically), with the following command:
 
-include::create-k8s-cluster.sh[tag=createClusterAndVLANS]
+include::ibm-install-guide/create-k8s-cluster.sh[tag=createClusterAndVLANS]
 
 WARNING: If you already have VLANs the previous command will throw an error- please use following command instead.
 
@@ -72,7 +72,7 @@ If you already have VLANs you will need to explicitly set the public and private
 looks at the output of `ibmcloud ks vlans $ZONE` and parses out the first *public* and *private* VLAN's ID.  You could
 easily do this by just writing down the ID of a VLAN you wish to explicitly use.
 
-include::create-k8s-cluster.sh[tag=createClusterInVLAN]
+include::ibm-install-guide/create-k8s-cluster.sh[tag=createClusterInVLAN]
 
 
 
