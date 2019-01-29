@@ -1,3 +1,4 @@
+When this is done, move to `appa.asciidoc`
 
 = IBM Install Guide
 
@@ -178,10 +179,56 @@ everything and even train and serve the model!
 
 ==== Instructive Way
 
-Running a one-liner at the shell is not a good way to learn.
+Running a one-liner at the shell is not a good way to learn.  You should have an environment variable named `CLUSTER_NAME`
+(you can check by running `echo $CLUSTER_NAME` as the command line interface).  We also want to make sure our S3 variables
+are set.  Run `source set-aws-creds.sh` to make sure they are infact available as environmental variables.
+
+====== Clone Kubeflow Examples
+
+We want to clone the Kubeflow examples and revert to a specific commit. We clone into the `kf-tutorial` directory by
+running the code:
+
+```bash
+git clone https://github.com/kubeflow/examples kf-tutorial
+```
+
+We also want to roll back to a specific commit (before a major refactor which happens to break this guide).
+
+```bash
+git checkout 4dda73afbfcbf023c20524a4d5dbce011d9dbf79
+```
+
+Now the examples code is all set up!
+
+====== Copying the `modified-model-train.yaml` file
+
+IBM run's a modified version of Kubeflow so we have to modify the `model-train.yaml` file in turn.
+
+include::ibm-install-guide/modified-model-train.yaml[tag=customApiSpec]
+
+Where exactly this falls in the yaml and what exactly `ks init` is doing is a bit out of scope for the tutorial (but
+will be covered in the book in some detail).  For now simply know and understand that in any YAML that you are using on
+IBM, whereever you see `ks init` you need to add the argument, `--api-spec=version:v1.10.11` (or whatever version your
+Kubernetes cluster is).  This is because by default the program just asks, "hey what Kubernetes is this" and IBM responds
+"It's Kubernetes v1.10.11+IKS", then Kubernetes tries to go download a file at
+https://raw.githubusercontent.com/kubernetes/kubernetes/<version>/api/openapi-spec/swagger.json which doesn't exist
+(because there is no v1.10.11+IKS, IKS is basically short for IBM-SPECIAL-SAUCE).  So you have to explicitly tell Kube
+Sonnet (`ks`) what the actualy version name is.
+
+So at anyrate, get back up to the top directory (maybe a `cd ..` ).  Then copy the `modified-model-train.yaml` to the
+Kubflow examples
+
+```bash
+include::ibm-install-guide/once-cluster-is-up.sh[tag=copyMmt]
+```
+
+
+
+
 
 == Train a Simple Tensorflow Model
 
 
 == Serve the Model for new predictions
+
 

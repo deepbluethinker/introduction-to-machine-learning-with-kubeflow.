@@ -48,8 +48,9 @@ else
 	echo "kf-tutorial found, skipping fresh cloning"
 fi
 
-
+#tag::copyMmt[]
 cp modified-model-train.yaml kf-tutorial/mnist
+#end::copyMmt[]
 cd kf-tutorial/mnist
 
 #tag::startProject[]

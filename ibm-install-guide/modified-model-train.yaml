@@ -341,7 +341,10 @@ spec:
       image: "{{workflow.parameters.ks-image}}"
       command: ["/ksonnet-entrypoint.sh"]
       source: |
-        ks init my-model-server --api-spec=file:swagger.json
+      #ks init my-model-server --api-spec=file:swagger.json  ## delete this if next line seems to work.
+      #tag::customApiSpec[]
+        ks init my-model-server --api-spec=version:v1.10.11
+      #end::customApiSpec[]
         cd my-model-server
         ks registry add kubeflow {{workflow.parameters.model-serving-ks-url}}
         ks pkg install kubeflow/tf-serving@{{workflow.parameters.model-serving-ks-tag}}
