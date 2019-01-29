@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
+#tag::setVars[]
 APP_NAME=my-kubeflow
 NAMESPACE=tfworkflow
 K8S_VERSION=1.10.11
+#end::setVars[]
 
 ## Assumes cluster has been created and is up and running... eventually merge these scripts..
 
@@ -12,7 +14,9 @@ if [ -z "$CLUSTER_NAME" ]; then
 fi
 
 
+#tag::kubeConfig[]
 export KUBECONFIG=$(ibmcloud cs cluster-config $CLUSTER_NAME | sed -n 's/.*KUBECONFIG=//p')
+#end::kubeConfig[]
 echo "KUBECONFIG=$KUBECONFIG"
 
 if [ -f ./set-aws-creds.sh ]; then
@@ -53,18 +57,22 @@ cp modified-model-train.yaml kf-tutorial/mnist
 #end::copyMmt[]
 cd kf-tutorial/mnist
 
-#tag::startProject[]
+
 
 if [[ $(kubectl get namespace) == *"${NAMESPACE}"* ]]; then
 	echo "${NAMESPACE} namespace already exists in k8s."
 else
+#tag::createK8sNamespace[]
 	kubectl create namespace ${NAMESPACE}
+#end::createK8sNamespace[]
 fi
 
 if [[ $(ibmcloud cr namespace-list) == *"${NAMESPACE}"* ]]; then
 	echo "${NAMESPACE} namespace already exists in Docker repo"
 else
+#tag::createDkrNamespace[]
 	ibmcloud cr namespace-add $NAMESPACE
+#end::createDkrNamespace[]
 fi
 
 
@@ -77,8 +85,10 @@ fi
 # todo skip if exists (or possibly not needed)
 wget https://raw.githubusercontent.com/kubernetes/kubernetes/v${K8S_VERSION}/api/openapi-spec/swagger.json
 echo "Initializing KS app ${APP_NAME} with api-spec version ${K8S_VERSION}"
-ks init ${APP_NAME} --api-spec=file:swagger.json  #important bc IBM wants to be creative w version name
 
+#ks init ${APP_NAME} --api-spec=file:swagger.json  #important bc IBM wants to be creative w version name
+#tag::ksWitchcraft[]
+ks init ${APP_NAME} --api-spec=file:swagger.json --api-spec=version:v$K8S_VERSION
 cd ${APP_NAME}
 
 ks registry add kubeflow github.com/kubeflow/kubeflow/tree/v0.2.4/kubeflow
@@ -93,29 +103,32 @@ ks apply default -c kubeflow-argo
 
 # Switch context for the rest of the example
 kubectl config set-context $(kubectl config current-context) --namespace=${NAMESPACE}
-#end::startProject[]
+
 
 cd -
 
 # Create a user for our workflow
 kubectl apply -f tf-user.yaml
+#end::ksWitchcraft[]
 
-#tag::configureDockerRegistry[]
+
 echo "Building Docker Image"
-DOCKER_BASE_URL=registry.ng.bluemix.net/$NAMESPACE # Put your docker registry here
+#tag::configureDockerRegistry[]
+export DOCKER_BASE_URL=registry.ng.bluemix.net/$NAMESPACE # Put your docker registry here
 #end::configureDockerRegistry[]
 
 #tag::buildnpushDockerRegistry[]
 if [[ $(ibmcloud cr image-list) == *"${DOCKER_BASE_URL}"* ]]; then
 	echo "${DOCKER_BASE_URL} already exists in registry."
 else
+#tag::buildnpushDockerRegistry[]
 	docker build . --no-cache  -f Dockerfile.model -t ${DOCKER_BASE_URL}/mytfmodel:1.7
 	docker push ${DOCKER_BASE_URL}/mytfmodel:1.7
+#end::buildnpushDockerRegistry[]
 	echo "Docker Image built and pushed"
 fi
-#end::buildnpushDockerRegistry[]
 
-#tag::addDockerSecrets[]
+
 echo "Copying Docker Secrets"
 
 IMAGE_PULL_SECRET_NAME=my-kf-docker-registry-secret
@@ -124,6 +137,8 @@ if [[ $(kubectl get secrets) == *"${IMAGE_PULL_SECRET_NAME}"* ]]; then
 	echo "${IMAGE_PULL_SECRET_NAME} exists."
 else
 	echo "Creating Docker Secret Token"
+#tag::createDockerSecret[]
+	IMAGE_PULL_SECRET_NAME=my-kf-docker-registry-secret
 	TOKEN_PASS=$(ibmcloud cr token-add --description "kf-tutorial" --non-expiring -q)
 	kubectl --namespace $NAMESPACE \
 	  create secret docker-registry $IMAGE_PULL_SECRET_NAME \
@@ -131,57 +146,62 @@ else
 	  --docker-username=token \
 	  --docker-password=$TOKEN_PASS \
 	  --docker-email=a@b.com
+#end::createDockerSecret[]
 	echo "Done"
 fi
-#end::addDockerSecrets[]
+
 
 
 ## Create S3 Creds
-#tag::configureStorage[]
-export S3_ENDPOINT=s3-api.us-geo.objectstorage.softlayer.net  #replace with your s3 endpoint in a host:port format, e.g. minio:9000
-export AWS_ENDPOINT_URL=https://${S3_ENDPOINT} #use http instead of https for default minio installs
+#tag::configureS3[]
+export S3_ENDPOINT=s3-api.us-geo.objectstorage.softlayer.net
+export AWS_ENDPOINT_URL=https://${S3_ENDPOINT}
 export AWS_REGION=us-geo
 export BUCKET_NAME=mnist-bucket-tutorial
-export S3_USE_HTTPS=1 #set to 0 for default minio installs
-export S3_VERIFY_SSL=1 #set to 0 for defaul minio installs
+export S3_USE_HTTPS=1
+export S3_VERIFY_SSL=1
+export S3_DATA_URL=s3://${BUCKET_NAME}/
+export S3_TRAIN_BASE_URL=s3://${BUCKET_NAME}
+#end::configureS3[]
 
 if [[ $(kubectl get secrets) == *"aws-creds"* ]]; then
 	echo "aws-creds exists."
 else
+#tag::createS3Secret[]
 	kubectl create secret generic aws-creds --from-literal=awsAccessKeyID=${AWS_ACCESS_KEY_ID} \
 	 --from-literal=awsSecretAccessKey=${AWS_SECRET_ACCESS_KEY}
+#end::createS3Secret[]
 	echo "created aws-creds"
 fi
 
-#export S3_DATA_URL=s3://${BUCKET_NAME}/data/mnist/
-export S3_DATA_URL=s3://${BUCKET_NAME}/
-export S3_TRAIN_BASE_URL=s3://${BUCKET_NAME}
-#export S3_TRAIN_BASE_URL=s3://${BUCKET_NAME}
+#tag::setTrainingParams[]
 export JOB_NAME=myjob-$(uuidgen  | cut -c -5 | tr '[:upper:]' '[:lower:]')
 export TF_MODEL_IMAGE=${DOCKER_BASE_URL}/mytfmodel:1.7
 export TF_WORKER=3
 export MODEL_TRAIN_STEPS=200
 export MODEL_BATCH_SIZE=100
-#end::configureStorage[]
+#end::setTrainingParams[]
 
 ## TODO If these already exist in bucket, don't upload them...
 ## Upload mnist/data to S3_DATA_URL
 
 aws --endpoint-url $AWS_ENDPOINT_URL s3 ls s3://mnist-bucket-tutorial/0.png
 
-
+#tag::uploadData[]
 for i in `seq 0 9`;
 	do
-		if [-z $(aws --endpoint-url $AWS_ENDPOINT_URL s3 ls $S3_TRAIN_BASE_URL/0.png) ]; then
+		if [-z $(aws --endpoint-url $AWS_ENDPOINT_URL s3 ls $S3_TRAIN_BASE_URL/$i.png) ]; then
 			echo "Uploading $i"
-			aws --endpoint-url $AWS_ENDPOINT_URL s3 cp data/0.png $S3_TRAIN_BASE_URL
+			aws --endpoint-url $AWS_ENDPOINT_URL s3 cp data/$i.png $S3_TRAIN_BASE_URL
 		else
 			echo "$i already exists, skipping"
 		fi
 	done
+#end::uploadData[]
 
 ## Submit the Job
 
+#tag::submitTraining[]
 argo submit modified-model-train.yaml --serviceaccount tf-user \
     -p aws-endpoint-url=${AWS_ENDPOINT_URL} \
     -p s3-endpoint=${S3_ENDPOINT} \
@@ -198,13 +218,15 @@ argo submit modified-model-train.yaml --serviceaccount tf-user \
     -p namespace=${NAMESPACE} \
     -p image-pull-secret=${IMAGE_PULL_SECRET_NAME} \
     -n ${NAMESPACE}
-
+#end::submitTraining[]
 #
 
 sleep 3
 
+#tag::argoServer[]
 PODNAME=$(kubectl get pod -l app=argo-ui -n${NAMESPACE} -o jsonpath='{.items[0].metadata.name}')
 kubectl port-forward ${PODNAME} 8001:8001
+#end::argoServer[]
 
 echo "visit http://127.0.0.1:8001 to see the status of your workflows"
 

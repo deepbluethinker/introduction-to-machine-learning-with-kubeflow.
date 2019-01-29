@@ -183,6 +183,24 @@ Running a one-liner at the shell is not a good way to learn.  You should have an
 (you can check by running `echo $CLUSTER_NAME` as the command line interface).  We also want to make sure our S3 variables
 are set.  Run `source set-aws-creds.sh` to make sure they are infact available as environmental variables.
 
+Once the cluster is up, you will need to set the `KUBE_CONFIG` variable to point at the cluster.
+
+
+```
+ibmcloud cs cluster-config $CLUSTER_NAME
+```
+
+will yield a message with something towards the end like `export KUBECONFIG=...`. You can either copy and paste that line
+or you can run the following:
+
+```bash
+include::ibm-install-guide/once-cluster-is-up.sh[tag=kubeConfig]
+```
+
+which will parse the output of `ibmcloud cs cluster-config ...` find the path to the Kube Config file, and export `KUBE_CONFIG`
+appropriately.
+
+
 ====== Clone Kubeflow Examples
 
 We want to clone the Kubeflow examples and revert to a specific commit. We clone into the `kf-tutorial` directory by
@@ -222,13 +240,122 @@ Kubflow examples
 include::ibm-install-guide/once-cluster-is-up.sh[tag=copyMmt]
 ```
 
+====== Setting up Namespace
+
+First we are going to set a few environmental variables for naming.
+
+```bash
+include::ibm-install-guide/once-cluster-is-up.sh[tag=setVars]
+```
+
+First we want to create the namespace in Kubernets, and then we will create it in Docker.  Note, that we used the same
+name for the namespace, but that is not required and there isn't any particular reason you _need_ to do so.
+
+```bash
+include::ibm-install-guide/once-cluster-is-up.sh[tag=createK8sNamespace]
+include::ibm-install-guide/once-cluster-is-up.sh[tag=createDkrNamespace]
+```
+
+====== Setting Up Kubeflow via Ksonnet
+
+A future chapter will dive into the finer points of what Ksonnet is and what all of these commands are doing. For now
+just accept and be happy for these magic commands.
+
+```bash
+include::ibm-install-guide/once-cluster-is-up.sh[tag=ksWitchcraft]
+```
+
+====== Setting Up the Docker Image
+
+First we will need to configure our docker registry as follows
+```bash
+include::ibm-install-guide/once-cluster-is-up.sh[tag=configureDockerRegistry]
+```
+
+Next we need to build and push a docker image containing the training code.
+
+```bash
+include::ibm-install-guide/once-cluster-is-up.sh[tag=buildnpushDockerRegistry]
+```
+
+TIP: You only need to re-push the Docker image if you change the training code.
+
+Finally, IBMs Docker registries are private by default.  This means for your Kubeflow pods to be able to access the Docker
+images, they will need to login.  This is accomplished with secrets.  To setup a Docker repository secret for an IBM
+private docker repository, copy the following code.
+
+```bash
+include::ibm-install-guide/once-cluster-is-up.sh[tag=createDockerSecret]
+```
+
+More information on creating Docker secrets for repotistories on IBM in Kubernetes can be found https://console.bluemix.net/docs/containers/cs_dedicated_tokens.html[here].
+
+====== Configuring S3
+
+First we need to set some environmental variables.  These will be passed to `argo` and then to the Docker image we created.
+
+```bash
+include::ibm-install-guide/once-cluster-is-up.sh[tag=configureS3]
+```
+
+Just as we had to create a Docker secret for the Kube pods to "login" to our private Docker image repository, we must
+also create a secret to allow the pods to access files on our S3 which we also created earlier. You might want to confirm
+first that `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` are in fact set environmental variables.
 
 
+```bash
+include::ibm-install-guide/once-cluster-is-up.sh[tag=createS3Secret]
+```
 
+====== Upload Training Data
+
+The last thing we must do before we train our model is uploading the training data.  This can be done via the Bluemix WebUI,
+however here we present a handy little trick for uploading it via the command line interface (CLI). This is a for loop that
+iterates through the digits 0 through 9 and uploads each.
+
+```bash
+include::ibm-install-guide/once-cluster-is-up.sh[tag=uploadData]
+```
+
+You may need to copy that into a `.sh` file and run it, or simply run the line
+
+```bash
+ aws --endpoint-url $AWS_ENDPOINT_URL s3 cp data/$i.png $S3_TRAIN_BASE_URL
+```
+
+ten times where `i` is the numbers 0 through 9.
 
 == Train a Simple Tensorflow Model
+
+[quote, Most highschool coaches]
+Prior preperation prevents poor performance
+
+We've done _so much work_ to set this all up.  Now we reap our reward.  We simply set a few last training meta-variables,
+and then run one `argo` command (with several arguments).
+
+First let's set up the arguments.
+
+```bash
+include::ibm-install-guide/once-cluster-is-up.sh[tag=setTrainingParams]
+```
+
+The user is free to edit `MODEL_TRAIN_STEPS` and `MODEL_BATCH_SIZE`.  Now the moment we've been building too this whole
+tutorial. We are now ready to train our model. We can do that with the following `argo` command:
+
+```bash
+include::ibm-install-guide/once-cluster-is-up.sh[tag=submitTraining]
+```
+
+That seems like a lot, but we'll get into what all of these commands are doing later in the book. The key is that you now
+have successfully trained a model on IBM Cloud. To "see" the model training, you can port forward the the `argo-server`
+to `localhost` and "watch" the pipeline progress.
+
+```bash
+include::ibm-install-guide/once-cluster-is-up.sh[tag=argoServer]
+```
 
 
 == Serve the Model for new predictions
 
+TODO
 
