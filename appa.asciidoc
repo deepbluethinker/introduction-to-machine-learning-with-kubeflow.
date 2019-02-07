@@ -184,9 +184,6 @@ While you can use your GKE cluster like any generic Kubernetes cluster, there ar
 
 [[ibm_install]]
 === IBM Cloud (Bluemix) w/IBM Cloud Kubernetes Service
-When this is done, move to `appa.asciidoc`
-
-= IBM Install Guide
 
 :imagesdir: ibm-install-guide/assets/images
 
@@ -197,7 +194,7 @@ similar to installing Kubeflow on other cloud providers, there are some tricks a
 to Bluemix we want the reader to be aware of.
 
 
-=== In this guide we are going to
+===== In this guide we are going to
 
 * Create a Kubernetes Cluster on IBM Bluemix
 * Create a Bucket in IBM Object Store and enable the S3 interface
@@ -210,14 +207,14 @@ IMPORTANT: We presume the user has already signed up for an IBMCloud account, ha
 at the command line. Please go to https://console.bluemix.net/docs/cli/index.html#overview for more info on installing
 the CLI tools.
 
-== Creating a Kubernetes Cluster in IBM Cloud
+==== Creating a Kubernetes Cluster in IBM Cloud
 
 For this entire tutorial, there is an "easy" way which will get Kubeflow up and running on IBMCloud with minimal effort
 and understanding, and a "long way" that explains what the scripts are doing, and hopefully will be instructive in
 helping the user understand what, how, and why the script is doing the things that it is doing. The user is encouraged to
 use the easy way for assistance but to read through and understand the instructive way as needed.
 
-==== Easy Way
+===== Easy Way
 
 The easy way is to clone the tutorial repo, login to IBMCloud, and run the `create-k8s-cluster.sh` script. This can be
 acheived in the following three lines of code (though login is interactive and may be slightly different depending on
@@ -233,7 +230,7 @@ That will fire off a series of commands that will setup a small Kubernetes clust
 minutes to set up a cluster, so now let's go through all of the lines in the script and see what it is doing.
 
 
-==== Instructive Way
+===== Instructive Way
 
 The first thing to do when setting up your Kubernetes cluster will be to name it.  This can be anything. The default name
 for this tutorial is `kubeflow-tutorial`.  Next you will select a *zone* in which to create your cluster.  You can see a
@@ -263,13 +260,13 @@ include::ibm-install-guide/create-k8s-cluster.sh[tag=createClusterInVLAN]
 
 
 
-== Creating a Bucket in IBM Object Store
+==== Creating a Bucket in IBM Object Store
 
 To create an S3 bucket using the Bluemix Web GUI, first log into IBM Cloud.  You will initially be brought to the
 Dashboard.  In this section, we are going to provision a Cloud Object storage instance and setup a bucket with S3 interface.
 If you already have a Cloud Object Storage instance you wish to use, please skip ahead to step *step number*.
 
-==== Provisioning Cloud Object Storage
+===== Provisioning Cloud Object Storage
 
 When you login you should be at the Dashboard.  The first step is to click on the Catalog tab at the top of the screen.
 
@@ -296,7 +293,7 @@ image::create-obj-sto.png[Dash,600,200]
 WARNING: You can only have one instance of a Lite plan per service. If you already have a Cloud Object Storage Lite,
 you'll have to use that one.
 
-==== Creating the Bucket with S3 Interface
+===== Creating the Bucket with S3 Interface
 
 After you have created the Object Cloud Storage instance, you can create buckets within it.  You should come to a page
 that looks like this.  Click on the 'Create Bucket' button off to the right.
@@ -350,20 +347,20 @@ chmod +x ./set-aws-creds.sh
 That's it! You've created an S3 bucket on IBMCloud!
 
 
-== Installing Kubeflow
+==== Installing Kubeflow
 
 Once the cluster is setup (you can check progress in the IBMCloud Web GUI), you have created a bucket, and entered your
 credentials into `set-aws-creds.sh`, you are ready to download the MNIST example, install Kubeflow, and submit the MNIST
 job for training.
 
 
-==== Easy Way
+===== Easy Way
 
 The "easy way" to do everything mentioned above is to run the script `once-cluster-is-up.sh`.  This will take care of
 everything and even train and serve the model!
 
 
-==== Instructive Way
+===== Instructive Way
 
 Running a one-liner at the shell is not a good way to learn.  You should have an environment variable named `CLUSTER_NAME`
 (you can check by running `echo $CLUSTER_NAME` as the command line interface).  We also want to make sure our S3 variables
@@ -511,7 +508,7 @@ You may need to copy that into a `.sh` file and run it, or simply run the line
 
 ten times where `i` is the numbers 0 through 9.
 
-== Train a Simple Tensorflow Model
+==== Train a Simple Tensorflow Model
 
 [quote, Most highschool coaches]
 Prior preperation prevents poor performance
@@ -541,7 +538,7 @@ include::ibm-install-guide/once-cluster-is-up.sh[tag=argoServer]
 ```
 
 
-== Serve the Model for new predictions
+==== Serve the Model for new predictions
 
 TODO
 
