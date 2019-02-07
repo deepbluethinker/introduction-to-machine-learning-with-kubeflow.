@@ -184,51 +184,367 @@ While you can use your GKE cluster like any generic Kubernetes cluster, there ar
 
 [[ibm_install]]
 === IBM Cloud (Bluemix) w/IBM Cloud Kubernetes Service
+When this is done, move to `appa.asciidoc`
 
-Setting Kubeflow up on IBM cloud is relatively simple and much of the set up can be accomplished in the command line or web-interface. Since web interfaces change more frequently than CLI tool's we've focused on using the CLI in this installation guide.
+= IBM Install Guide
 
-The first step is downloading the IBM cloud tools. The current release has a self install link at link::$https://ibm.biz/idt-installer$ which downloads the necessary components system wide (requires sudo). If you're the trusting sort you can run it directly with <<download_ibm_clooud_cli>>. There is a manual installation guide as well at link:$$https://console.bluemix.net/docs/cli/ts_createapps.html#appendix$$.
+:imagesdir: ibm-install-guide/assets/images
 
-[[download_ibm_clooud_cli]]
-.Download IBM Cloud CLI tool
-====
-[source, shell]
-----
-include::ibm-install-guide/setup-ibm.sh
-----
-====
+[.lead]
 
-After that you'll need to authenticate the command line tools <<ibm_cloud_cli_login>>:
+In this module we're going to walk through installing Kubeflow on IBM Bluemix.  While this is very
+similar to installing Kubeflow on other cloud providers, there are some tricks and gotchyas specific
+to Bluemix we want the reader to be aware of.
 
-[[ibm_cloud_cli_login]]
-.Login to your IBM cloud account from the command line
-====
-[source, shell]
-----
+
+=== In this guide we are going to
+
+* Create a Kubernetes Cluster on IBM Bluemix
+* Create a Bucket in IBM Object Store and enable the S3 interface
+* Install Kubeflow
+* Train a simple Tensorflow model (MNIST)
+* Create a serving layer for the model to predict new hand written digits
+
+
+IMPORTANT: We presume the user has already signed up for an IBMCloud account, has installed the CLI tools, and has logged in
+at the command line. Please go to https://console.bluemix.net/docs/cli/index.html#overview for more info on installing
+the CLI tools.
+
+== Creating a Kubernetes Cluster in IBM Cloud
+
+For this entire tutorial, there is an "easy" way which will get Kubeflow up and running on IBMCloud with minimal effort
+and understanding, and a "long way" that explains what the scripts are doing, and hopefully will be instructive in
+helping the user understand what, how, and why the script is doing the things that it is doing. The user is encouraged to
+use the easy way for assistance but to read through and understand the instructive way as needed.
+
+==== Easy Way
+
+The easy way is to clone the tutorial repo, login to IBMCloud, and run the `create-k8s-cluster.sh` script. This can be
+acheived in the following three lines of code (though login is interactive and may be slightly different depending on
+the security on your account).
+
+```bash
 ibmcloud login
-----
-====
+git clone https://github.com/intro-to-ml-with-kubeflow/ibm-install-guide
+cd ;ibm-install-guide/create-k8s-cluster.sh
+```
+
+That will fire off a series of commands that will setup a small Kubernetes cluster on IBMCloud.  It takes about ten
+minutes to set up a cluster, so now let's go through all of the lines in the script and see what it is doing.
 
 
-If you don't have a Kubernetes cluster running already (or you want a separate one for your Kubeflow explorations) you can launch a new cluster from the command line. Starting completely fresh (new cluster, new VLANs) is the simplest as in <<ibm_cloud_create_cluster_and_vlans>>. Otherwise figure out the existing your VLAN ids and specify it as in <<ibm_cloud_create_cluster_in_vlan>>.
+==== Instructive Way
 
-[[ibm_cloud_create_cluster_and_vlans]]
-.IBM Cloud create cluster and VLANs
-====
-[source, shell]
-----
-include::ibm-install-guide/create-k8s-cluster.sh[tags=createClusterAndVLANS]
-----
-====
+The first thing to do when setting up your Kubernetes cluster will be to name it.  This can be anything. The default name
+for this tutorial is `kubeflow-tutorial`.  Next you will select a *zone* in which to create your cluster.  You can see a
+full list of available zones with the command `ibmcloud ks zones`.  The script simply chooses the last zone in the list.
+Next we will set the version of Kubernetes we want to run.  We have chosen `1.10.11` as it is the latest stable version
+available on IBMCloud at the time of writing. Next you will need to choose  your machine types.  To see a full list of
+available machines you can run `ibmcloud ks machine-types $ZONE` (replace `$ZONE` with your zone).  For the tutorial however,
+we are going to use the smallest cheapest machines `u2c.2x4`.
 
-[[ibm_cloud_create_cluster_in_vlan]]
-.IBM Cloud create cluster in VLAN
-====
-[source, shell]
-----
-include::ibm-install-guide/create-k8s-cluster.sh[tags=createClusterInVLAN]
-----
-====
+include::ibm-install-guide/create-k8s-cluster.sh[tag=setClusterName]
+include::ibm-install-guide/create-k8s-cluster.sh[tag=setZoneAndV]
+include::ibm-install-guide/create-k8s-cluster.sh[tag=setMachineType]
+
+Next you may need to create new VLANs.  If you have already set up a Kubernetes cluster in this zone however, you won't
+need to create them.  To find out if VLANs exist in the zone run `ibmcloud ks vlans $ZONE`. If that command returns an
+empty list, then you can create the cluster (and the VLANs automatically), with the following command:
+
+include::ibm-install-guide/create-k8s-cluster.sh[tag=createClusterAndVLANS]
+
+WARNING: If you already have VLANs the previous command will throw an error- please use following command instead.
+
+If you already have VLANs you will need to explicitly set the public and private VLAN by their ID.  The shell script
+looks at the output of `ibmcloud ks vlans $ZONE` and parses out the first *public* and *private* VLAN's ID.  You could
+easily do this by just writing down the ID of a VLAN you wish to explicitly use.
+
+include::ibm-install-guide/create-k8s-cluster.sh[tag=createClusterInVLAN]
+
+
+
+== Creating a Bucket in IBM Object Store
+
+To create an S3 bucket using the Bluemix Web GUI, first log into IBM Cloud.  You will initially be brought to the
+Dashboard.  In this section, we are going to provision a Cloud Object storage instance and setup a bucket with S3 interface.
+If you already have a Cloud Object Storage instance you wish to use, please skip ahead to step *step number*.
+
+==== Provisioning Cloud Object Storage
+
+When you login you should be at the Dashboard.  The first step is to click on the Catalog tab at the top of the screen.
+
+.Click on 'Catalog', circled in Red
+[#img-dash]
+[caption="Step 1: "]
+image::dash.png[Dash,600,200]
+
+In the next screen, search for 'Object Storage', you should see the following icon come up- click that.
+
+.Search for Object Storage
+[#img-dash]
+[caption="Step 2: "]
+image::obj-sto.png[Dash,600,200]
+
+In the next screen, feel free to name your service something fun or to use the name generated by the system. Click 'Create'
+when you're done (in the bottom left corner).
+
+.Create Object Storage Service
+[#img-dash]
+[caption="Step 3: "]
+image::create-obj-sto.png[Dash,600,200]
+
+WARNING: You can only have one instance of a Lite plan per service. If you already have a Cloud Object Storage Lite,
+you'll have to use that one.
+
+==== Creating the Bucket with S3 Interface
+
+After you have created the Object Cloud Storage instance, you can create buckets within it.  You should come to a page
+that looks like this.  Click on the 'Create Bucket' button off to the right.
+
+.Create Bucket
+[#img-dash]
+[caption="Step 4: "]
+image::create-bucket.png[Dash,600,200]
+
+On the next page, let's create our bucket.  For the purposes of this tutorial, we're going to call the bucket `mnist-bucket-tutorial`.
+
+IMPORTANT: Set the resiliancy to "Cross Region" and the location to "us-geo". These are not the default settings.
+
+Finally scroll down and click "Create Bucket".
+
+.Setup Bucket
+[#img-dash]
+[caption="Step 5: "]
+image::bucket-settings.png[Dash,600,200]
+
+Note the tabs on the left, and click on "Service Credentials".  You will see a blue box on the right that says "New credential".
+ Click on that box.
+
+.Create New Credentials
+[#img-dash]
+[caption="Step 6: "]
+image::create-cred.png[Dash,600,200]
+
+A dialog will pop up. You can leave everything as defaults, however you must add `{"HMAC":true}` into the *Add Inline
+Configuration Parameters* box.  Adding this parameter causes the service credential to create `AWS_ACCESS_KEY_ID` and
+`AWS_SECRET_KEY_ID`.
+
+After you've created the credentials, you should see them populate in the list in the *Service credentials* page.  Click
+on *View credentials* to expose a JSON of the credentials.  In a key called `cos_hmac_keys` you will see `access_key_id`
+and `secret_access_key`.  In the directory where you have cloned the tutorial repo, create a file called `set-aws-creds.sh`
+and fill it out as follows:
+
+```bash
+#!/usr/bin/env bash
+export AWS_ACCESS_KEY_ID=<access_key_id>
+export AWS_SECRET_ACCESS_KEY=<secret_access_key>
+```
+
+Where obviously, you replace `<access_key_id>` and `<secret_access_key>` with the values from the json. Finally at the
+command prompt make the bash script executable with
+
+```bash
+chmod +x ./set-aws-creds.sh
+```
+
+That's it! You've created an S3 bucket on IBMCloud!
+
+
+== Installing Kubeflow
+
+Once the cluster is setup (you can check progress in the IBMCloud Web GUI), you have created a bucket, and entered your
+credentials into `set-aws-creds.sh`, you are ready to download the MNIST example, install Kubeflow, and submit the MNIST
+job for training.
+
+
+==== Easy Way
+
+The "easy way" to do everything mentioned above is to run the script `once-cluster-is-up.sh`.  This will take care of
+everything and even train and serve the model!
+
+
+==== Instructive Way
+
+Running a one-liner at the shell is not a good way to learn.  You should have an environment variable named `CLUSTER_NAME`
+(you can check by running `echo $CLUSTER_NAME` as the command line interface).  We also want to make sure our S3 variables
+are set.  Run `source set-aws-creds.sh` to make sure they are infact available as environmental variables.
+
+Once the cluster is up, you will need to set the `KUBE_CONFIG` variable to point at the cluster.
+
+
+```
+ibmcloud cs cluster-config $CLUSTER_NAME
+```
+
+will yield a message with something towards the end like `export KUBECONFIG=...`. You can either copy and paste that line
+or you can run the following:
+
+```bash
+include::ibm-install-guide/once-cluster-is-up.sh[tag=kubeConfig]
+```
+
+which will parse the output of `ibmcloud cs cluster-config ...` find the path to the Kube Config file, and export `KUBE_CONFIG`
+appropriately.
+
+
+====== Clone Kubeflow Examples
+
+We want to clone the Kubeflow examples and revert to a specific commit. We clone into the `kf-tutorial` directory by
+running the code:
+
+```bash
+git clone https://github.com/kubeflow/examples kf-tutorial
+```
+
+We also want to roll back to a specific commit (before a major refactor which happens to break this guide).
+
+```bash
+git checkout 4dda73afbfcbf023c20524a4d5dbce011d9dbf79
+```
+
+Now the examples code is all set up!
+
+====== Copying the `modified-model-train.yaml` file
+
+IBM run's a modified version of Kubeflow so we have to modify the `model-train.yaml` file in turn.
+
+include::ibm-install-guide/modified-model-train.yaml[tag=customApiSpec]
+
+Where exactly this falls in the yaml and what exactly `ks init` is doing is a bit out of scope for the tutorial (but
+will be covered in the book in some detail).  For now simply know and understand that in any YAML that you are using on
+IBM, whereever you see `ks init` you need to add the argument, `--api-spec=version:v1.10.11` (or whatever version your
+Kubernetes cluster is).  This is because by default the program just asks, "hey what Kubernetes is this" and IBM responds
+"It's Kubernetes v1.10.11+IKS", then Kubernetes tries to go download a file at
+https://raw.githubusercontent.com/kubernetes/kubernetes/<version>/api/openapi-spec/swagger.json which doesn't exist
+(because there is no v1.10.11+IKS, IKS is basically short for IBM-SPECIAL-SAUCE).  So you have to explicitly tell Kube
+Sonnet (`ks`) what the actualy version name is.
+
+So at anyrate, get back up to the top directory (maybe a `cd ..` ).  Then copy the `modified-model-train.yaml` to the
+Kubflow examples
+
+```bash
+include::ibm-install-guide/once-cluster-is-up.sh[tag=copyMmt]
+```
+
+====== Setting up Namespace
+
+First we are going to set a few environmental variables for naming.
+
+```bash
+include::ibm-install-guide/once-cluster-is-up.sh[tag=setVars]
+```
+
+First we want to create the namespace in Kubernets, and then we will create it in Docker.  Note, that we used the same
+name for the namespace, but that is not required and there isn't any particular reason you _need_ to do so.
+
+```bash
+include::ibm-install-guide/once-cluster-is-up.sh[tag=createK8sNamespace]
+include::ibm-install-guide/once-cluster-is-up.sh[tag=createDkrNamespace]
+```
+
+====== Setting Up Kubeflow via Ksonnet
+
+A future chapter will dive into the finer points of what Ksonnet is and what all of these commands are doing. For now
+just accept and be happy for these magic commands.
+
+```bash
+include::ibm-install-guide/once-cluster-is-up.sh[tag=ksWitchcraft]
+```
+
+====== Setting Up the Docker Image
+
+First we will need to configure our docker registry as follows
+```bash
+include::ibm-install-guide/once-cluster-is-up.sh[tag=configureDockerRegistry]
+```
+
+Next we need to build and push a docker image containing the training code.
+
+```bash
+include::ibm-install-guide/once-cluster-is-up.sh[tag=buildnpushDockerRegistry]
+```
+
+TIP: You only need to re-push the Docker image if you change the training code.
+
+Finally, IBMs Docker registries are private by default.  This means for your Kubeflow pods to be able to access the Docker
+images, they will need to login.  This is accomplished with secrets.  To setup a Docker repository secret for an IBM
+private docker repository, copy the following code.
+
+```bash
+include::ibm-install-guide/once-cluster-is-up.sh[tag=createDockerSecret]
+```
+
+More information on creating Docker secrets for repotistories on IBM in Kubernetes can be found https://console.bluemix.net/docs/containers/cs_dedicated_tokens.html[here].
+
+====== Configuring S3
+
+First we need to set some environmental variables.  These will be passed to `argo` and then to the Docker image we created.
+
+```bash
+include::ibm-install-guide/once-cluster-is-up.sh[tag=configureS3]
+```
+
+Just as we had to create a Docker secret for the Kube pods to "login" to our private Docker image repository, we must
+also create a secret to allow the pods to access files on our S3 which we also created earlier. You might want to confirm
+first that `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` are in fact set environmental variables.
+
+
+```bash
+include::ibm-install-guide/once-cluster-is-up.sh[tag=createS3Secret]
+```
+
+====== Upload Training Data
+
+The last thing we must do before we train our model is uploading the training data.  This can be done via the Bluemix WebUI,
+however here we present a handy little trick for uploading it via the command line interface (CLI). This is a for loop that
+iterates through the digits 0 through 9 and uploads each.
+
+```bash
+include::ibm-install-guide/once-cluster-is-up.sh[tag=uploadData]
+```
+
+You may need to copy that into a `.sh` file and run it, or simply run the line
+
+```bash
+ aws --endpoint-url $AWS_ENDPOINT_URL s3 cp data/$i.png $S3_TRAIN_BASE_URL
+```
+
+ten times where `i` is the numbers 0 through 9.
+
+== Train a Simple Tensorflow Model
+
+[quote, Most highschool coaches]
+Prior preperation prevents poor performance
+
+We've done _so much work_ to set this all up.  Now we reap our reward.  We simply set a few last training meta-variables,
+and then run one `argo` command (with several arguments).
+
+First let's set up the arguments.
+
+```bash
+include::ibm-install-guide/once-cluster-is-up.sh[tag=setTrainingParams]
+```
+
+The user is free to edit `MODEL_TRAIN_STEPS` and `MODEL_BATCH_SIZE`.  Now the moment we've been building too this whole
+tutorial. We are now ready to train our model. We can do that with the following `argo` command:
+
+```bash
+include::ibm-install-guide/once-cluster-is-up.sh[tag=submitTraining]
+```
+
+That seems like a lot, but we'll get into what all of these commands are doing later in the book. The key is that you now
+have successfully trained a model on IBM Cloud. To "see" the model training, you can port forward the the `argo-server`
+to `localhost` and "watch" the pipeline progress.
+
+```bash
+include::ibm-install-guide/once-cluster-is-up.sh[tag=argoServer]
+```
+
+
+== Serve the Model for new predictions
+
+TODO
+
 
 
 === Azure
