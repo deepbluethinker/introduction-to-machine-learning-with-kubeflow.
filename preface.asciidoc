@@ -3,7 +3,17 @@
 
 We wrote this book for data engineers and data scientist who are looking to productionize their machine learning pipelines. If you've ever had the experience of training an excellent model only to ask your self how to deploy it into production or keep it up to date once it gets there, or if you've been handled an `Untitled_5.ipynb` and asked to "make it work" in production this is the book for you.
 
-This book assumes that you either have the basics of machine learning well understood, or are working with someone who does. If you don't, there are many excellent introduction books on machine Learning
+
+[[assumptions_about the audience]]
+=== Our assumption about you.
+
+
+This book assumes that you either have the basics of machine learning well understood, or are working with someone who does. If you don't, there are many excellent introduction books on machine learning to get you started, including link:$$https://amzn.to/2WPOGJj$$["Hands-On Machine Learning with Scikit-Learn and TensorFlow: Concepts, Tools, and Techniques to Build Intelligent Systems" by Aurélien Géron].
+
+
+We also assume you have the tools, or work with someone who does, to get the data needed for training. If you don't pass:[<a class="orm:hideurl" href="http://shop.oreilly.com/product/0636920028512.do"><em>Learning Spark</em> by Karau, Konwinski, Wendell, and Zaharia</a>] is an excellent introduction,footnote:[Though we may be biased.].
+
+# TODO -- More resources here
 
 === Your responsibility as a practitioner
 

@@ -6,7 +6,16 @@ Put some introductory text here.
 
 === Who is this for?
 
-Put more content here.
+Kubeflow is for data scientist and data engineers who wish to avoid the difficulty updating their model with new data, or moving from their laptop to production.
+Kubeflow does this by offering a variety of tools in one place, more than just Tensorflow, for all the different stages of a models life (data exploration, feature prep, model training, model serving, and model testing).
+
+[TIP]
+====
+We talk about who this book is for in <<assumptions_about the audience>> as well as the required background and resources to get up to speed if you need them.
+====
+
+
+
 
 === Brief Alternatives to Kubeflow
 
@@ -176,4 +185,4 @@ If you want to quickly explore Kubeflow end-to-end there are some link:$$https:/
 === Conclusion
 
 At this point you have everything you need to get started on your Kubeflow adventure: a Kubernetes cluster, Kubeflow and it's core dependencies, and a desire to have fun.
-In the next chapter <<simple_training_ch>>, we'll train and serve a simple machine learning model together
+In the next chapter <<simple_training_ch>>, we'll train and serve a relatively simple machine learning model together to give you an idea of how the basics of how to use Kubeflow.
