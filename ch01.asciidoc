@@ -38,12 +38,19 @@ Let's take a closer look at some of these components.
 ==== Training
 
 Kubeflow supports a variety of distributed training frameworks. As of the time of this writing, Kubeflow has support for:
+
 * TensorFlow
+
 * PyTorch
+
 * MXNet
+
 * Chainer
+
 * Caffe2
+
 * MPI
+
 
 In Kubeflow, distributed training jobs are managed by application-specific controllers, known as "operators". These operators extend the Kubernetes APIs to create, manage, and manipulate the state of resources. For example, to run a distributed TensorFlow training job, the user just needs to provide a specification that describes the desired state (number of workers and parameter servers, etc), and the TensorFlow operator component will take care of the rest and manage the lifecycle of the training job.
 
@@ -76,8 +83,11 @@ In Kubeflow, you can spin up instances of Jupyter notebooks that directly intera
 ==== Pipelines
 
 A machine learning pipeline can be seen as a graph, where each node is a stage in a workflow. Kubeflow Pipelines is a component that allows users to compose reusable workflows at ease. Its features include:
+
 * An orchestratration engine for multi-step workflows
+
 * An SDK to interact with pipeline components
+
 * A user interface that allows users to visualize and track experiments, and to share results with collaborators
 
 
