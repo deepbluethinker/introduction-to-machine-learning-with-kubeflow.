@@ -22,9 +22,14 @@ We talk about who this book is for in <<assumptions_about the audience>> as well
 [[breif_kubeflow_design_and_core_components]]
 === Brief Kubeflow’s design & core components
 
-Kubeflow's mission is to make machine learning composable, portable, and scalable.
+Kubeflow's mission is to make machine learning composable, portable, and scalable. It is designed to leverage the advantages of Kubernetes:
+- Easy deployments at production scale
+- Portable, cloud-native microservices
+- High scalability on demand
 
-Kubeflow's core components can be used indepedently to facilitate specific stages of machine learning, or composed together to form end-to-end pipelines. Let's look at some of these components in greater detail.
+In the machine learning landscape, there are many diverse tool sets and frameworks. Kubeflow does not seek to reinvent the wheel - instead, it allows machine learning practitioners to compose and customize their own stacks based on their needs. Kubeflow is designed to simplify the process of building and deploying machine learning at scale; allowing data scientists to do their jobs without worrying about the "boring parts" of building the infrastructure.
+
+Kubeflow is designed to be flexible: the core components can be used indepedently to facilitate specific stages of machine learning, or composed together to form end-to-end pipelines. Let's take a closer look at some of these components.
 
 ==== Training
 
@@ -60,6 +65,7 @@ Interactive notebooks are popular among machine learning practitioners due to th
 
 ==== Pipelines
 
+A pipeline is a 
 
 === Getting Set Up with Kubeflow
 
