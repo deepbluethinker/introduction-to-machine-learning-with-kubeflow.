@@ -22,6 +22,45 @@ We talk about who this book is for in <<assumptions_about the audience>> as well
 [[breif_kubeflow_design_and_core_components]]
 === Brief Kubeflow’s design & core components
 
+Kubeflow's mission is to make machine learning composable, portable, and scalable.
+
+Kubeflow's core components can be used indepedently to facilitate specific stages of machine learning, or composed together to form end-to-end pipelines. Let's look at some of these components in greater detail.
+
+==== Training
+
+Kubeflow supports a variety of distributed training frameworks. As of the time of this writing, Kubeflow has support for:
+* TensorFlow
+* PyTorch
+* MXNet
+* Chainer
+* Caffe2
+* MPI
+
+In Kubeflow, distributed training jobs are managed by application-specific controllers, known as "operators". These operators extend the Kubernetes APIs to create, manage, and manipulate the state of resources. For example, to run a distributed TensorFlow training job, the user just needs to provide a specification that describes the desired state (number of workers and parameter servers, etc), and the tf-operator component will take care of the rest and manage the lifecycle of the training job.
+
+In a later chapter we will examine how Kubeflow trains a TensorFlow model in greater detail.
+
+==== Serving
+
+After training your model, the next step is to serve the model in your cluster so it can handle prediction requests. Kubeflow makes it easy for data scientists to deploy machine learning models in production environments at scale. Currently Kubeflow supports TensorFlow serving and SeldonCore.
+
+
+==== Hyperparameter Tuning
+
+In machine learning, hyperparameters are variables that govern the training process. For example, what should the model's learning rate be? How many hidden layers and neurons should be in the neural network? These parameters are not part of the training data, but they can have a significant effect on the performance of the training models.
+
+Finding the right set of hyperparameters for your training model can be a daunting task. Traditional methodologies such as grid search can be time consuming and quite tedious. 
+
+Kubeflow provides a component (called "katib") that allows users to perform hyperparameter optimizations easily on Kubernetes clusters. Katib is inspired by Vizier, a black-box optimization framework created at Google. Users can specify a hyperparameter optimization experiment through a custom resource definition, and Kubeflow will take care of the rest - spin up training jobs using different hyperparameters, collect the metrics, and save the results to a model database so their performance can be compared.
+
+
+==== Notebooks
+
+Interactive notebooks are popular among machine learning practitioners due to their simplicity and portability. Kubeflow allows you spin up instances of Jupyter notebooks that interact with your training clusters seamlessly, so you can launch distributed training jobs directly from your browser.
+
+==== Pipelines
+
+
 === Getting Set Up with Kubeflow
 
 One of the great things about Kubeflow is the ability to do our initial development and exploration locally, moving into more powerful and distributed tools later on.
@@ -34,7 +73,7 @@ Probably the fastest way to get started with Kubeflow is using the simplified cl
 ====
 
 
-==== Installing Kubeflow & it's dependencies
+==== Installing Kubeflow & its dependencies
 
 Kubeflow has relatively few dependencies, most of the heavy lifting is done inside of containers which ship with their requirements.
 Thankfully, Kubeflow's dependencies can be automatically installed along with the optional Minikube by running the install shell script <<mini_kube_setup_sh>>. Even if you don't plan on using Minikube this script simplifies the rest of the set up.
@@ -60,7 +99,7 @@ This will modify your system packages installing and require root/super user per
 
 If you don't want to install Minikube, you can manually install Kubeflow's dependencies: ksonnet and kubectl. Even if you have these installed, you will want to check that you have the right versions installed for your version of Kubeflow.
 // TODO(holden): Where? Release notes?
-Ksonnet is on github, with it's release posted at link:$$https://github.com/ksonnet/ksonnet/releases$$[https://github.com/ksonnet/ksonnet/releases], and you can install it with <<install_ksonnet_sh>>.
+Ksonnet is on github, with its release posted at link:$$https://github.com/ksonnet/ksonnet/releases$$[https://github.com/ksonnet/ksonnet/releases], and you can install it with <<install_ksonnet_sh>>.
 
 [[install_ksonnet_sh]]
 .Install ksonnet
@@ -184,5 +223,5 @@ If you want to quickly explore Kubeflow end-to-end there are some link:$$https:/
 
 === Conclusion
 
-At this point you have everything you need to get started on your Kubeflow adventure: a Kubernetes cluster, Kubeflow and it's core dependencies, and a desire to have fun.
+At this point you have everything you need to get started on your Kubeflow adventure: a Kubernetes cluster, Kubeflow and its core dependencies, and a desire to have fun.
 In the next chapter <<simple_training_ch>>, we'll train and serve a relatively simple machine learning model together to give you an idea of how the basics of how to use Kubeflow.
