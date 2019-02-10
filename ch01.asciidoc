@@ -22,14 +22,18 @@ We talk about who this book is for in <<assumptions_about the audience>> as well
 [[breif_kubeflow_design_and_core_components]]
 === Brief Kubeflow’s design & core components
 
-In the machine learning landscape, there are many diverse tool sets and frameworks. Kubeflow does not seek to reinvent the wheel or provide a "one size fits all" solution - instead, it allows machine learning practitioners to compose and customize their own stacks based on specific needs. Kubeflow is designed to simplify the process of building and deploying machine learning at scale; allowing data scientists to do their jobs without worrying about the "boring parts" of building the infrastructure.
+In the machine learning landscape, there are many diverse tool sets and frameworks. Kubeflow does not seek to reinvent the wheel or provide a "one size fits all" solution - instead, it allows machine learning practitioners to compose and customize their own stacks based on specific needs. It is designed to simplify the process of building and deploying machine learning at scale; allowing data scientists to do their jobs without worrying about the "boring parts" of building the infrastructure.
 
-Kubeflow's mission is to make machine learning composable, portable, and scalable. It is designed to leverage the advantages of Kubernetes:
-- Easy deployments at production scale
-- Portable, cloud-native microservices
-- High scalability on demand
+Kubeflow seeks to tackle the problem of simplifying machine learning through three aspects: composability, portability, and scalability.
 
-Kubeflow is designed to be flexible: the core components can be used indepedently to facilitate specific stages of machine learning, or composed together to form end-to-end pipelines. Let's take a closer look at some of these components.
+* Composability - the core components come from data science tools that are already familiar to machine learning practictioners. They can be used independently to facilitate specific stages of machine learning, or composed together to form end-to-end pipelines. 
+
+* Portability - taking advantage of Kubernetes and cloud-native microservices, Kubeflow does not require you to anchor to any particular platform. You can develop and prototype on your laptop, and deploy to production effortlessly.
+
+* Scalability - the container-based design allows your clusters to dynamically scale up or down according to demand.
+
+
+Let's take a closer look at some of these components.
 
 ==== Training
 
@@ -41,7 +45,7 @@ Kubeflow supports a variety of distributed training frameworks. As of the time o
 * Caffe2
 * MPI
 
-In Kubeflow, distributed training jobs are managed by application-specific controllers, known as "operators". These operators extend the Kubernetes APIs to create, manage, and manipulate the state of resources. For example, to run a distributed TensorFlow training job, the user just needs to provide a specification that describes the desired state (number of workers and parameter servers, etc), and the tf-operator component will take care of the rest and manage the lifecycle of the training job.
+In Kubeflow, distributed training jobs are managed by application-specific controllers, known as "operators". These operators extend the Kubernetes APIs to create, manage, and manipulate the state of resources. For example, to run a distributed TensorFlow training job, the user just needs to provide a specification that describes the desired state (number of workers and parameter servers, etc), and the TensorFlow operator component will take care of the rest and manage the lifecycle of the training job.
 
 In a later chapter we will examine how Kubeflow trains a TensorFlow model in greater detail.
 
@@ -54,14 +58,16 @@ After training your model, the next step is to serve the model in your cluster s
 
 In machine learning, hyperparameters are variables that govern the training process. For example, what should the model's learning rate be? How many hidden layers and neurons should be in the neural network? These parameters are not part of the training data, but they can have a significant effect on the performance of the training models.
 
-Finding the right set of hyperparameters for your training model can be a daunting task. Traditional methodologies such as grid search can be time consuming and quite tedious. 
+Finding the right set of hyperparameters for your training model can be a challenging task. Traditional methodologies such as grid search can be time consuming and quite tedious. 
 
-Kubeflow provides a component (called "katib") that allows users to perform hyperparameter optimizations easily on Kubernetes clusters. Katib is inspired by Vizier, a black-box optimization framework created at Google. Users can specify a hyperparameter optimization experiment through a custom resource definition, and Kubeflow will take care of the rest - spin up training jobs using different hyperparameters, collect the metrics, and save the results to a model database so their performance can be compared.
+Kubeflow provides a component (called "katib") that allows users to perform hyperparameter optimizations easily on Kubernetes clusters. Katib is inspired by Vizier, a black-box optimization framework created at Google. Users can begin with a training model that they are unsure about, define the hyperparameter search space, and Kubeflow will take care of the rest - spin up training jobs using different hyperparameters, collect the metrics, and save the results to a model database so their performance can be compared.
 
 
-==== Notebooks
+==== Jupyter Notebooks
 
-Interactive notebooks are popular among machine learning practitioners due to their simplicity and portability. Kubeflow allows you spin up instances of Jupyter notebooks that interact with your training clusters seamlessly, so you can launch distributed training jobs directly from your browser.
+Jupyter notebook is an open-source web application that allows users to create and share data, code snippets, and experiments at scale. They are popular among machine learning practitioners due to their simplicity and portability.
+
+In Kubeflow, you can spin up instances of Jupyter notebooks that directly interact with your cluster and its other components. For example, you can write snippets of TensorFlow distributed training code in your laptop, and bring up a training cluster with just a few clicks.
 
 ==== Pipelines
 
