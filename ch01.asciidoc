@@ -40,15 +40,10 @@ Let's take a closer look at some of these components.
 Kubeflow supports a variety of distributed training frameworks. As of the time of this writing, Kubeflow has support for:
 
 * TensorFlow
-
 * PyTorch
-
 * MXNet
-
 * Chainer
-
 * Caffe2
-
 * MPI
 
 
