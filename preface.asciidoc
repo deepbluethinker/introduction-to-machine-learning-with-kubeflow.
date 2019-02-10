@@ -13,7 +13,7 @@ This book assumes that you either have the basics of machine learning well under
 
 We also assume you have the tools, or work with someone who does, to get the data needed for training. If you don't pass:[<a class="orm:hideurl" href="http://shop.oreilly.com/product/0636920028512.do"><em>Learning Spark</em> by Karau, Konwinski, Wendell, and Zaharia</a>] is an excellent introduction,footnote:[Though we may be biased.].
 
-# TODO -- More resources here
+// TODO -- More resources here
 
 === Your responsibility as a practitioner
 
