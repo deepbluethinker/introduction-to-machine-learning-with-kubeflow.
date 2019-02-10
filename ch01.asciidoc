@@ -2,12 +2,40 @@
 == What does Kubeflow solve & who’s it for, and how to get started
 
 
-Put some introductory text here.
+Kubeflow solves the problem of needing to build portable, reliable, scalable machine learning pipelines and exposing the results.
+We hope Kubeflow is the right tool for you, and briefly look at some alternatives in <<alternatives_to_kubeflow>>, but even if it is not learning about Kubeflow can help provide a good mental model of different steps required 
 
-=== Who is this for?
+=== Who is Kubeflow for?
 
 Kubeflow is for data scientist and data engineers who wish to avoid the difficulty updating their model with new data, or moving from their laptop to production.
 Kubeflow does this by offering a variety of tools in one place, more than just Tensorflow, for all the different stages of a models life (data exploration, feature prep, model training, model serving, and model testing).
+These tools can be run either locally for your development or on a production cluster once you are ready.
+Many of benefits of using Kubeflow over building your own pipelines manually come from containerization and running on Kubernetes.
+
+
+Containerization means no more "it worked on my machine" or "just install extra_pip_requirements.txt"
+Data Scientist with Python experience can think of containers are a heavy duty virtual enviroment, which not only includes Python includes all of the system around it.
+Containers isolate your from the host enviroment, meaning that all dependencies must be explicitly added and you won't accidently start depending on some system packages.
+Docker containers also include the operating system they are built on top of, so you don't have to worry about compatability differences between different Linux distributions at run-time.
+Docker containers are made out of multiple layers and are easily compossible, so, if for example, there is a container image that has most of what you need (CUDA, etc.) but you also need some extra packages on top of it, you can build a container using another one as the base.
+Containers also allow us to have different system libraries between different pipelines (or even stages in the same pipeline!).
+Containirizing our machine learning makes it portable and reproducible.
+
+[TIP]
+====
+You don't need a deep understanding of containers to succeed with Kubeflow, but for those looking to learn more about containers X/Y/Z.
+====
+
+
+Kubernetes in Kubeflow allows our pipelines to be scalable and maintain portability.
+With Kubernetes the different stages of your pipeline can request the different resources they need from a cluster, and different versions of your pipeline can run with different resources.
+The availability of local versions of Kubernetes means you can even work locally on your laptop with a single node during your prototyping phase.
+Since Kubernetes is not just used for data or machine learning jobs, unlike cluster managers like YARN, you can also more effectively share resources with the rest of your organization.
+
+
+Now one can of course build their own containirzed machine learning pipelines on Kubernetes without using Kubefklow, but Kubeflow aims to make this substantailly easier.
+Kubeflow provides an easier partially-standarized interface to the tools you would be likely to use on your own adventure, as well making it easier to configure your pipeline to use cloud accelerations like TPUs (tensor processing units).
+
 
 [TIP]
 ====
@@ -17,6 +45,7 @@ We talk about who this book is for in <<assumptions_about the audience>> as well
 
 
 
+[[alternatives_to_kubeflow]]
 === Brief Alternatives to Kubeflow
 
 [[breif_kubeflow_design_and_core_components]]
