@@ -2,6 +2,7 @@
 == Preface
 
 We wrote this book for data engineers and data scientist who are looking to productionize their machine learning pipelines. If you've ever had the experience of training an excellent model only to ask your self how to deploy it into production or keep it up to date once it gets there, or if you've been handled an `Untitled_5.ipynb` and asked to "make it work" in production this is the book for you.
+This book is not intended to serve as your first introduction to machine learning, <<assumptions_about the audience>> has pointers to some resources that may be useful if you are just getting started on your machine learning journey.
 
 
 [assumptions_about the audience]
