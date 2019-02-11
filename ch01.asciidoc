@@ -65,7 +65,7 @@ Finding the right set of hyperparameters for your training model can be a challe
 
 Kubeflow provides a component (called "Katib") that allows users to perform hyperparameter optimizations easily on Kubernetes clusters. Katib is inspired by Vizier, a black-box optimization framework created at Google. It leverages advanced searching algorithms such as Bayesian optimization to find optimal hyperparameter configurations.
 
-In Kubeflow, users can begin with a training model that they are unsure about, define the hyperparameter search space, and Kubeflow will take care of the rest - spin up training jobs using different hyperparameters, collect the metrics, and save the results to a model database so their performance can be compared.
+With Kubeflow, users can begin with a training model that they are unsure about, define the hyperparameter search space, and Kubeflow will take care of the rest - spin up training jobs using different hyperparameters, collect the metrics, and save the results to a model database so their performance can be compared.
 
 
 ==== Jupyter Notebooks
