@@ -53,8 +53,9 @@ In a later chapter we will examine how Kubeflow trains a TensorFlow model in gre
 
 ==== Serving
 
-After training your model, the next step is to serve the model in your cluster so it can handle prediction requests. Kubeflow makes it easy for data scientists to deploy machine learning models in production environments at scale. Currently Kubeflow supports TensorFlow serving and SeldonCore.
+After training your model, the next step is to serve the model in your cluster so it can handle prediction requests. Kubeflow makes it easy for data scientists to deploy machine learning models in production environments at scale. Currently Kubeflow supports TensorFlow Serving and SeldonCore.
 
+Serving a model on Kubeflow is fairly straightforward. There is no need to build or customize a container yourself - simply point Kubeflow to where your model is stored, and a server will be ready within seconds to service requests.
 
 ==== Hyperparameter Tuning
 
@@ -62,7 +63,9 @@ In machine learning, hyperparameters are variables that govern the training proc
 
 Finding the right set of hyperparameters for your training model can be a challenging task. Traditional methodologies such as grid search can be time consuming and quite tedious. 
 
-Kubeflow provides a component (called "katib") that allows users to perform hyperparameter optimizations easily on Kubernetes clusters. Katib is inspired by Vizier, a black-box optimization framework created at Google. Users can begin with a training model that they are unsure about, define the hyperparameter search space, and Kubeflow will take care of the rest - spin up training jobs using different hyperparameters, collect the metrics, and save the results to a model database so their performance can be compared.
+Kubeflow provides a component (called "Katib") that allows users to perform hyperparameter optimizations easily on Kubernetes clusters. Katib is inspired by Vizier, a black-box optimization framework created at Google. It leverages advanced searching algorithms such as Bayesian optimization to find optimal hyperparameter configurations.
+
+In Kubeflow, users can begin with a training model that they are unsure about, define the hyperparameter search space, and Kubeflow will take care of the rest - spin up training jobs using different hyperparameters, collect the metrics, and save the results to a model database so their performance can be compared.
 
 
 ==== Jupyter Notebooks
@@ -86,11 +89,11 @@ A machine learning pipeline can be seen as a graph, where each node is a stage i
 * A user interface that allows users to visualize and track experiments, and to share results with collaborators
 
 
-
 .A Kubeflow pipeline
 [#1_kubeflow_pipeline]
 image::images/1_kubeflow_pipeline.png[A Kubeflow pipeline]
 
+Each building block in a pipeline is a self-contained step in a machine learning workflow, such as preprocessing, transformation, training, or cross-validation. In Kubeflow, each of these blocks is built as a Docker image. This allows users to share and reuse individual components with ease.
 
 === Getting Set Up with Kubeflow
 
