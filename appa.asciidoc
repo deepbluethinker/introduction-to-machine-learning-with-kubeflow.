@@ -471,7 +471,7 @@ private docker repository, copy the following code.
 include::ibm-install-guide/once-cluster-is-up.sh[tag=createDockerSecret]
 ```
 
-More information on creating Docker secrets for repotistories on IBM in Kubernetes can be found https://console.bluemix.net/docs/containers/cs_dedicated_tokens.html[here].
+More information on creating Docker secrets for repositories on IBM in Kubernetes can be found https://console.bluemix.net/docs/containers/cs_dedicated_tokens.html[here].
 
 ====== Configuring S3
 
@@ -581,7 +581,7 @@ nvidia-device-plugin-daemonset   2         2         2         2            2   
 
 ==== Setting Up Kubeflow
 
-The easiest way to install Kubeflow on an EKS cluster is by using Ksonnet. The tool can be downloaded here: link:$$https://ksonnet.io/#get-started$$. 
+The easiest way to install Kubeflow on an EKS cluster is by using Ksonnet. The tool can be downloaded here: link:$$https://ksonnet.io/#get-started$$.
 Next, create a local directory and download the installation files:
 [source, shell]
 ----
@@ -611,7 +611,72 @@ kubectl -n kubeflow get all
 
 
 === On-prem / different provider
+The assumption for on-prem, is that your bare-metal boxes have a Kubernetes installed.
+As such, you should be able to reproduce the below shell commands:
+[source, shell]
+----
+$ kubectl cluster-info
+Kubernetes master is running at https://<YOUR_K8S_API_IP>
+$ kubectl get nodes
+NAME                                      STATUS    ROLES     AGE       VERSION
+<NODE_1>                                  Ready     <none>    7m        <k8s_version>
+<NODE_2>                                  Ready     <none>    7m        <k8s_version>
+<NODE_3>                                  Ready     <none>    7m        <k8s_verison>
+...
+$ kubectl get --all-namespaces services
+NAMESPACE     NAME                   TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)         AGE
+default       kubernetes             ClusterIP   <CLUSTER_IP>   <none>        443/TCP         7m
+kube-system   default-http-backend   NodePort    <CLUSTER_IP>   <none>        80:31260/TCP    7m
+kube-system   kube-dns               ClusterIP   <CLUSTER_IP>   <none>        53/UDP,53/TCP   7m
+...
+----
+The rest of this guide will use Ksonnet, as it functions as a fairly extensible configuration management tool for Kubernetes manifests.
 
+The example below is assuming that your bare-metal boxes run on Linux, but can be tuned and customized for your custom OS.
+[source, shell]
+----
+include::examples/dev-setup/install-ksonnet.sh[tags=installksonnet]
+----
+
+Upon install Ksonnet you can now run the following deployment steps to setup a Kubeflow project
+[source, shell]
+----
+include::examples/dev-setup/deploy-kf.sh[tags=deploy]
+----
+
+Upon completion of the deployment script you should see a host of CRDs and various resources like the ones shown below, created:
+
+[source, shell]
+----
+$ kubectl get crds --all-namespaces
+NAME                                         AGE
+applications.app.k8s.io                      1m
+backendconfigs.cloud.google.com              2h
+compositecontrollers.metacontroller.k8s.io   1m
+controllerrevisions.metacontroller.k8s.io    1m
+decoratorcontrollers.metacontroller.k8s.io   1m
+notebooks.kubeflow.org                       1m
+pytorchjobs.kubeflow.org                     1m
+scalingpolicies.scalingpolicy.kope.io        2h
+scheduledworkflows.kubeflow.org              1m
+studyjobs.kubeflow.org                       1m
+tfjobs.kubeflow.org                          1m
+workflows.argoproj.io                        1m
+$ kubectl get clusterrolebinding --all-namespaces
+NAME                                                   AGE
+ambassador                                             2m
+argo                                                   2m
+argo-ui                                                2m
+...
+----
+
+Once again you can verify that kubeflow components are correctly installed with the following:
+
+[source, shell]
+----
+$ kubectl -n kubeflow get all
+...
+----
 == Multi-cloud deployments
 
 == Cloud specific Debugging
