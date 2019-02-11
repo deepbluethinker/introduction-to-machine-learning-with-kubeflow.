@@ -14,11 +14,6 @@ Kubeflow does this by offering a variety of tools in one place, more than just T
 We talk about who this book is for in <<assumptions_about the audience>> as well as the required background and resources to get up to speed if you need them.
 ====
 
-
-
-
-=== Brief Alternatives to Kubeflow
-
 [[breif_kubeflow_design_and_core_components]]
 === Kubeflow’s Design & Core Components
 
@@ -26,7 +21,7 @@ In the machine learning landscape, there are many diverse tool sets and framewor
 
 Kubeflow seeks to tackle the problem of simplifying machine learning through three aspects: composability, portability, and scalability.
 
-* Composability - the core components come from data science tools that are already familiar to machine learning practictioners. They can be used independently to facilitate specific stages of machine learning, or composed together to form end-to-end pipelines. 
+* Composability - the core components come from data science tools that are already familiar to machine learning practictioners. They can be used independently to facilitate specific stages of machine learning, or composed together to form end-to-end pipelines.
 
 * Portability - taking advantage of Kubernetes and cloud-native microservices, Kubeflow does not require you to anchor to any particular platform. You can develop and prototype on your laptop, and deploy to production effortlessly.
 
@@ -61,7 +56,7 @@ Serving a model on Kubeflow is fairly straightforward. There is no need to build
 
 In machine learning, hyperparameters are variables that govern the training process. For example, what should the model's learning rate be? How many hidden layers and neurons should be in the neural network? These parameters are not part of the training data, but they can have a significant effect on the performance of the training models.
 
-Finding the right set of hyperparameters for your training model can be a challenging task. Traditional methodologies such as grid search can be time consuming and quite tedious. 
+Finding the right set of hyperparameters for your training model can be a challenging task. Traditional methodologies such as grid search can be time consuming and quite tedious.
 
 Kubeflow provides a component (called "Katib") that allows users to perform hyperparameter optimizations easily on Kubernetes clusters. Katib is inspired by Vizier, a black-box optimization framework created at Google. It leverages advanced searching algorithms such as Bayesian optimization to find optimal hyperparameter configurations.
 
@@ -231,14 +226,59 @@ For emacs there are many modes available for YAML editing, as well as the link:$
 Atom has syntax highlighting available as packages for both link:$$https://atom.io/packages/language-yaml$$[YAML] and link:$$https://atom.io/packages/language-jsonnet$$[Jsonnet].
 If you use a different IDE don't throw it away just for better ksonnet editing before you explore the plugin available.
 
+[[brief_alternatives_to_kubeflow]]
+=== Brief Alternatives to Kubeflow
 
+Within the research community, various alternatives exist that provide uniquely different functionality to that of Kubeflow.
+In recent research cadences, model development or training has received much attention and support with regards to advancements in infrastructure, theory, and systems.
+Prediction serving, on the other hand, has received relatively less attention.
+As such, it is commonly seen that data science practitioners end up hacking together an amalgam of critical systems components that are integrated to support serving and inference across various workloads and continuously evolving frameworks.
+However, given the demand for constant availability and horizontal scalability, solutions like Kubeflow and various others are gaining traction through industry as powerful architectural abstraction tools and as convincing research scopes.
 
+==== Clipper (RiseLabs)
+One interesting alternative to Kubeflow, is a general-purpose low-latency prediction serving system that came out of RiseLabs, titled Clipper. In an attempt to simplify deployment, optimization, and inference, Clipper has developed a layered architecture system like the one seen below.
+image::images/6_clipper.png[Clipper and its modular architecture]
+Through various optimizations and its modular design, Clipper, in its seminal paper, has achieved low latency and high throughput predictions at comparable levels to TensorFlow Serving, on three TensorFlow models of varying inference costs.
 
+Clipper is divided across two abstractions, aptly named: model selection and model abstraction layers.
 
+The model selection layer is quite sophisticated in that it uses an adaptive online model selection policy and various ensemble techniques to incorporate feedback and automatically select and combine predictions
+from models that can span multiple machine learning frameworks. Since you are continuously learning from feedback throughout the lifetime of your application, the model selection layer self-calibrates failed model without needing to interact directly with the policy layer.
+The two different selection policies that are implemented allow for single-model selection, using a multi-armed bandit algorithm, and ensemble-model selection, using bootstrap aggregation (or bagging).
+
+The model abstraction layer provides an implementable interface for providing pluggability in terms of custom machine learning frameworks.
+The layer is comprised of a prediction cache, an adaptive query-batching component, and model containers that are communicable through RPC.
+These model containers are built as Docker containers, so it was intended that Clipper may run on Kubernetes seamlessly.
+
+Clipper's modular architecture and focus on containerization, similar to Kubeflow, enables caching and batching mechanisms to be shared across frameworks while also reaping the gains of scalability, concurrency, and flexibility in adding new model frameworks
+
+Graduating from just scientific theory into a functional end-to-end system, Clipper has gained traction within the scientific community and has had various parts of its architectural designs incorporated into recently introduced machine learning systems; nonetheless, we have yet to see if it will be adopted in industry at scale.
+
+==== MLflow (Databricks)
+
+MLflow is Databrick's own flavor of open-source machine learning development.
+The architecture of MLflow leverages a lot of the same architectural paradigms of Clipper, including its framework agnostic nature,  while focusing on three major components that it calls: Tracking, Projects, and Models.
+
+MLflow Tracking functions as an API with a complementing UI for logging parameters, code versions, metrics and output files. This is quite power in machine learning as tracking parameters, metrics, and artifacts is of paramount importance.
+The power of this API is that it can be leveraged in a standalone or notebook setting.
+
+MLflow Projects provides a standard format for packaging reusable data science code, defined by a yaml file that can leverage source-controlled code and dependency management via Anaconda.
+The project format makes it easy to share reproducible data science code, as reproduciblity is critical for machine learning practitioners.
+
+MLflow Models is a convention for packaging machine learning models in multiple format.
+Each MLflow Model is saved as a directory containing arbitrary files and an MLmodel descriptor file.
+
+MLflow is still in active development, but with the entire project being open-sourced, the visibility and community excitement around its development is enticing as well.
+
+==== Others
+
+Because of the challenges presented in machine learning development, many organizations have started to build internal machine learning platforms to manage their machine learning lifecycle.
+For example: Bloomberg, Facebook, Google, Uber have built the Data Science Platform, FBLearner Flow, TFX, and Michelangelo to manage data preparation, model training and deployment.
+With the machine learning infrastructure landscape always evolving and maturing, we are excited to see how open-source projects, like Kubeflow, will bring much-needed simplicity and abstraction to machine learning development.
 
 [TIP]
 ====
-If you get stuck here, or if your permissions/policies don't allow you to use minikube, just jump on over to <<appendix_installing>> and you can deploy your Kubeflow app's against your remote K8s cluster. 
+If you get stuck here, or if your permissions/policies don't allow you to use minikube, just jump on over to <<appendix_installing>> and you can deploy your Kubeflow app's against your remote K8s cluster.
 ====
 
 
