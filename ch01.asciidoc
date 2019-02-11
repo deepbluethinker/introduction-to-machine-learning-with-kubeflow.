@@ -311,6 +311,7 @@ However, given the demand for constant availability and horizontal scalability, 
 ==== Clipper (RiseLabs)
 
 One interesting alternative to Kubeflow, is a general-purpose low-latency prediction serving system that came out of RiseLabs, titled Clipper. In an attempt to simplify deployment, optimization, and inference, Clipper has developed a layered architecture system like the one seen below.
+[#6_clipper]
 image::images/6_clipper.png[Clipper and its modular architecture]
 Through various optimizations and its modular design, Clipper, in its seminal paper, has achieved low latency and high throughput predictions at comparable levels to TensorFlow Serving, on three TensorFlow models of varying inference costs.
 
