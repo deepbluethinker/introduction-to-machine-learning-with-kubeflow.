@@ -144,14 +144,18 @@ While you can get started with Kubeflow locally, you don't have to, you can just
 
 [TIP]
 ====
-Probably the fastest way to get started with Kubeflow is using the simplified click-to-deploy on Google Cloud Platform (GCP). If you're in a rush to get started go ahead and jump to <<gcp_click_to_deploy>>.
+The fastest way to get started with Kubeflow is using the simplified click-to-deploy app on Google Cloud Platform (GCP). If you're in a rush to get started go ahead and jump to <<gcp_click_to_deploy>>.
 ====
 
 
 ==== Installing Kubeflow & its dependencies
 
-Kubeflow has relatively few dependencies, most of the heavy lifting is done inside of containers which ship with their requirements.
-Thankfully, Kubeflow's dependencies can be automatically installed along with the optional Minikube by running the install shell script <<mini_kube_setup_sh>>. Even if you don't plan on using Minikube this script simplifies the rest of the set up.
+Kubeflow has relatively few system dependencies, most of the heavy lifting is done inside of containers which include their requirements.
+The biggest requirement for Kubeflow is access to a Kubernetes cluster, local or remote is fine.
+
+
+Kubeflow's system dependencies can be automatically installed along with the optional Minikube by running the install shell script <<mini_kube_setup_sh>>.
+Even if you don't plan on using Minikube this script simplifies the rest of the set up.
 
 [[mini_kube_setup_sh]]
 .Automatically install Kubeflow's dependencies & Minikube
