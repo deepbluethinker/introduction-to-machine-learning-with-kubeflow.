@@ -163,10 +163,12 @@ Even if you don't plan on using Minikube this script simplifies the rest of the 
 
 [[mini_kube_setup_sh]]
 .Automatically install Kubeflow's dependencies & Minikube
+====
 [source, shell]
 ----
 include::examples/dev-setup/install-kf-and-minikube.sh[tags=work]
 ----
+====
 
 [TIP]
 ====
@@ -190,10 +192,12 @@ Ksonnet is on github, with its release posted at link:$$https://github.com/ksonn
 
 [[install_ksonnet_sh]]
 .Install ksonnet
+====
 [source, shell]
 ----
 include::examples/dev-setup/install-ksonnet-and-kubectl.sh[tags=ksonnet]
 ----
+====
 
 
 
@@ -202,25 +206,30 @@ Kubectl can also be installed outside of your package manager <<install_kubectl_
 
 [[install_kubectl_snap]]
 .Install kubectl with snap
+====
 [source, shell]
 ----
 include::examples/dev-setup/install-ksonnet-and-kubectl.sh[tags=ubuntu-kubectl]
 ----
+====
 
 [[install_kubectl_homebrew]]
 .Install kubectl with homebrew
+====
 [source, shell]
 ----
 include::examples/dev-setup/install-ksonnet-and-kubectl.sh[tags=osx-kubectl]
 ----
+====
 
 [[install_kubectl_curl]]
 .Install kubectl without a package manager
+====
 [source, shell]
 ----
 include::examples/dev-setup/install-ksonnet-and-kubectl.sh[tags=no-pkg-manager-kubectl]
 ----
-
+====
 
 
 
@@ -228,10 +237,13 @@ Once you have the dependencies installed, you can now install Kubeflow with <<in
 
 [[install_kf]]
 .Install Kubeflow
+====
 [source, shell]
 ----
 include::examples/dev-setup/install-kf.sh[tags=no-pkg-manager-install]
 ----
+====
+
 
 You now have Kubeflow installed! There are some additional optional tools you can set up to make the rest of this book easier we will cover next.
 
