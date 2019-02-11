@@ -1,2 +1,1 @@
-[[canary_ch]]
-== Automatic canary testing for new models
+// TODO kill this file
