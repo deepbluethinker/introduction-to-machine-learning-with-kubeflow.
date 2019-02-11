@@ -16,6 +16,10 @@ We also assume you have the tools, or work with someone who does, to get the dat
 
 // TODO -- More resources here
 
+Containers and Kubernetes are a wide area of practice, which is rapidly evolving.
+If you want to depend your knowledge of Kubernetes we recommend looking at ....
+// TODO (holden)
+
 === Your responsibility as a practitioner
 
 This book helps you put your machine learning models into production and solve real world problems. Solving real world problems with machine learning is great, but as you go forth and apply your skills to the real world, remember to think about the real world impact.

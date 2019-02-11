@@ -23,27 +23,26 @@ Kubeflow is for both data scientist and data engineers looking to build producti
 Kubeflow packages components for all the different stages of a models life (data exploration, feature prep, model training, model serving, and model testing); allowing you
 to build integrated end-to-end pipelines.
 These tools can be run either locally for your development or on a production cluster once you are ready.
-Many of benefits of using Kubeflow over building your own pipelines manually come from a unified systems, containerization and running on Kubernetes.
+Many of benefits of using Kubeflow come from a unified systems, containerization and running on Kubernetes.
 
 
-Containerization means no more "it worked on my machine" or "just install extra_pip_requirements.txt"
-Data Scientist with Python experience can think of containers are a heavy duty virtual enviroment, which not only includes Python includes all of the system around it.
-Containers isolate your from the host enviroment, meaning that all dependencies must be explicitly added and you won't accidently start depending on some system packages.
-Docker containers also include the operating system they are built on top of, so you don't have to worry about compatability differences between different Linux distributions at run-time.
-Docker containers are made out of multiple layers and are easily compossible, so, if for example, there is a container image that has most of what you need (CUDA, etc.) but you also need some extra packages on top of it, you can build a container using another one as the base.
-Containers also allow us to have different system libraries between different pipelines (or even stages in the same pipeline!).
+Containerization means no more "it worked on my machine" or "just install extra_pip_requirements.txt".
+Data Scientist with Python experience can think of containers as a like heavy duty virtual environment, which includes the operating system to the packages and everything in between.
+This is used to isolate your from the host environment (or machine running the container).
+The isolation means that all dependencies must be explicitly added and you won't accidently start depending on some system packages.
 Containirizing our machine learning makes it portable and reproducible.
+
 
 [TIP]
 ====
-You don't need a deep understanding of containers to succeed with Kubeflow, but for those looking to learn more about containers X/Y/Z.
+Docker containers are made out of multiple layers and are easily compossible, so, if for example, there is a container image that has most of what you need (CUDA, etc.) but you also need some extra packages on top of it, you can build a container using another one as the base.
 ====
 
 
-Kubernetes in Kubeflow allows our pipelines to be scalable and maintain portability.
+
+
+Kubernetes allows our pipelines to be scalable without sacrificing portability, allowing us to avoid becoming locked into a specific cloud provider.
 With Kubernetes the different stages of your pipeline can request the different resources they need from a cluster, and different versions of your pipeline can run with different resources.
-The availability of local versions of Kubernetes means you can even work locally on your laptop with a single node during your prototyping phase.
-Since Kubernetes is not just used for data or machine learning jobs, unlike cluster managers like YARN, you can also more effectively share resources with the rest of your organization.
 
 
 Now one can of course build their own containirzed machine learning pipelines on Kubernetes without using Kubefklow, but Kubeflow aims to make this substantailly easier.
@@ -52,7 +51,7 @@ Kubeflow provides an easier partially-standarized interface to the tools you wou
 
 [TIP]
 ====
-We talk about who this book is for in <<assumptions_about the audience>> as well as the required background and resources to get up to speed if you need them.
+We talk about who this book is for in <<assumptions_about the_audience>> as well as the required background and resources to get up to speed if you need them.
 ====
 
 
@@ -141,7 +140,7 @@ Each building block in a pipeline is a self-contained step in a machine learning
 
 One of the great things about Kubeflow is the ability to do our initial development and exploration locally, moving into more powerful and distributed tools later on.
 Deploying Kubeflow locally can be a great way to get started, and gives us access to a few debugging cheats we can use during our initial exploration.
-While you can get started with Kubeflow locally, you don't have to, you can just as easily do your initial work with one of the cloud providers or on prem Kubernetes clusters covered in <<appendix_installing>>, although for all but click-to-deploy.
+While you can get started with Kubeflow locally, you don't have to, you can just as easily do your initial work with one of the cloud providers or on prem Kubernetes clusters covered in <<appendix_installing>>, although for all but click-to-deploy we thing starting locally will be the fastest.
 
 [TIP]
 ====
