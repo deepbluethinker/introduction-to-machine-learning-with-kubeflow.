@@ -5,7 +5,7 @@ We wrote this book for data engineers and data scientist who are looking to prod
 This book is not intended to serve as your first introduction to machine learning, <<assumptions_about_the_audience>> has pointers to some resources that may be useful if you are just getting started on your machine learning journey.
 
 
-[assumptions_about_the_audience]
+[[assumptions_about_the_audience]]
 === Our assumption about you
 
 
