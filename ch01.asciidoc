@@ -151,8 +151,12 @@ The fastest way to get started with Kubeflow is using the simplified click-to-de
 ==== Installing Kubeflow & its dependencies
 
 Kubeflow has relatively few system dependencies, most of the heavy lifting is done inside of containers which include their requirements.
-The biggest requirement for Kubeflow is access to a Kubernetes cluster, local or remote is fine.
+The biggest requirement for Kubeflow is access to a Kubernetes cluster, be it local or remote.
+Kubeflow ships with scripts to automate the set up
 
+
+
+===== Automatically
 
 Kubeflow's system dependencies can be automatically installed along with the optional Minikube by running the install shell script <<mini_kube_setup_sh>>.
 Even if you don't plan on using Minikube this script simplifies the rest of the set up.
@@ -166,7 +170,7 @@ include::examples/dev-setup/install-kf-and-minikube.sh[tags=work]
 
 [TIP]
 ====
-If this fails to X/Y/Z, don't worry we'll cover how to fix that up in <<setting_up_minikube>>.
+If this fails to install minikube, don't worry we'll cover how to fix that up in <<setting_up_minikube>>.
 ====
 
 
@@ -175,6 +179,10 @@ If this fails to X/Y/Z, don't worry we'll cover how to fix that up in <<setting_
 ====
 This will modify your system packages installing and require root/super user permissions. If you wish you can instead run these commands on another host (e.g. dedicated KF development enviroment).
 ====
+
+===== Manually
+
+// TODO(holden): This is going to change
 
 If you don't want to install Minikube, you can manually install Kubeflow's dependencies: ksonnet and kubectl. Even if you have these installed, you will want to check that you have the right versions installed for your version of Kubeflow.
 // TODO(holden): Where? Release notes?
@@ -293,6 +301,8 @@ We are so glad you've decided to use this book to start your adventures into Kub
 However, like all adventures, there may come a point when your guide book isn't enough to carry you through.
 Thankfully there are a collection of community resources where you can interact with others on similar adventures to your own.
 We encourage you to sign up for the link:$$http://kubeflow.slack.com$$[Kubeflow slack at http://kubeflow.slack.com], one of the more active areas of discussion, now since account approval is semi-manual.
+// TODO(holden): Check and see if we split the user/dev list out from discuss@
+While less active than slack, their is also a mailing list at link:$$https://groups.google.com/forum/#!forum/kubeflow-discuss$$[].
 The link:$$https://www.kubeflow.org/$$[kubeflow project page is at https://www.kubeflow.org/].
 
 [TIP]
