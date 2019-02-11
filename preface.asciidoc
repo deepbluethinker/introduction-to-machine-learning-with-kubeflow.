@@ -2,22 +2,33 @@
 == Preface
 
 We wrote this book for data engineers and data scientist who are looking to productionize their machine learning pipelines. If you've ever had the experience of training an excellent model only to ask your self how to deploy it into production or keep it up to date once it gets there, or if you've been handled an `Untitled_5.ipynb` and asked to "make it work" in production this is the book for you.
+This book is not intended to serve as your first introduction to machine learning, <<assumptions_about_the_audience>> has pointers to some resources that may be useful if you are just getting started on your machine learning journey.
 
 
-[[assumptions_about the audience]]
-=== Our assumption about you.
+[[assumptions_about_the_audience]]
+=== Our assumption about you
 
 
-This book assumes that you either have the basics of machine learning well understood, or are working with someone who does. If you don't, there are many excellent introduction books on machine learning to get you started, including link:$$https://amzn.to/2WPOGJj$$["Hands-On Machine Learning with Scikit-Learn and TensorFlow: Concepts, Tools, and Techniques to Build Intelligent Systems" by Aurélien Géron].
+This book assumes that you either have the basics of machine learning, or are working with someone who does. If you don't, there are many excellent introduction books on machine learning to get you started, including link:$$https://amzn.to/2WPOGJj$$["Hands-On Machine Learning with Scikit-Learn and TensorFlow: Concepts, Tools, and Techniques to Build Intelligent Systems" by Aurélien Géron].
 
 
-We also assume you have the tools, or work with someone who does, to get the data needed for training. If you don't pass:[<a class="orm:hideurl" href="http://shop.oreilly.com/product/0636920028512.do"><em>Learning Spark</em> by Karau, Konwinski, Wendell, and Zaharia</a>] is an excellent introduction,footnote:[Though we may be biased.].
+We also assume you have the tools, or work with someone who does, to get the data needed for training your models. If you don't pass:[<a class="orm:hideurl" href="http://shop.oreilly.com/product/0636920028512.do"><em>Learning Spark</em> by Karau, Konwinski, Wendell, and Zaharia</a>] is an excellent introduction,footnote:[Though we may be biased.].
 
 // TODO -- More resources here
 
+Containers and Kubernetes are a wide area of practice, which is rapidly evolving.
+If you want to depend your knowledge of Kubernetes we recommend looking at ....
+// TODO (holden)
+
 === Your responsibility as a practitioner
 
-This book helps you put your machine learning models into production and solve real world problems. Solving real world problems with machine learning is great, but as you go forth and apply your skills to the real world, remember to think about the real world impact. Even if you test your models at the start, it's important to be aware that X/Y/Z.
+This book helps you put your machine learning models into production and solve real world problems. Solving real world problems with machine learning is great, but as you go forth and apply your skills to the real world, remember to think about the real world impact.
+First, it's important to make sure your models are sufficiently accurate, and their are great tools for this in Kubeflow discussed in <<model_management>>, but even the best tools
+will not save you from all mistakes, for example hyper-parameter tuning on the same dataset to report final cross-validation results.
+Even models with great predictive power can still have unintended effects and biases that may not show up during the regular training-evaluation phase.
+And it's important to note that none of these are a "one-stop" task, model performance can degrade, and biases can be introduced over time -- even if you don't change anything.
+
+
 
 === Conventions Used in This Book
 
@@ -54,7 +65,7 @@ We will use warnings to indicate any situations where the resulting pipeline is 
 <!--PROD: Please reach out to author to find out if they will be uploading code examples to oreilly.com or their own site (e.g., GitHub). If there is no code download, delete this whole section. If there is, when you email digidist with the link, let them know what you filled in for title_title (should be as close to book title as possible, i.e., learning_python_2e). This info will determine where digidist loads the files.-->
 ++++
 
-Supplemental material (code examples, exercises, etc.) is available for download at link:$$https://github.com/oreillymedia/title_title$$[]. There are additional examples from the Kubeflow project it's self at X/Y/Z under it's own license.
+Supplemental material (code examples, exercises, etc.) is available for download at link:$$https://github.com/intro-to-ml-with-kubeflow$$[]. There are additional examples from the Kubeflow project it's self at link:$$https://github.com/kubeflow/examples$$[] under it's own license.
 
 This book is here to help you get your job done. In general, if example code is offered with this book, you may use it in your programs and documentation. You do not need to contact us for permission unless you’re reproducing a significant portion of the code. For example, writing a program that uses several chunks of code from this book does not require permission. Selling or distributing a CD-ROM of examples from O’Reilly books does require permission. Answering a question by citing this book and quoting example code does not require permission. Incorporating a significant amount of example code from this book into your product’s documentation does require permission.
 
@@ -83,6 +94,10 @@ For feedback, email us at pass:[<a class="email" href="mailto:intro-to-ml-kubefl
 Holden: link:$$http://twitter.com/holdenkarau$$[]
 
 // TODO everyone here
+// TODO(richard)
+// TODO(trevor)
+// TODO(ilan)
+
 
 
 === How to Contact Us

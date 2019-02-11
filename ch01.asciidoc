@@ -2,17 +2,61 @@
 == What does Kubeflow solve & who’s it for, and how to get started
 
 
-Put some introductory text here.
-
-=== Who is this for?
-
-Kubeflow is for data scientist and data engineers who wish to avoid the difficulty updating their model with new data, or moving from their laptop to production.
-Kubeflow does this by offering a variety of tools in one place, more than just Tensorflow, for all the different stages of a models life (data exploration, feature prep, model training, model serving, and model testing).
+Kubeflow solves the problem of needing to build portable, reliable, scalable machine learning pipelines and exposing the results.
+We hope Kubeflow is the right tool for you, and briefly look at some alternatives in <<alternatives_to_kubeflow>>, but even if it is not learning about Kubeflow can help provide a good mental model of how to build production machine learning workflows.
 
 [TIP]
 ====
-We talk about who this book is for in <<assumptions_about the audience>> as well as the required background and resources to get up to speed if you need them.
+Despite common misconception, Kubeflow is more than just Kubernetes and tensorflow -- you can use it for all sorts of machine learning models.
 ====
+
+[WARNING]
+====
+Kubeflow is rapidly evolving, this book is written for $KUBEFLOW_VERSION, if you are using a newer version of Kubeflow you will want to pay close attention to the release notes for things which may have changed.
+====
+
+
+
+=== Who is Kubeflow for?
+
+Kubeflow is for both data scientist and data engineers looking to build production machine learning pipelines.
+Kubeflow packages components for all the different stages of a models life (data exploration, feature prep, model training, model serving, and model testing); allowing you
+to build integrated end-to-end pipelines.
+These tools can be run either locally for your development or on a production cluster once you are ready.
+Many of benefits of using Kubeflow come from a unified systems, containerization and running on Kubernetes.
+
+
+Containerization means no more "it worked on my machine" or "just install extra_pip_requirements.txt".
+Data Scientist with Python experience can think of containers as a like heavy duty virtual environment, which includes the operating system to the packages and everything in between.
+This is used to isolate your from the host environment (or machine running the container).
+The isolation means that all dependencies must be explicitly added and you won't accidently start depending on some system packages.
+Containirizing our machine learning makes it portable and reproducible.
+
+
+[TIP]
+====
+Docker containers are made out of multiple layers and are easily compossible, so, if for example, there is a container image that has most of what you need (CUDA, etc.) but you also need some extra packages on top of it, you can build a container using another one as the base.
+====
+
+
+
+
+Kubernetes allows our pipelines to be scalable without sacrificing portability, allowing us to avoid becoming locked into a specific cloud provider.
+With Kubernetes the different stages of your pipeline can request the different resources they need from a cluster, and different versions of your pipeline can run with different resources.
+
+
+Now one can of course build their own containirzed machine learning pipelines on Kubernetes without using Kubefklow, but Kubeflow aims to make this substantailly easier.
+Kubeflow provides an easier partially-standarized interface to the tools you would be likely to use on your own adventure, as well making it easier to configure your pipeline to use cloud accelerations like TPUs (tensor processing units).
+
+
+[TIP]
+====
+We talk about who this book is for in <<assumptions_about the_audience>> as well as the required background and resources to get up to speed if you need them.
+====
+
+
+[[alternatives_to_kubeflow]]
+=== Brief Alternatives to Kubeflow
 
 [[breif_kubeflow_design_and_core_components]]
 === Kubeflow’s Design & Core Components
@@ -94,29 +138,39 @@ Each building block in a pipeline is a self-contained step in a machine learning
 
 One of the great things about Kubeflow is the ability to do our initial development and exploration locally, moving into more powerful and distributed tools later on.
 Deploying Kubeflow locally can be a great way to get started, and gives us access to a few debugging cheats we can use during our initial exploration.
-While you can get started with Kubeflow locally, you don't have to, you can just as easily do your initial work with one of the cloud providers or on prem Kubernetes clusters covered in <<appendix_installing>>, although for all but click-to-deploy.
+While you can get started with Kubeflow locally, you don't have to, you can just as easily do your initial work with one of the cloud providers or on prem Kubernetes clusters covered in <<appendix_installing>>, although for all but click-to-deploy we thing starting locally will be the fastest.
 
 [TIP]
 ====
-Probably the fastest way to get started with Kubeflow is using the simplified click-to-deploy on Google Cloud Platform (GCP). If you're in a rush to get started go ahead and jump to <<gcp_click_to_deploy>>.
+The fastest way to get started with Kubeflow is using the simplified click-to-deploy app on Google Cloud Platform (GCP). If you're in a rush to get started go ahead and jump to <<gcp_click_to_deploy>>.
 ====
 
 
 ==== Installing Kubeflow & its dependencies
 
-Kubeflow has relatively few dependencies, most of the heavy lifting is done inside of containers which ship with their requirements.
-Thankfully, Kubeflow's dependencies can be automatically installed along with the optional Minikube by running the install shell script <<mini_kube_setup_sh>>. Even if you don't plan on using Minikube this script simplifies the rest of the set up.
+Kubeflow has relatively few system dependencies, most of the heavy lifting is done inside of containers which include their requirements.
+The biggest requirement for Kubeflow is access to a Kubernetes cluster, be it local or remote.
+Kubeflow ships with scripts to automate the set up
+
+
+
+===== Automatically
+
+Kubeflow's system dependencies can be automatically installed along with the optional Minikube by running the install shell script <<mini_kube_setup_sh>>.
+Even if you don't plan on using Minikube this script simplifies the rest of the set up.
 
 [[mini_kube_setup_sh]]
 .Automatically install Kubeflow's dependencies & Minikube
+====
 [source, shell]
 ----
 include::examples/dev-setup/install-kf-and-minikube.sh[tags=work]
 ----
+====
 
 [TIP]
 ====
-If this fails to X/Y/Z, don't worry we'll cover how to fix that up in <<setting_up_minikube>>.
+If this fails to install minikube, don't worry we'll cover how to fix that up in <<setting_up_minikube>>.
 ====
 
 
@@ -126,16 +180,22 @@ If this fails to X/Y/Z, don't worry we'll cover how to fix that up in <<setting_
 This will modify your system packages installing and require root/super user permissions. If you wish you can instead run these commands on another host (e.g. dedicated KF development enviroment).
 ====
 
+===== Manually
+
+// TODO(holden): This is going to change
+
 If you don't want to install Minikube, you can manually install Kubeflow's dependencies: ksonnet and kubectl. Even if you have these installed, you will want to check that you have the right versions installed for your version of Kubeflow.
 // TODO(holden): Where? Release notes?
 Ksonnet is on github, with its release posted at link:$$https://github.com/ksonnet/ksonnet/releases$$[https://github.com/ksonnet/ksonnet/releases], and you can install it with <<install_ksonnet_sh>>.
 
 [[install_ksonnet_sh]]
 .Install ksonnet
+====
 [source, shell]
 ----
 include::examples/dev-setup/install-ksonnet-and-kubectl.sh[tags=ksonnet]
 ----
+====
 
 
 
@@ -144,25 +204,30 @@ Kubectl can also be installed outside of your package manager <<install_kubectl_
 
 [[install_kubectl_snap]]
 .Install kubectl with snap
+====
 [source, shell]
 ----
 include::examples/dev-setup/install-ksonnet-and-kubectl.sh[tags=ubuntu-kubectl]
 ----
+====
 
 [[install_kubectl_homebrew]]
 .Install kubectl with homebrew
+====
 [source, shell]
 ----
 include::examples/dev-setup/install-ksonnet-and-kubectl.sh[tags=osx-kubectl]
 ----
+====
 
 [[install_kubectl_curl]]
 .Install kubectl without a package manager
+====
 [source, shell]
 ----
 include::examples/dev-setup/install-ksonnet-and-kubectl.sh[tags=no-pkg-manager-kubectl]
 ----
-
+====
 
 
 
@@ -170,10 +235,13 @@ Once you have the dependencies installed, you can now install Kubeflow with <<in
 
 [[install_kf]]
 .Install Kubeflow
+====
 [source, shell]
 ----
 include::examples/dev-setup/install-kf.sh[tags=no-pkg-manager-install]
 ----
+====
+
 
 You now have Kubeflow installed! There are some additional optional tools you can set up to make the rest of this book easier we will cover next.
 
@@ -288,6 +356,8 @@ We are so glad you've decided to use this book to start your adventures into Kub
 However, like all adventures, there may come a point when your guide book isn't enough to carry you through.
 Thankfully there are a collection of community resources where you can interact with others on similar adventures to your own.
 We encourage you to sign up for the link:$$http://kubeflow.slack.com$$[Kubeflow slack at http://kubeflow.slack.com], one of the more active areas of discussion, now since account approval is semi-manual.
+// TODO(holden): Check and see if we split the user/dev list out from discuss@
+While less active than slack, their is also a mailing list at link:$$https://groups.google.com/forum/#!forum/kubeflow-discuss$$[].
 The link:$$https://www.kubeflow.org/$$[kubeflow project page is at https://www.kubeflow.org/].
 
 [TIP]

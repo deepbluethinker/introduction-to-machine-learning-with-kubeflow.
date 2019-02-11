@@ -1,2 +1,16 @@
-[[scheduling_ch]]
-== Keeping your model up-to-date w/ Luigi or similar (my kingdom for a distributed cron)
+[[model_management]]
+== Keeping your model up-to-date
+
+
+
+=== Scheduling
+=== Versioning / Storing
+=== Model Testing
+==== Canary / Stand-out deployments
+==== A/B Testing new models
+==== Multi-Armed-Bandit Testing
+
+=== Conclusion
+
+Keeping your model up to date can seem like daunting dangerous task, but not keeping it up to date can be even more dangerous.
+With the right automation, you can avoid having to answer why your product recommender is recommending inappropriate content for innocuous terms.
