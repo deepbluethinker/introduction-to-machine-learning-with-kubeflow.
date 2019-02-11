@@ -2,12 +2,53 @@
 == What does Kubeflow solve & who’s it for, and how to get started
 
 
-Put some introductory text here.
+Kubeflow solves the problem of needing to build portable, reliable, scalable machine learning pipelines and exposing the results.
+We hope Kubeflow is the right tool for you, and briefly look at some alternatives in <<alternatives_to_kubeflow>>, but even if it is not learning about Kubeflow can help provide a good mental model of how to build production machine learning workflows.
 
-=== Who is this for?
+[TIP]
+====
+Despite common misconception, Kubeflow is more than just Kubernetes and tensorflow -- you can use it for all sorts of machine learning models.
+====
 
-Kubeflow is for data scientist and data engineers who wish to avoid the difficulty updating their model with new data, or moving from their laptop to production.
-Kubeflow does this by offering a variety of tools in one place, more than just Tensorflow, for all the different stages of a models life (data exploration, feature prep, model training, model serving, and model testing).
+[WARNING]
+====
+Kubeflow is rapidly evolving, this book is written for $KUBEFLOW_VERSION, if you are using a newer version of Kubeflow you will want to pay close attention to the release notes for things which may have changed.
+====
+
+
+
+=== Who is Kubeflow for?
+
+Kubeflow is for both data scientist and data engineers looking to build production machine learning pipelines.
+Kubeflow packages components for all the different stages of a models life (data exploration, feature prep, model training, model serving, and model testing); allowing you
+to build integrated end-to-end pipelines.
+These tools can be run either locally for your development or on a production cluster once you are ready.
+Many of benefits of using Kubeflow over building your own pipelines manually come from a unified systems, containerization and running on Kubernetes.
+
+
+Containerization means no more "it worked on my machine" or "just install extra_pip_requirements.txt"
+Data Scientist with Python experience can think of containers are a heavy duty virtual enviroment, which not only includes Python includes all of the system around it.
+Containers isolate your from the host enviroment, meaning that all dependencies must be explicitly added and you won't accidently start depending on some system packages.
+Docker containers also include the operating system they are built on top of, so you don't have to worry about compatability differences between different Linux distributions at run-time.
+Docker containers are made out of multiple layers and are easily compossible, so, if for example, there is a container image that has most of what you need (CUDA, etc.) but you also need some extra packages on top of it, you can build a container using another one as the base.
+Containers also allow us to have different system libraries between different pipelines (or even stages in the same pipeline!).
+Containirizing our machine learning makes it portable and reproducible.
+
+[TIP]
+====
+You don't need a deep understanding of containers to succeed with Kubeflow, but for those looking to learn more about containers X/Y/Z.
+====
+
+
+Kubernetes in Kubeflow allows our pipelines to be scalable and maintain portability.
+With Kubernetes the different stages of your pipeline can request the different resources they need from a cluster, and different versions of your pipeline can run with different resources.
+The availability of local versions of Kubernetes means you can even work locally on your laptop with a single node during your prototyping phase.
+Since Kubernetes is not just used for data or machine learning jobs, unlike cluster managers like YARN, you can also more effectively share resources with the rest of your organization.
+
+
+Now one can of course build their own containirzed machine learning pipelines on Kubernetes without using Kubefklow, but Kubeflow aims to make this substantailly easier.
+Kubeflow provides an easier partially-standarized interface to the tools you would be likely to use on your own adventure, as well making it easier to configure your pipeline to use cloud accelerations like TPUs (tensor processing units).
+
 
 [TIP]
 ====
@@ -17,83 +58,11 @@ We talk about who this book is for in <<assumptions_about the audience>> as well
 
 
 
+[[alternatives_to_kubeflow]]
 === Brief Alternatives to Kubeflow
 
 [[breif_kubeflow_design_and_core_components]]
-=== Kubeflow’s Design & Core Components
-
-In the machine learning landscape, there are many diverse tool sets and frameworks. Kubeflow does not seek to reinvent the wheel or provide a "one size fits all" solution - instead, it allows machine learning practitioners to compose and customize their own stacks based on specific needs. It is designed to simplify the process of building and deploying machine learning at scale; allowing data scientists to do their jobs without worrying about the "boring parts" of building the infrastructure.
-
-Kubeflow seeks to tackle the problem of simplifying machine learning through three aspects: composability, portability, and scalability.
-
-* Composability - the core components come from data science tools that are already familiar to machine learning practictioners. They can be used independently to facilitate specific stages of machine learning, or composed together to form end-to-end pipelines. 
-
-* Portability - taking advantage of Kubernetes and cloud-native microservices, Kubeflow does not require you to anchor to any particular platform. You can develop and prototype on your laptop, and deploy to production effortlessly.
-
-* Scalability - the container-based design allows your clusters to dynamically scale up or down according to demand.
-
-
-Let's take a closer look at some of these components.
-
-==== Training
-
-Kubeflow supports a variety of distributed training frameworks. As of the time of this writing, Kubeflow has support for:
-
-* TensorFlow
-* PyTorch
-* MXNet
-* Chainer
-* Caffe2
-* MPI
-
-
-In Kubeflow, distributed training jobs are managed by application-specific controllers, known as "operators". These operators extend the Kubernetes APIs to create, manage, and manipulate the state of resources. For example, to run a distributed TensorFlow training job, the user just needs to provide a specification that describes the desired state (number of workers and parameter servers, etc), and the TensorFlow operator component will take care of the rest and manage the lifecycle of the training job.
-
-In a later chapter we will examine how Kubeflow trains a TensorFlow model in greater detail.
-
-==== Serving
-
-After training your model, the next step is to serve the model in your cluster so it can handle prediction requests. Kubeflow makes it easy for data scientists to deploy machine learning models in production environments at scale. Currently Kubeflow supports TensorFlow Serving and SeldonCore.
-
-Serving a model on Kubeflow is fairly straightforward. There is no need to build or customize a container yourself - simply point Kubeflow to where your model is stored, and a server will be ready within seconds to service requests.
-
-==== Hyperparameter Tuning
-
-In machine learning, hyperparameters are variables that govern the training process. For example, what should the model's learning rate be? How many hidden layers and neurons should be in the neural network? These parameters are not part of the training data, but they can have a significant effect on the performance of the training models.
-
-Finding the right set of hyperparameters for your training model can be a challenging task. Traditional methodologies such as grid search can be time consuming and quite tedious. 
-
-Kubeflow provides a component (called "Katib") that allows users to perform hyperparameter optimizations easily on Kubernetes clusters. Katib is inspired by Vizier, a black-box optimization framework created at Google. It leverages advanced searching algorithms such as Bayesian optimization to find optimal hyperparameter configurations.
-
-With Kubeflow, users can begin with a training model that they are unsure about, define the hyperparameter search space, and Kubeflow will take care of the rest - spin up training jobs using different hyperparameters, collect the metrics, and save the results to a model database so their performance can be compared.
-
-
-==== Jupyter Notebooks
-
-Jupyter notebook is an open-source web application that allows users to create and share data, code snippets, and experiments at scale. They are popular among machine learning practitioners due to their simplicity and portability.
-
-.A Jupyter notebook running in Kubeflow
-[#1_jupyter_notebook]
-image::images/1_jupyter_notebook.png[A Jupyter notebook running in Kubeflow]
-
-In Kubeflow, you can spin up instances of Jupyter notebooks that directly interact with your cluster and its other components. For example, you can write snippets of TensorFlow distributed training code in your laptop, and bring up a training cluster with just a few clicks.
-
-==== Pipelines
-
-A machine learning pipeline can be seen as a graph, where each node is a stage in a workflow. Kubeflow Pipelines is a component that allows users to compose reusable workflows at ease. Its features include:
-
-* An orchestratration engine for multi-step workflows
-
-* An SDK to interact with pipeline components
-
-* A user interface that allows users to visualize and track experiments, and to share results with collaborators
-
-
-.A Kubeflow pipeline
-[#1_kubeflow_pipeline]
-image::images/1_kubeflow_pipeline.png[A Kubeflow pipeline]
-
-Each building block in a pipeline is a self-contained step in a machine learning workflow, such as preprocessing, transformation, training, or cross-validation. In Kubeflow, each of these blocks is built as a Docker image. This allows users to share and reuse individual components with ease.
+=== Brief Kubeflow’s design & core components
 
 === Getting Set Up with Kubeflow
 
@@ -107,7 +76,7 @@ Probably the fastest way to get started with Kubeflow is using the simplified cl
 ====
 
 
-==== Installing Kubeflow & its dependencies
+==== Installing Kubeflow & it's dependencies
 
 Kubeflow has relatively few dependencies, most of the heavy lifting is done inside of containers which ship with their requirements.
 Thankfully, Kubeflow's dependencies can be automatically installed along with the optional Minikube by running the install shell script <<mini_kube_setup_sh>>. Even if you don't plan on using Minikube this script simplifies the rest of the set up.
@@ -133,7 +102,7 @@ This will modify your system packages installing and require root/super user per
 
 If you don't want to install Minikube, you can manually install Kubeflow's dependencies: ksonnet and kubectl. Even if you have these installed, you will want to check that you have the right versions installed for your version of Kubeflow.
 // TODO(holden): Where? Release notes?
-Ksonnet is on github, with its release posted at link:$$https://github.com/ksonnet/ksonnet/releases$$[https://github.com/ksonnet/ksonnet/releases], and you can install it with <<install_ksonnet_sh>>.
+Ksonnet is on github, with it's release posted at link:$$https://github.com/ksonnet/ksonnet/releases$$[https://github.com/ksonnet/ksonnet/releases], and you can install it with <<install_ksonnet_sh>>.
 
 [[install_ksonnet_sh]]
 .Install ksonnet
@@ -257,5 +226,5 @@ If you want to quickly explore Kubeflow end-to-end there are some link:$$https:/
 
 === Conclusion
 
-At this point you have everything you need to get started on your Kubeflow adventure: a Kubernetes cluster, Kubeflow and its core dependencies, and a desire to have fun.
+At this point you have everything you need to get started on your Kubeflow adventure: a Kubernetes cluster, Kubeflow and it's core dependencies, and a desire to have fun.
 In the next chapter <<simple_training_ch>>, we'll train and serve a relatively simple machine learning model together to give you an idea of how the basics of how to use Kubeflow.
