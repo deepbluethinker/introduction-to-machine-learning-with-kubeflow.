@@ -2,8 +2,10 @@
 == What does Kubeflow solve & who’s it for, and how to get started
 
 
-Kubeflow solves the problem of needing to build portable, reliable, scalable machine learning pipelines and exposing the results.
-We hope Kubeflow is the right tool for you, and briefly look at some alternatives in <<alternatives_to_kubeflow>>, but even if it is not learning about Kubeflow can help provide a good mental model of how to build production machine learning workflows.
+Kubeflow solves the problem of needing to build portable, reliable, scalable machine learning pipelines and using the results.
+We hope Kubeflow is the right tool for you, although it may not be especially if your organization does not have Kubernetes deployed.
+We briefly look at some alternatives in <<alternatives_to_kubeflow>> for you to explore.
+
 
 [TIP]
 ====
@@ -22,8 +24,11 @@ Kubeflow is rapidly evolving, this book is written for $KUBEFLOW_VERSION, if you
 Kubeflow is for both data scientist and data engineers looking to build production machine learning pipelines.
 Kubeflow packages components for all the different stages of a models life (data exploration, feature prep, model training, model serving, and model testing); allowing you
 to build integrated end-to-end pipelines.
-These tools can be run either locally for your development or on a production cluster once you are ready.
-Many of benefits of using Kubeflow come from a unified systems, containerization and running on Kubernetes.
+
+
+Kubeflow can be run either locally for your development or on a production cluster once you are ready.
+Kubeflow provides a unified system with repeatable components power by containerization and scalability by leveraging Kubernetes.
+
 
 
 Containerization means no more "it worked on my machine" or "just install extra_pip_requirements.txt".
