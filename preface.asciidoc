@@ -14,7 +14,7 @@ This book is not intended to serve as your first introduction to machine learnin
 This book assumes that you either understand how to train models locally, or are working with someone who does. If you don't, there are many excellent introduction books on machine learning to get you started, including link:$$https://amzn.to/2WPOGJj$$["Hands-On Machine Learning with Scikit-Learn and TensorFlow: Concepts, Tools, and Techniques to Build Intelligent Systems" by Aurélien Géron].
 
 
-We also assume you have the tools, or work with someone who does, to get the data needed for training your models. If you don't pass:[<a class="orm:hideurl" href="http://shop.oreilly.com/product/0636920028512.do"><em>Learning Spark</em> by Karau, Konwinski, Wendell, and Zaharia</a>] is an excellent introduction,footnote:[Though we may be biased.].
+We also assume you have the tools, or work with someone who does, to get the data needed for training your models. If you don't pass:[<a class="orm:hideurl" href="http://shop.oreilly.com/product/0636920028512.do"><em>Learning Spark</em> by Karau, Konwinski, Wendell, and Zaharia</a>] is an excellent introduction,.footnote:[Though we may be biased.]
 
 // TODO -- More resources here
 
@@ -113,7 +113,7 @@ For more information, please visit pass:[<a href="http://oreilly.com/safari" cla
 
 For feedback, email us at pass:[<a class="email" href="mailto:intro-to-ml-kubeflow@googlegroups.com"><em>intro-to-ml-kubeflow@googlegroups.com</em></a>]. For random ramblings, occasionally about Kubeflow, follow us on twitter:
 
-Holden: On twitter at link:$$http://twitter.com/holdenkarau$$[], YouTube link:$$https://www.youtube.com/user/holdenkarau$$, Twitch link:$$https://www.twitch.tv/holdenkarau$$[], LinkedIn link:$$https://www.linkedin.com/in/holdenkarau$$[], Blog link:$$http://blog.holdenkarau.com/$$[], or Facebook link:$$https://www.facebook.com/hkarau$$[].
+Holden: On Twitter at link:$$http://twitter.com/holdenkarau$$[], YouTube link:$$https://www.youtube.com/user/holdenkarau$$, Twitch link:$$https://www.twitch.tv/holdenkarau$$[], LinkedIn link:$$https://www.linkedin.com/in/holdenkarau$$[], Blog link:$$http://blog.holdenkarau.com/$$[], or Facebook link:$$https://www.facebook.com/hkarau$$[].
 
 // TODO everyone here
 // TODO(richard)

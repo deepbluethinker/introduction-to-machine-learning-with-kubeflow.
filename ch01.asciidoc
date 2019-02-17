@@ -100,7 +100,7 @@ Serving a model on Kubeflow is fairly straightforward. There is no need to build
 
 In machine learning, hyperparameters are variables that govern the training process. For example, what should the model's learning rate be? How many hidden layers and neurons should be in the neural network? These parameters are not part of the training data, but they can have a significant effect on the performance of the training models.
 
-Finding the right set of hyperparameters for your training model can be a challenging task. Traditional methodologies such as grid search can be time consuming and quite tedious.
+Finding the right set of hyperparameters for your training model can be a challenging task. Traditional methodologies such as grid search can be time-consuming and quite tedious.
 
 Kubeflow provides a component (called "Katib") that allows users to perform hyperparameter optimizations easily on Kubernetes clusters. Katib is inspired by Vizier, a black-box optimization framework created at Google. It leverages advanced searching algorithms such as Bayesian optimization to find optimal hyperparameter configurations.
 
@@ -269,9 +269,9 @@ The set up script for Kubeflow we showed earlier will attempt to install Minikub
 
 
 
-The most common reason for the automatic set up of Minikube as part of the set-up scripts failing is missing a hypervisor or docker install.
+The most common reason for the automatic set up of Minikube as part of the set-up scripts failing is missing a hypervisor or Docker install.
 The regardless of your OS you should be able to use link:$$https://www.virtualbox.org/wiki/Downloads$$[VirtualBox], however other options like KVM on Linux, Hyper-V on Windows, and HyperKit on MacOs all work as well.
-There are installation guides for Minikube on the main Kubernetes website link:$$https://kubernetes.io/docs/tasks/tools/install-minikube/$$[] as well as the Kubeflow specific one at link:$$link:$$https://www.kubeflow.org/docs/started/getting-started-minikube/$$[].
+There are installation guides for Minikube on the main Kubernetes website link:$$https://kubernetes.io/docs/tasks/tools/install-minikube/$$[] as well as the Kubeflow specific one at link:$$https://www.kubeflow.org/docs/started/getting-started-minikube/$$[].
 
 
 
@@ -345,7 +345,7 @@ include::examples/dev-setup/jsonnet.sh[tags=manual]
 
 Most Integrated Development Enviroments (IDEs) offer some sort of tooling for editing YAML and Jsonnet, but you may have to install these seperately.
 For InteliJ //TODO(trevor)
-For emacs there are many modes available for YAML editing, as well as the link:$$jsonnet-mode$$[jsonnet] (which is installable from link:$https://melpa.org/$$[Milkypostman’s Emacs Lisp Package Archive (MELPA)]).
+For emacs there are many modes available for YAML editing, as well as the link:$$jsonnet-mode$$[jsonnet] (which is installable from link:$$https://melpa.org/$$[Milkypostman’s Emacs Lisp Package Archive (MELPA)]).
 Atom has syntax highlighting available as packages for both link:$$https://atom.io/packages/language-yaml$$[YAML] and link:$$https://atom.io/packages/language-jsonnet$$[Jsonnet].
 If you use a different IDE don't throw it away just for better ksonnet editing before you explore the plugin available.
 

@@ -18,7 +18,7 @@ While you don't need to deploy Kubeflow to it's own cluster, while you are in th
 Kubeflow can be easily deployed on Google Cloud Platform (GCP), using the Google Kubernetes Engine (GKE) & storage Google Cloud Storage (GCS). Other tools like Dataflow can be used, although doing so will reduce the portability of your Kubeflow pipelines so we will call out any such instances along with portable alternatives. Specialized resources, like Tensor-Processing-Units (TPUs) can also be accessed, and while not available on other providers do not reduce portability since they primarily accelerate your standard workflow.
 
 
-There are two primary ways to get started with Kubeflow on, one is the standard command line tools, and an even easier link:$$https://deploy.kubeflow.cloud/$[$"click-to-deploy"] system.
+There are two primary ways to get started with Kubeflow on, one is the standard command line tools, and an even easier link:$$https://deploy.kubeflow.cloud/$$[$"click-to-deploy"] system.
 // TODO(holden): Verify is this the recommendation we want to give? It's the one I want -- I don't trust GUIs
 Click-to-deploy is recommended for users on locked down corporate machines, tutorials, and getting started. For longer term and portable deployments the authors have found the traditional command line tools give them more flexibility and reduced dependence on magic.
 
@@ -450,12 +450,12 @@ include::ibm-install-guide/once-cluster-is-up.sh[tag=ksWitchcraft]
 
 ====== Setting Up the Docker Image
 
-First we will need to configure our docker registry as follows
+First we will need to configure our Docker registry as follows
 ```bash
 include::ibm-install-guide/once-cluster-is-up.sh[tag=configureDockerRegistry]
 ```
 
-Next we need to build and push a docker image containing the training code.
+Next we need to build and push a Docker image containing the training code.
 
 ```bash
 include::ibm-install-guide/once-cluster-is-up.sh[tag=buildnpushDockerRegistry]
@@ -465,7 +465,7 @@ TIP: You only need to re-push the Docker image if you change the training code.
 
 Finally, IBMs Docker registries are private by default.  This means for your Kubeflow pods to be able to access the Docker
 images, they will need to login.  This is accomplished with secrets.  To setup a Docker repository secret for an IBM
-private docker repository, copy the following code.
+private Docker repository, copy the following code.
 
 ```bash
 include::ibm-install-guide/once-cluster-is-up.sh[tag=createDockerSecret]
@@ -511,7 +511,7 @@ ten times where `i` is the numbers 0 through 9.
 ==== Train a Simple Tensorflow Model
 
 [quote, Most highschool coaches]
-Prior preperation prevents poor performance
+Prior preparation prevents poor performance
 
 We've done _so much work_ to set this all up.  Now we reap our reward.  We simply set a few last training meta-variables,
 and then run one `argo` command (with several arguments).
@@ -530,7 +530,7 @@ include::ibm-install-guide/once-cluster-is-up.sh[tag=submitTraining]
 ```
 
 That seems like a lot, but we'll get into what all of these commands are doing later in the book. The key is that you now
-have successfully trained a model on IBM Cloud. To "see" the model training, you can port forward the the `argo-server`
+have successfully trained a model on IBM Cloud. To "see" the model training, you can port forward the `argo-server`
 to `localhost` and "watch" the pipeline progress.
 
 ```bash
