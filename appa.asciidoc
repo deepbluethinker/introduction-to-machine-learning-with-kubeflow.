@@ -677,8 +677,13 @@ Once again you can verify that kubeflow components are correctly installed with 
 $ kubectl -n kubeflow get all
 ...
 ----
+
+[[appendix]]
+[appendix_multi_cloud]
 == Multi-cloud deployments
 
+[[appendix]]
+[appendix_cloud_specific]
 == Cloud specific Debugging
 
 Once you starting working with a project it's only a matter of time time before you need to start debugging it. We talk about general debugging tools in [[debugging]], but there are some additional tools available on different commercial cloud offerings which may also be of use.
@@ -687,4 +692,6 @@ Once you starting working with a project it's only a matter of time time before 
 
 
 
+[[appendix]]
+[appendix_notevil]
 == Try to not burn down the world / Pointers to avoid reinforcing biases
