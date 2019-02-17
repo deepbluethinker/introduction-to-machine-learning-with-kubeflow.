@@ -159,6 +159,8 @@ Watch us on YouTube: link:$$http://www.youtube.com/oreillymedia$$[]
 
 === Acknowledgments
 
+Holden would like to thank Kris Nova for her help debugging her first Kubeflow PR, as well as the entire Kubeflow community for being so welcoming.
+
 ++++
 <!--Fill in...-->
 ++++
