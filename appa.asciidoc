@@ -1,5 +1,5 @@
-[[appendix]]
-[appendix_installing]
+[appendix]
+[[appendix_installing]]
 == Setting Kubeflow up on your provider(s) of choice
 
 While you can do much of your development locally on minikube, once you're ready to start training and predicting real production workloads you'll want to go beyond what can be accomplished on a single machine. This doesn't mean you _shouldn't_ set up minikube, it's an amazing resource for developing and testing locally.
@@ -678,12 +678,12 @@ $ kubectl -n kubeflow get all
 ...
 ----
 
-[[appendix]]
-[appendix_multi_cloud]
+[appendix]
+[[appendix_multi_cloud]]
 == Multi-cloud deployments
 
-[[appendix]]
-[appendix_cloud_specific]
+[appendix]
+[[appendix_cloud_specific]]
 == Cloud specific Debugging
 
 Once you starting working with a project it's only a matter of time time before you need to start debugging it. We talk about general debugging tools in [[debugging]], but there are some additional tools available on different commercial cloud offerings which may also be of use.
@@ -692,6 +692,6 @@ Once you starting working with a project it's only a matter of time time before 
 
 
 
-[[appendix]]
-[appendix_notevil]
+[appendix]
+[[appendix_notevil]]
 == Try to not burn down the world / Pointers to avoid reinforcing biases
