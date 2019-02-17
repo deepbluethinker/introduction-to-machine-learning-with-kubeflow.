@@ -345,7 +345,7 @@ include::examples/dev-setup/jsonnet.sh[tags=manual]
 
 Most Integrated Development Enviroments (IDEs) offer some sort of tooling for editing YAML and Jsonnet, but you may have to install these seperately.
 For InteliJ //TODO(trevor)
-For emacs there are many modes available for YAML editing, as well as the link:$$jsonnet-mode$$[jsonnet] (which is installable from link:$$https://melpa.org/$$[Milkypostman’s Emacs Lisp Package Archive (MELPA)]).
+For emacs there are many modes available for YAML editing, as well as the link:$$https://github.com/mgyucht/jsonnet-mode$$[jsonnet-mode] (which is installable from link:$$https://melpa.org/$$[Milkypostman’s Emacs Lisp Package Archive (MELPA)]).
 Atom has syntax highlighting available as packages for both link:$$https://atom.io/packages/language-yaml$$[YAML] and link:$$https://atom.io/packages/language-jsonnet$$[Jsonnet].
 If you use a different IDE don't throw it away just for better ksonnet editing before you explore the plugin available.
 
