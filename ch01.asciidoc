@@ -150,14 +150,15 @@ The fastest way to get started with Kubeflow is using the simplified click-to-de
 
 Kubeflow has relatively few system dependencies, most of the heavy lifting is done inside of containers which include their requirements.
 The biggest requirement for Kubeflow is access to a Kubernetes cluster, be it local or remote.
-Kubeflow ships with scripts to automate the set up
+Kubeflow ships with scripts to automate the set up of the system dependencies as well as a local Kubernetes cluster, called Minikube.
+You don't need to install Kubeflow with these scripts, but the automatic setup tools can help you get up and running faster even if you don't plan on using Minikube.
 
 
 
 ===== Automatically
 
 Kubeflow's system dependencies can be automatically installed along with the optional Minikube by running the install shell script <<mini_kube_setup_sh>>.
-Even if you don't plan on using Minikube this script simplifies the rest of the set up.
+If you prefer MicroK8s, Canonical Labs has their own auto-install script covered in <<setting_up_microk8s>>.
 
 [[mini_kube_setup_sh]]
 .Automatically install Kubeflow's dependencies & Minikube
@@ -243,15 +244,29 @@ include::examples/dev-setup/install-kf.sh[tags=no-pkg-manager-install]
 ====
 
 
-You now have Kubeflow installed! There are some additional optional tools you can set up to make the rest of this book easier we will cover next.
+You now have Kubeflow installed on your machine. There are some additional optional tools you can set up to make the rest of this book easier we will cover next.
+
+
+==== Setting up Kubeflow for local use
+
+Being able to have the same software running locally as in production is one of the great advantages of Kubeflow.
+To support this you will need a local version of Kubernetes installed.
+Kubeflow has setup scripts which automatically download and attempt to set up Minikube, but this is not your only option.
+Ubuntu users in particular may find MicroK8s faster to set up.
+
+[TIP]
+====
+You don't need to have a local Kubernetes cluster, but many data scientists and developers find having a local cluster to test with (be it Minikube or MicroK8s or other).
+====
 
 [[setting_up_minikube]]
-==== Finishing setting up Kubeflow on Minikube (optional)
+===== Minikube
 
 Minikube is a local version of Kubernetes which can be used in conjunction with Kubeflow.
-You don't need to have a local Kubernetes cluster, but many data scientists and developers find having a local cluster to test with (be it Minikube or other).
+
 The set up script for Kubeflow we showed earlier will attempt to install Minikube so you can work locally, although it may sometimes not succeed.
 // TODO: other local k8s options
+
 
 
 The most common reason for the automatic set up of Minikube as part of the set-up scripts failing is missing a hypervisor or docker install.
@@ -259,9 +274,37 @@ The regardless of your OS you should be able to use link:$$https://www.virtualbo
 There are installation guides for Minikube on the main Kubernetes website link:$$https://kubernetes.io/docs/tasks/tools/install-minikube/$$[] as well as the Kubeflow specific one at link:$$link:$$https://www.kubeflow.org/docs/started/getting-started-minikube/$$[].
 
 
+
 [TIP]
 ====
 The Kubeflow project has a link:$$https://www.kubeflow.org/docs/started/getting-started-minikube/$$[frequently updated guide on how to install Kubeflow with Minikube at https://www.kubeflow.org/docs/started/getting-started-minikube/].
+====
+
+[[setting_up_microk8s]]
+===== MicroK8s
+
+link:$$https://microk8s.io/$$[MicroK8s] is another single node Kubernetes option.
+Ubuntu users can directly install MicroK8s from snap with <<install_microk8s>>.
+
+[[install_microk8s]]
+.Install MicroK8s
+====
+[source, shell]
+----
+include::examples/dev-setup/install-microk8s.sh[tags=installmicrok8s]
+----
+====
+
+Once you have MicroK8s installed you can use the Canonical provided bootstrap scripts to set up Kubeflow on top of it <<bootstrap_microk8s_kf>>,
+or use it like a regular K8s cluster.
+
+.Bootstrap Kubeflow on MicroK8s
+[[bootstrap_microk8s_kf]]
+====
+[source, shell]
+----
+include::examples/dev-setup/install-microk8s.sh[tags=bootstrapwithcanonicallabs]
+----
 ====
 
 
