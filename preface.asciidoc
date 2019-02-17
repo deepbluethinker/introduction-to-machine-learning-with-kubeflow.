@@ -113,13 +113,17 @@ For more information, please visit pass:[<a href="http://oreilly.com/safari" cla
 
 For feedback, email us at pass:[<a class="email" href="mailto:intro-to-ml-kubeflow@googlegroups.com"><em>intro-to-ml-kubeflow@googlegroups.com</em></a>]. For random ramblings, occasionally about Kubeflow, follow us on twitter:
 
-Holden: link:$$http://twitter.com/holdenkarau$$[]
+Holden: On twitter at link:$$http://twitter.com/holdenkarau$$[], YouTube link:$$https://www.youtube.com/user/holdenkarau$$, Twitch link:$$https://www.twitch.tv/holdenkarau$$[], LinkedIn link:$$https://www.linkedin.com/in/holdenkarau$$[], Blog link:$$http://blog.holdenkarau.com/$$[], or Facebook link:$$https://www.facebook.com/hkarau$$[].
 
 // TODO everyone here
 // TODO(richard)
 // TODO(trevor)
 // TODO(ilan)
 
+[TIP]
+====
+Early feedback can make a huge difference in the direction and quality of the book. We want to hear from you, especially if there are things you find confusing or wish we covered.
+====
 
 
 === How to Contact Us
