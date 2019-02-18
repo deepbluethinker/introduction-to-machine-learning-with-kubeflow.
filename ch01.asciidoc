@@ -394,7 +394,7 @@ Graduating from just scientific theory into a functional end-to-end system, Clip
 MLflow is Databrick's own flavor of open-source machine learning development.
 The architecture of MLflow leverages a lot of the same architectural paradigms of Clipper, including its framework agnostic nature,  while focusing on three major components that it calls: Tracking, Projects, and Models.
 
-MLflow Tracking functions as an API with a complementing UI for logging parameters, code versions, metrics and output files. This is quite power in machine learning as tracking parameters, metrics, and artifacts is of paramount importance.
+MLflow Tracking functions as an API with a complementing UI for logging parameters, code versions, metrics and output files. This is quite powerful in machine learning as tracking parameters, metrics, and artifacts is of paramount importance.
 The power of this API is that it can be leveraged in a standalone or notebook setting.
 
 MLflow Projects provides a standard format for packaging reusable data science code, defined by a yaml file that can leverage source-controlled code and dependency management via Anaconda.
@@ -418,7 +418,7 @@ However, like all adventures, there may come a point when your guide book isn't 
 Thankfully there are a collection of community resources where you can interact with others on similar adventures to your own.
 We encourage you to sign up for the link:$$http://kubeflow.slack.com$$[Kubeflow slack at http://kubeflow.slack.com], one of the more active areas of discussion, now since account approval is semi-manual.
 // TODO(holden): Check and see if we split the user/dev list out from discuss@
-While less active than slack, their is also a mailing list at link:$$https://groups.google.com/forum/#!forum/kubeflow-discuss$$[].
+While less active than slack, there is also a mailing list at link:$$https://groups.google.com/forum/#!forum/kubeflow-discuss$$[].
 The link:$$https://www.kubeflow.org/$$[kubeflow project page is at https://www.kubeflow.org/].
 
 [TIP]
