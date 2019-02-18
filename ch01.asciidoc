@@ -59,9 +59,6 @@ We talk about who this book is for in <<assumptions_about_the_audience>> as well
 ====
 
 
-[[alternatives_to_kubeflow]]
-=== Brief Alternatives to Kubeflow
-
 [[breif_kubeflow_design_and_core_components]]
 === Kubeflow’s Design & Core Components
 
