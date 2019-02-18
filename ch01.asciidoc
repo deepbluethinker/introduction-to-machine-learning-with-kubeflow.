@@ -9,7 +9,7 @@ We briefly look at some alternatives in <<alternatives_to_kubeflow>> for you to 
 
 [TIP]
 ====
-Despite common misconception, Kubeflow is more than just Kubernetes and tensorflow -- you can use it for all sorts of machine learning models.
+Despite common misconception, Kubeflow is more than just Kubernetes and TensorFlow -- you can use it for all sorts of machine learning models.
 ====
 
 [WARNING]
@@ -21,15 +21,15 @@ Kubeflow is rapidly evolving, this book is written for $KUBEFLOW_VERSION, if you
 
 === Who is Kubeflow for?
 
-Kubeflow is for both data scientist and data engineers looking to build production machine learning pipelines.
-Kubeflow packages components for all the different stages of a models life (data exploration, feature prep, model training, model serving, and model testing); allowing you
-to build integrated end-to-end pipelines.
+Kubeflow is for both data scientists and data engineers looking to build production machine learning pipelines.
+Kubeflow packages components for all the different stages of a model's lifecycle (data exploration, feature preparation, model training, model serving, and model testing); allowing users to build integrated end-to-end pipelines from these components.
 
 
-Kubeflow can be run either locally for your development or on a production cluster once you are ready.
+Kubeflow can be run either locally in your development environment or on a production cluster once the pipelines are ready.
 Kubeflow provides a unified system with repeatable components power by containerization and scalability by leveraging Kubernetes.
 
 
+=== Why Containerization?
 
 Containerization means no more "it worked on my machine" or "oh yeah we you need package this extra package."
 Containerized applications are isolated from the rest of your machine, and have all of their requirements included (from the operating system up).
@@ -40,18 +40,17 @@ The isolation provided by containers allow our machine learning stages to be por
 
 [TIP]
 ====
-Data Scientist with Python experience can think of containers as a like heavy duty virtual environment, which includes the operating system to the packages and everything in between.
+Data scientists with Python experience can think of containers as a heavy duty virtual environment, which includes the operating system, the packages, and everything in between.
 ====
 
 
 Kubernetes allows our pipelines to be scalable without sacrificing portability, allowing us to avoid becoming locked into a specific cloud provider.
-In addition to being able to switch from a single machine to a distributed cluster, different stages of your machine learning pipeline can request different amounts and types of resources.
-For example, with your data preparation step may benefit more from running on multiple machines, and your model training can benefit more from access GPUs.
+In addition to being able to switch from a single machine to a distributed cluster, different stages of your machine learning pipeline can request different amounts and types of resources - for example, your data preparation step may benefit more from running on multiple machines, while your model training can benefit more from access GPUs.
 This flexibility is especially useful in cloud enviroments, where you can reduce your costs by only using expensive resources when required.
 
 
-Now one can of course build their own containirzed machine learning pipelines on Kubernetes without using Kubefklow, but Kubeflow aims to make this substantailly easier.
-Kubeflow provides an easier partially-standarized interface to the tools you would be likely to use on your own adventure, as well making it easier to configure your pipeline to use cloud accelerations like TPUs (tensor processing units).
+You can, of course, build your own containerized machine learning pipelines on Kubernetes without using Kubeflow, but Kubeflow aims to make this substantailly easier.
+Kubeflow provides a partially-standardized interface to the tools you would be likely to use on your own adventure, as well making it easier to configure your pipeline to use cloud accelerations like TPUs (tensor processing units).
 
 
 [TIP]
@@ -143,17 +142,18 @@ Each building block in a pipeline is a self-contained step in a machine learning
 
 One of the great things about Kubeflow is the ability to do our initial development and exploration locally, moving into more powerful and distributed tools later on.
 Deploying Kubeflow locally can be a great way to get started, and gives us access to a few debugging cheats we can use during our initial exploration.
-While you can get started with Kubeflow locally, you don't have to, you can just as easily do your initial work with one of the cloud providers or on prem Kubernetes clusters covered in <<appendix_installing>>, although for all but click-to-deploy we thing starting locally will be the fastest.
 
 [TIP]
 ====
+While you can get started with Kubeflow locally, you don't have to - you can just as easily do your initial work with one of the cloud providers or on-prem Kubernetes clusters covered in <<appendix_installing>>.
+
 The fastest way to get started with Kubeflow is using the simplified click-to-deploy app on Google Cloud Platform (GCP). If you're in a rush to get started go ahead and jump to <<gcp_click_to_deploy>>.
 ====
 
 
 ==== Installing Kubeflow & its dependencies
 
-Kubeflow has relatively few system dependencies, most of the heavy lifting is done inside of containers which include their requirements.
+Kubeflow has relatively few system dependencies, most of the heavy lifting is done inside containers which are already built with their requirements.
 The biggest requirement for Kubeflow is access to a Kubernetes cluster, be it local or remote.
 Kubeflow ships with scripts to automate the set up of the system dependencies as well as a local Kubernetes cluster, called Minikube.
 You don't need to install Kubeflow with these scripts, but the automatic setup tools can help you get up and running faster even if you don't plan on using Minikube.
@@ -249,7 +249,7 @@ include::examples/dev-setup/install-kf.sh[tags=no-pkg-manager-install]
 ====
 
 
-You now have Kubeflow installed on your machine. There are some additional optional tools you can set up to make the rest of this book easier we will cover next.
+You now have Kubeflow installed on your machine. Now we will cover some additional optional tools that you can set up to make the rest of this book easier.
 
 
 ==== Setting up Kubeflow for local use
@@ -327,7 +327,7 @@ This part is optional, if it ends up being frustrating or slowing you down feel 
 ====
 
 
-Inside of the Kubeflow project, the Jsonnet library is used to automatically format Ksonnet into a standard layout. This autoformatter can also catch syntax errors or other simple errors earlier on in the deploy. The jsonnet package link:$$https://github.com/google/jsonnet/releases$$[releases are available on GitHub] <<jsonnet_manual>>, link:$$https://snapcraft.io/$$[Snap] <<jsonnet_snap>> (from Canonical). It is also listed on PyPi, but currently does not install the command line tools. Some of the IDE tools for Jsonnet depend on the command line binary.
+Inside the Kubeflow project, the Jsonnet library is used to automatically format Ksonnet into a standard layout. This autoformatter can also catch syntax errors or other simple errors earlier on in the deploy. The jsonnet package link:$$https://github.com/google/jsonnet/releases$$[releases are available on GitHub] <<jsonnet_manual>>, link:$$https://snapcraft.io/$$[Snap] <<jsonnet_snap>> (from Canonical). It is also listed on PyPi, but currently does not install the command line tools. Some of the IDE tools for Jsonnet depend on the command line binary.
 
 [[jsonnet_snap]]
 .Install jsonnet with snap (Ubuntu)
@@ -352,11 +352,11 @@ Most Integrated Development Enviroments (IDEs) offer some sort of tooling for ed
 For InteliJ //TODO(trevor)
 For emacs there are many modes available for YAML editing, as well as the link:$$https://github.com/mgyucht/jsonnet-mode$$[jsonnet-mode] (which is installable from link:$$https://melpa.org/$$[Milkypostman’s Emacs Lisp Package Archive (MELPA)]).
 Atom has syntax highlighting available as packages for both link:$$https://atom.io/packages/language-yaml$$[YAML] and link:$$https://atom.io/packages/language-jsonnet$$[Jsonnet].
-If you use a different IDE don't throw it away just for better ksonnet editing before you explore the plugin available.
+If you use a different IDE, don't throw it away just for better ksonnet editing before you explore the plugin available.
 
 [TIP]
 ====
-If you get stuck here, or if your permissions/policies don't allow you to use minikube, just jump on over to <<appendix_installing>> and you can deploy your Kubeflow app's against your remote K8s cluster.
+If you get stuck here, or if your permissions/policies don't allow you to use minikube, just jump on over to <<appendix_installing>> and you can deploy your Kubeflow apps against your remote K8s cluster.
 ====
 
 [[brief_alternatives_to_kubeflow]]
@@ -385,7 +385,7 @@ The model abstraction layer provides an implementable interface for providing pl
 The layer is comprised of a prediction cache, an adaptive query-batching component, and model containers that are communicable through RPC.
 These model containers are built as Docker containers, so it was intended that Clipper may run on Kubernetes seamlessly.
 
-Clipper's modular architecture and focus on containerization, similar to Kubeflow, enables caching and batching mechanisms to be shared across frameworks while also reaping the gains of scalability, concurrency, and flexibility in adding new model frameworks
+Clipper's modular architecture and focus on containerization, similar to Kubeflow, enables caching and batching mechanisms to be shared across frameworks while also reaping the gains of scalability, concurrency, and flexibility in adding new model frameworks.
 
 Graduating from just scientific theory into a functional end-to-end system, Clipper has gained traction within the scientific community and has had various parts of its architectural designs incorporated into recently introduced machine learning systems; nonetheless, we have yet to see if it will be adopted in industry at scale.
 
