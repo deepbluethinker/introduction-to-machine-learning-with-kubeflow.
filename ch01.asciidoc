@@ -31,23 +31,23 @@ Kubeflow provides a unified system with repeatable components power by container
 
 
 
-Containerization means no more "it worked on my machine" or "just install extra_pip_requirements.txt".
-Data Scientist with Python experience can think of containers as a like heavy duty virtual environment, which includes the operating system to the packages and everything in between.
-This is used to isolate your from the host environment (or machine running the container).
-The isolation means that all dependencies must be explicitly added and you won't accidently start depending on some system packages.
-Containirizing our machine learning makes it portable and reproducible.
+Containerization means no more "it worked on my machine" or "oh yeah we you need package this extra package."
+Containerized applications are isolated from the rest of your machine, and have all of their requirements included (from the operating system up).
+A common worry about using containers is overhead, but containers can be built in layers allowing you to use another container description as its base.
+This means that if, for example, you have a new NLP library you want to use in your pipeline you can add it on top of the existing container and you don't have to start from scratch each time.
+The isolation provided by containers allow our machine learning stages to be portable and reproducible.
 
 
 [TIP]
 ====
-Docker containers are made out of multiple layers and are easily compossible, so, if for example, there is a container image that has most of what you need (CUDA, etc.) but you also need some extra packages on top of it, you can build a container using another one as the base.
+Data Scientist with Python experience can think of containers as a like heavy duty virtual environment, which includes the operating system to the packages and everything in between.
 ====
 
 
-
-
 Kubernetes allows our pipelines to be scalable without sacrificing portability, allowing us to avoid becoming locked into a specific cloud provider.
-With Kubernetes the different stages of your pipeline can request the different resources they need from a cluster, and different versions of your pipeline can run with different resources.
+In addition to being able to switch from a single machine to a distributed cluster, different stages of your machine learning pipeline can request different amounts and types of resources.
+For example, with your data preparation step may benefit more from running on multiple machines, and your model training can benefit more from access GPUs.
+This flexibility is especially useful in cloud enviroments, where you can reduce your costs by only using expensive resources when required.
 
 
 Now one can of course build their own containirzed machine learning pipelines on Kubernetes without using Kubefklow, but Kubeflow aims to make this substantailly easier.
@@ -56,7 +56,7 @@ Kubeflow provides an easier partially-standarized interface to the tools you wou
 
 [TIP]
 ====
-We talk about who this book is for in <<assumptions_about the_audience>> as well as the required background and resources to get up to speed if you need them.
+We talk about who this book is for in <<assumptions_about_the_audience>> as well as the required background and resources to get up to speed if you need them.
 ====
 
 
