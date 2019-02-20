@@ -1,38 +1,244 @@
 [[simple_training_ch]]
-== Training & Serving a Simple Model with `scikit`
+== Training and Serving a Simple Model with `sklearn`
+
+In this chapter we're going to do a "Hello World" of Kubeflow.  Kubeflow is a large and complicated system, and we're
+ not going to turn every knob, set every dial, or utilize every feature.  What we are going to do is present a "simple"
+ getting started-first pass attempt to achieve three things:
+
+- Train a simple `sklearn` model
+- Serve that model using `seldon-core`
+- Query that model to make sure it is (technically) functional .
+
+The first question the reader might ask is, "Why `sklearn`?  That's boring stuff for babies." Well, maybe- but it's also one of
+the most widely used machine learning packages today, and while there is plenty of documentation about deploying
+fancy-pants deep learning models, there isn't much available for the old workhorse `sklearn`.  We are following an
+example that uses sklearn but was focused on `TensorFlow` so if you feel so inclined- you are welcome to change over to
+that.
+
+The second question the reader might ask is, "What do you mean by "technically" functional?"  In this example we're
+going to read handwritten digits via `RandomForrestClassifier` which is really the wrong tool for the job and does not
+perform well.  We really just care that we have a model, we can send it a digit (or at least a matrix repreesntation of
+digit), and it will respond with the digits zero through nine, and the models "guess" at how likely it is to be each of
+digits.
+
+The third question the reader might ask is, "Why are we using `seldon-core`? Flask is much easier." I would agree that
+_every thing in this entire book_ might seem like an unnessicarily long and overly complex approach to seemingly simple
+problems.  The reader should only be here if they are attempting to scale simple laptop problems to robust production
+systems.  The underlying idea here is that deploying to production is complex, data scientists do a poor job of handling
+complex things, and we would rather do hard work once to keep the data scientists away from the complexity because we
+know what we're doing.
+
+This chapter will consist of the following sections:
+
+- Installing `microk8s` on `multipass`, along with supporting tools (to be moved to appendix?)
+- Cloning and modifying `example-seldon`
+- Training and observing the training of the model
+- Serving the model and checking that it "works"
+
+=== Install `microk8s` on `multipass` with support tooling
+
+Multipass (https://github.com/CanonicalLtd/multipass) is a system for orchestrating virtual machines in Linux or OSX.
+If you have a Linux machine you could simply install `kubectl` and friends on the system, however when learning, I have
+found it's usually nice to have a 'throw away' system to learn on.  Multipass is also very useful for OSX because trying
+do anything besides playing stuff on iTunes and writing blogs on OSX is an aweful experience I wouldn't wish on my worst
+enemy.
+
+==== Installing `multipass`
+
+====== On OSX
+
+To install `multipass` on OSX, go to https://github.com/CanonicalLtd/multipass/releases and download `*-Darwin.pkg` from
+the latest release.  Follow the instructions in the installer.
+
+====== On Linux
+
+To install `multipass` in a Linux environment using `snap` run the following at the command line interface:
+
+```
+sudo snap install multipass --beta --classic
+```
+
+===== Create Machine and Setup `microk8s`
+
+First we must create a new virtual machine.
+
+```
+multipass launch bionic -n kubeflow -m 8G -d 40G -c 4
+```
+
+This will create a VM based on `bionic-beaver` also known as Ubuntu 18.04.  We are naming the machine `kubeflow` and
+alloting it 8 GB of memory, 40 GB of disk space and 4 cpu cores. You may need to reduce those amount on smaller systems.
+
+Next we install `microk8s` on our virtual machine.
+
+```
+multipass exec kubeflow -- sudo snap install microk8s --classic
+```
+
+Now lets enter our virtual machines shell and set some settings.
+
+```
+multipass shell kubeflow
+```
+
+The following will enable the `microk8s.docker` registry and DNS dashboard, and create aliases so `kubectl` and `docker`
+ will use `microk8s.kubectl` and `microk8s.docker` respectively.  We update the `DOCKER_HOST` environmental variable
+ because the `microk8s.docker` version behaves slightly differently from the standard `docker`. Finally, you'll notice we update `iptables` to accept
+ incoming connections, we do this so we can see the web-uis of various services we are running.
+
+```
+microk8s.enable dns dashboard # turns off FORAWARD ACCEPT
+sudo iptables -P FORWARD ACCEPT
+sudo snap alias microk8s.kubectl kubectl
+
+### Faking Docker
+microk8s.enable registry
+sudo snap alias microk8s.docker docker
+export DOCKER_HOST="unix:///var/snap/microk8s/current/docker.sock"
+sudo ln -s /var/snap/microk8s/current/docker.sock /var/run/docker.sock
+sudo ln -s /var/snap/microk8s/common/var/lib/docker /var/lib/docker
+```
+
+==== Installing all of our Friends
+
+Kubernetes has _lots_ of friends.  Here we present a simple recipe for installing them all.  The user is encouraged to
+go research what each does on their own time.
+
+```
+### K8s Tools
+git clone https://github.com/canonical-labs/kubernetes-tools
+sudo kubernetes-tools/setup-microk8s.sh
+
+### Kubeflow Tools
+git clone https://github.com/canonical-labs/kubeflow-tools
+kubeflow-tools/install-kubeflow.sh
+
+### KSonnet
+wget https://github.com/ksonnet/ksonnet/releases/download/v0.13.1/ks_0.13.1_linux_amd64.tar.gz
+tar -xzf *gz
+rm *gz
+sudo cp ks*/ks /usr/local/bin
+
+### Argo
+udo curl -sSL -o /usr/local/bin/argo https://github.com/argoproj/argo/releases/download/v2.2.1/argo-linux-amd64
+sudo chmod +x /usr/local/bin/argo
+kubectl apply -f https://raw.githubusercontent.com/argoproj/argo/v2.2.1/manifests/install.yaml
+
+### Helm and Tiller
+sudo snap install helm --classic
+kubectl -n kube-system create sa tiller
+kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
+helm init --service-account tiller
+kubectl rollout status deploy/tiller-deploy -n kube-system
+```
 
 
-=== Install `microk8s` on `multipass`
+=== Hello World
 
-- Docker Host stuff / tricking docker
+===== Clone `example-seldon`
 
+TIP: Will need to be updated to factor out `ks`
 
-=== Install supporting tools
+For this simple example we are going to follow along with an example you can find at https://github.com/kubeflow/example-seldon.
 
-- Argo
-- Helm
-- Tiller
+Though we will be loosely following this example, we will be updating the version of `seldon-core` and changing the
+persistant volume claim (storage) from Google Cloud to local disk.  We will also be building the docker containers
+and pushing them to our own local registry.
 
+While in the shell of the virtual machine- run the following command to clone the example source code:
 
-=== Clone `example-seldon`
+```
+git clone https://github.com/kubeflow/example-seldon
+```
 
-Will need to be updated to factor out `ks`
+I'm not going to say too much about this bc it's getting factored out, but here is a recipe.
+```
+cd ~/my_kubeflow/ks_app  # created by kubeflow-tools/install-kubeflow.sh
+ks pkg install kubeflow/seldon
+ks pkg install kubeflow/argo
 
-=== Creating a Persistent Volume (locally, not on google)
+ks generate seldon seldon
+ks generate argo kubeflow-argo
 
-=== Updating YAMLs
+ks apply default -c seldon
+ks apply default -c kubeflow-argo
+```
+===== Creating a Persistent Volume
 
-- point to our PVC
-- update Seldon Version (and containerSpec**s**)
+The first place we are going to diverge from the provided example is instead of using Google NFS for our storage, we are
+goign to create a Persistant Volume Claim on local disks.  See https://kubernetes.io/docs/tasks/configure-pod-container/configure-persistent-volume-storage/
+ for more information.
 
-=== Building Docker Images
+To create the `PersistantVolume` and `PersistantVolumeClaim`:
 
-=== Running Training
+```bash
+kubectl create -f https://k8s.io/examples/pods/storage/pv-volume.yaml -n kubeflow
+kubectl create -f https://k8s.io/examples/pods/storage/pv-claim.yaml -n kubeflow
+```
+
+This will download the `.yaml` file examples which will create a persistent volume named `task-pv-volume` and a
+persistent volume claim against `task-pv-volume` named `task-pv-claim`. We will see in the next section that this
+persistent disk space is only used to save and load the model, however we could also load training data in this way
+(MNIST data is downloaded in `create_model.py`). The reader is encouraged to learn more on their own about `PersistentVolume`
+and `PersistentVolumeClaim` s.
+
+===== Updating YAMLs
+
+We are going to be updating two `yaml` files. `$EXAMPLE_SELDON_CLONE_DIR/workflows/training-sk-mnist-workflow.yaml`
+and `$EXAMPLE_SELDON_CLONE_DIR/workflows/serving-sk-mnist-workflow.yaml`.  We will need to edit these in the virtual
+machine, but it might be easier to look at them here:
+
+- https://github.com/kubeflow/example-seldon/blob/master/workflows/training-sk-mnist-workflow.yaml
+- https://github.com/kubeflow/example-seldon/blob/master/workflows/serving-sk-mnist-workflow.yaml
+
+We want to accomplish three things.  First- are going to update them both to use our newly created `PersistentVolumeClaim`
+instead of the Google based on originally called for in the example.  Next we are going to update them both to point to
+local Docker images we will be creating in the next step. Finally, we will update the serving `yaml` to use a newer version
+`seldon-core`.
+
+In the VM shell, edit `$EXAMPLE_SELDON_CLONE_DIR/workflows/training-sk-mnist-workflow.yaml`.  The first edit we will make
+is the last line you will see:
+
+```
+ claimName: "nfs-1"
+```
+
+We want to change that to
+
+```
+ claimName: task-pv-claim
+```
+
+If you create your own persistent volume clain and name it something else, simply enter that here.
+
+Secondly, we are going to update the image to use. A few lines up (appoximately line 87) you will see:
+
+```
+{{workflow.parameters.docker-user}}/skmnistclassifier_trainer:{{workflow.parameters.version}}
+```
+
+We want to change that to
+
+```
+localhost:32000/skmnistclassifier_trainer:latest
+```
+
+The observant reader will have noticed that we didn't _need_ to change that, instead we could have simply set `docker-user`
+and `version` however, we want the reader to see where this is being set with the idea they will be writing their own someday
+soon.
+
+Next we're going to edit `$EXAMPLE_SELDON_CLONE_DIR/workflows/serving-sk-mnist-workflow.yaml`.
+The steps are similar. `claimName: "nfs-1"` is a few lines from the bottom (not the dead last line as previously).
+The `image` is a few lines above that.
+
+===== Building Docker Images
+
+===== Running Training
 
 - launch w argo
 - look at pretty webui
 
-=== Serving
+===== Serving
 
 - launch w argo
 - bootleg notbook for testing
