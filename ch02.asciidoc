@@ -1,2 +1,38 @@
 [[simple_training_ch]]
-== Training & Serving a simple linear regression model w/scikit on pre-built data 
+== Training & Serving a Simple Model with `scikit`
+
+
+=== Install `microk8s` on `multipass`
+
+- Docker Host stuff / tricking docker
+
+
+=== Install supporting tools
+
+- Argo
+- Helm
+- Tiller
+
+
+=== Clone `example-seldon`
+
+Will need to be updated to factor out `ks`
+
+=== Creating a Persistent Volume (locally, not on google)
+
+=== Updating YAMLs
+
+- point to our PVC
+- update Seldon Version (and containerSpec**s**)
+
+=== Building Docker Images
+
+=== Running Training
+
+- launch w argo
+- look at pretty webui
+
+=== Serving
+
+- launch w argo
+- bootleg notbook for testing
