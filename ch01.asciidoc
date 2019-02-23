@@ -150,17 +150,22 @@ The fastest way to get started with Kubeflow is using the simplified click-to-de
 
 ==== Installing Kubeflow & its dependencies
 
-Kubeflow has relatively few system dependencies, most of the heavy lifting is done inside containers which are already built with their requirements.
-The biggest requirement for Kubeflow is access to a Kubernetes cluster, be it local or remote.
+The biggest requirement for Kubeflow is access to a Kubernetes cluster, be it local (like Minikube, MicroK8s) or a remote cluster.
+In addition to a Kubernetes cluster you need some extra tools, but less than you would expect since the containers contain all there own dependencies.
 Kubeflow ships with scripts to automate the set up of the system dependencies as well as a local Kubernetes cluster, called Minikube.
 You don't need to install Kubeflow with these scripts, but the automatic setup tools can help you get up and running faster even if you don't plan on using Minikube.
 
+[TIP]
+====
+Regardless of if you use a local or remote Kubernetes cluster, having the development tools installed locally will simplify your life.
+====
 
 
 ===== Automatically
 
-Kubeflow's system dependencies can be automatically installed along with the optional Minikube by running the install shell script <<mini_kube_setup_sh>>.
+Kubeflow's dependencies can be automatically installed along with, optional, Minikube by running the install shell script <<mini_kube_setup_sh>>.
 If you prefer MicroK8s, Canonical Labs has their own auto-install script covered in <<setting_up_microk8s>>.
+Even if you don't plan on using Minikube or MicroK8s, these scripts simplify the rest of the set up.
 
 [[mini_kube_setup_sh]]
 .Automatically install Kubeflow's dependencies & Minikube
@@ -180,16 +185,21 @@ If this fails to install minikube, don't worry we'll cover how to fix that up in
 
 [WARNING]
 ====
-This will modify your system packages installing and require root/super user permissions. If you wish you can instead run these commands on another host (e.g. dedicated KF development enviroment).
+These will modify your system packages installing and require root/super user permissions. If you wish you can instead run these commands on another host (e.g. dedicated KF development enviroment).
 ====
 
 ===== Manually
 
 // TODO(holden): This is going to change
 
-If you don't want to install Minikube, you can manually install Kubeflow's dependencies: ksonnet and kubectl. Even if you have these installed, you will want to check that you have the right versions installed for your version of Kubeflow.
-// TODO(holden): Where? Release notes?
+If you don't want to install Minikube, you can manually install Kubeflow's dependencies: ksonnet and kubectl.
+// TODO(holden): Where to check the versions
 Ksonnet is on github, with its release posted at link:$$https://github.com/ksonnet/ksonnet/releases$$[https://github.com/ksonnet/ksonnet/releases], and you can install it with <<<install_ksonnet_sh>>.
+
+[NOTE]
+====
+Even if you have these installed, you will want to check that you have the right versions installed for your version of Kubeflow.
+====
 
 [[install_ksonnet_sh]]
 .Install ksonnet
@@ -224,7 +234,7 @@ include::examples/dev-setup/install-ksonnet-and-kubectl.sh[tags=osx-kubectl]
 ====
 
 [[install_kubectl_curl]]
-.Install kubectl without a package manager
+.Install kubectl without a package manager and no sudo
 ====
 [source, shell]
 ----
@@ -324,7 +334,14 @@ This part is optional, if it ends up being frustrating or slowing you down feel 
 ====
 
 
-Inside the Kubeflow project, the Jsonnet library is used to automatically format Ksonnet into a standard layout. This autoformatter can also catch syntax errors or other simple errors earlier on in the deploy. The jsonnet package link:$$https://github.com/google/jsonnet/releases$$[releases are available on GitHub] <<jsonnet_manual>>, link:$$https://snapcraft.io/$$[Snap] <<jsonnet_snap>> (from Canonical). It is also listed on PyPi, but currently does not install the command line tools. Some of the IDE tools for Jsonnet depend on the command line binary.
+Inside the Kubeflow project, the Jsonnet library is used to automatically format Ksonnet into a standard layout. This autoformatter can also catch syntax errors or other simple errors earlier on in the deploy.
+You can install from jsonnet package link:$$https://github.com/google/jsonnet/releases$$[releases are available on GitHub] <<jsonnet_manual>>, link:$$https://snapcraft.io/$$[Snap] <<jsonnet_snap>> (from Canonical).
+
+[WARNING]
+====
+While jsonnet is listed on PyPi, it doesn't install the command line tools which are needed by some IDEs.
+====
+
 
 [[jsonnet_snap]]
 .Install jsonnet with snap (Ubuntu)
