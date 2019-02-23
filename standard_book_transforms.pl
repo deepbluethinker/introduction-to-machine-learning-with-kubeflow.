@@ -18,7 +18,7 @@ sub process_file {
     $text =~ s/hive([\s\n]+)support/Hive$1support/gi;
     $text =~ s/spark[\s\n]+streaming/Spark Streaming/gi;
     $text =~ s/built[\s\n]+in/built-in/gi;
-    $text =~ s/data[\s\n]+scientists[\s\n]+and[\s\n]+engineers/Data Scientists and Engineers/gi;
+    #$text =~ s/data[\s\n]+scientists[\s\n]+and[\s\n]+engineers/Data Scientists and Engineers/gi;
     $text =~ s/([\s\n])rdd([\s\n\.])/$1RDD$2/gi;
     $text =~ s/its[\s\n]important/it's important/gi;
     $text =~ s/its[\s\n]time/it's time/gi;
@@ -111,6 +111,9 @@ sub process_file {
     $text =~ s/link:\$\$\$\$/link:\$\$/g;
     $text =~ s/link:\$h/link:\$\$h/g;
     $text =~ s/link:\$\$(h[^\$\s]*)\$\[/link:\$\$$1\$\$\[/g;
+    # Pluralize some things
+    $text =~ s/data scientist and data engineers/data scientists and data engineers/g;
+    $text =~ s/data scientists and data engineer/data scientists and data engineers/g;
 
     open (my $out, ">$file");
     print $out $text;
