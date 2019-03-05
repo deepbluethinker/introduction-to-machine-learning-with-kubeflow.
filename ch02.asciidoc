@@ -9,7 +9,8 @@ In this chapter we're going to do a "Hello World" of Kubeflow.  Kubeflow is a la
 - Serve that model using `seldon-core`
 - Query that model to make sure it is (technically) functional .
 
-The first question the reader might ask is, "Why `sklearn`?  That's boring stuff for babies." Well, maybe- but it's also one of
+The first question the reader might ask is, "Why `sklearn`?  That's not Tensorflow"
+Well, maybe- but it's also one of
 the most widely used machine learning packages today, and while there is plenty of documentation about deploying
 fancy-pants deep learning models, there isn't much available for the old workhorse `sklearn`.  We are following an
 example that uses sklearn but was focused on `TensorFlow` so if you feel so inclined- you are welcome to change over to
@@ -36,9 +37,43 @@ This chapter will consist of the following sections:
 
 === Hello World
 
-===== Clone `example-seldon`
+==== Creating a Kubeflow project
 
-TIP: Will need to be updated to factor out `ks`
+Before we get started, we will need to make a Kubeflow project for us to work in.
+The script `kfctl.sh`, in the scripts directory of your Kubeflow installation,
+allows you to create projects. We'll start with an example project in <<create_example_project>>.
+
+.Create first example project
+====
+[source, shell]
+----
+include::examples/ch2_seldon_examples/setup_example.sh[tags=generate_kf_app]
+----
+====
+
+
+[NOTE]
+====
+If you haven't added the scripts directory to your path for easy access you will to use the full path to your Kubeflow install.
+====
+
+==== Setting up our components
+
+Kubeflow project's can have all kinds of different components.
+Many common ones, like seldon, are automatically installed by kfctl automatically.
+In addition to the default components set up we will configure a few extra pieces:
+
+.Set up components
+====
+[source, shell]
+----
+include::examples/ch2_seldon_examples/setup_example.sh[tags=setup_components]
+----
+====
+
+
+==== Clone `example-seldon`
+
 
 For this simple example we are going to follow along with an example you can find at https://github.com/kubeflow/example-seldon.
 
@@ -46,25 +81,20 @@ Though we will be loosely following this example, we will be updating the versio
 persistant volume claim (storage) from Google Cloud to local disk.  We will also be building the docker containers
 and pushing them to our own local registry.
 
-While in the shell of the virtual machine- run the following command to clone the example source code:
+The example source can be cloned with git <<get_seldon_example_source>>.
 
-```
-git clone https://github.com/kubeflow/example-seldon
-```
+.Clone Seldon Example
+[[get_seldon_example_source]]
+====
+[source, shell]
+----
+include::examples/ch2/setup_example.sh[tags=clone]
+----
+====
 
-I'm not going to say too much about this bc it's getting factored out, but here is a recipe.
-```
-cd ~/my_kubeflow/ks_app  # created by kubeflow-tools/install-kubeflow.sh
-ks pkg install kubeflow/seldon
-ks pkg install kubeflow/argo
 
-ks generate seldon seldon
-ks generate argo kubeflow-argo
 
-ks apply default -c seldon
-ks apply default -c kubeflow-argo
-```
-===== Creating a Persistent Volume
+==== Creating a Persistent Volume
 
 The first place we are going to diverge from the provided example is instead of using Google NFS for our storage, we are
 goign to create a Persistant Volume Claim on local disks.  See https://kubernetes.io/docs/tasks/configure-pod-container/configure-persistent-volume-storage/
@@ -83,7 +113,7 @@ persistent disk space is only used to save and load the model, however we could 
 (MNIST data is downloaded in `create_model.py`). The reader is encouraged to learn more on their own about `PersistentVolume`
 and `PersistentVolumeClaim` s.
 
-===== Updating YAMLs
+==== Updating YAMLs
 
 We are going to be updating two `yaml` files. `$EXAMPLE_SELDON_CLONE_DIR/workflows/training-sk-mnist-workflow.yaml`
 and `$EXAMPLE_SELDON_CLONE_DIR/workflows/serving-sk-mnist-workflow.yaml`.  We will need to edit these in the virtual
@@ -134,7 +164,7 @@ The `image` is a few lines above that.
 
 === Building Images, Training, and Serving
 
-====== Building and Training
+==== Building and Training
 
 It might seem a bit strange that in a "Hello World" of a system that is all about building, training and serving machine
 learning models, that this is just a short section at the end, but here we are.  Kubeflow is about setting up pipelines
@@ -209,10 +239,16 @@ argo submit serving-sk-mnist-workflow.yaml -n kubeflow -p deploy-model=true
 
 TIP: `-p deploy-model=true` is a feature of that particular workflow, and not nessicary for all kubeflow serving.
 
-====== Querying the Model
+== Querying the Model
 
 The model will be available at http://<AMBASSADOR_IP>:<AMBASSADOR_PORT>/seldon/<DEPLOYMENT_NAME>/api/v0.1/predictions
 
 There is a python script available at (insert path, it's in atlas) for pulling an image from the MNIST dataset, turning
 into a vector, displaying the image, and sending to to the model.  The model returns a json of the 10 digits and the 
 probabiltiy that submitted image is what digit. 
+
+== Conclusion
+
+We hope that your first adventure into Kubeflow has been a success.
+In the next chapter we are going to introduce the case studies that we will develop
+throughout the rest of the book.
