@@ -455,7 +455,8 @@ If you use a different IDE, don't throw it away just for better ksonnet editing 
 If you get stuck here, or if your permissions/policies don't allow you to use minikube, just jump on over to <<appendix_installing>> and you can deploy your Kubeflow apps against your remote K8s cluster.
 ====
 
-[[brief_alternatives_to_kubeflow]]
+
+[[brief_alternatives_to_kubeflow, brief alternatives to kubeflow section]]
 === Brief Alternatives to Kubeflow
 
 Within the research community, various alternatives exist that provide uniquely different functionality to that of Kubeflow.
