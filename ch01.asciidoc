@@ -170,7 +170,7 @@ Even if you don't plan on using Minikube or MicroK8s, these scripts simplify the
 [[mini_kube_setup_sh]]
 .Automatically install Kubeflow's dependencies & Minikube
 ====
-[source, shell]
+[source, bash]
 ----
 include::examples/dev-setup/install-kf-and-minikube.sh[tags=work]
 ----
@@ -204,7 +204,7 @@ Even if you have these installed, you will want to check that you have the right
 [[install_ksonnet_sh]]
 .Install ksonnet
 ====
-[source, shell]
+[source, bash]
 ----
 include::examples/dev-setup/install-ksonnet-and-kubectl.sh[tags=ksonnet]
 ----
@@ -222,7 +222,7 @@ Kubectl can also be installed outside of your package manager <<install_kubectl_
 [[install_kubectl_snap]]
 .Install kubectl with snap
 ====
-[source, shell]
+[source, bash]
 ----
 include::examples/dev-setup/install-ksonnet-and-kubectl.sh[tags=ubuntu-kubectl]
 ----
@@ -231,7 +231,7 @@ include::examples/dev-setup/install-ksonnet-and-kubectl.sh[tags=ubuntu-kubectl]
 [[install_kubectl_homebrew]]
 .Install kubectl with homebrew
 ====
-[source, shell]
+[source, bash]
 ----
 include::examples/dev-setup/install-ksonnet-and-kubectl.sh[tags=osx-kubectl]
 ----
@@ -240,7 +240,7 @@ include::examples/dev-setup/install-ksonnet-and-kubectl.sh[tags=osx-kubectl]
 [[install_kubectl_curl]]
 .Install kubectl without a package manager and no sudo
 ====
-[source, shell]
+[source, bash]
 ----
 include::examples/dev-setup/install-ksonnet-and-kubectl.sh[tags=no-pkg-manager-kubectl]
 ----
@@ -253,7 +253,7 @@ Once you have the dependencies installed, you can now install Kubeflow with <<in
 [[install_kf]]
 .Install Kubeflow
 ====
-[source, shell]
+[source, bash]
 ----
 include::examples/dev-setup/install-kf.sh[tags=no-pkg-manager-install]
 ----
@@ -353,7 +353,7 @@ Ubuntu users can directly install MicroK8s from snap with <<install_microk8s>>.
 [[install_microk8s]]
 .Install MicroK8s
 ====
-[source, shell]
+[source, bash]
 ----
 include::examples/dev-setup/install-microk8s.sh[tags=installmicrok8s]
 ----
@@ -367,7 +367,7 @@ Since Kubeflow uses the standard names, you will want to add an alias as shown i
 [[setup_microk8s]]
 .Set up MicroK8s components and aliases
 ====
-[source, shell]
+[source, bash]
 ----
 include::examples/dev-setup/install-microk8s.sh[tags=setupmicrok8s]
 ----
@@ -378,7 +378,7 @@ Once you're done using MicroK8s, or you otherwise want to access the regular ver
 [[unalias_microk8s]]
 .Set up MicroK8s components and aliases
 ====
-[source, shell]
+[source, bash]
 ----
 include::examples/dev-setup/install-microk8s.sh[tags=unaliasmicrok8s]
 ----
@@ -394,7 +394,7 @@ or use it like a regular K8s cluster.
 .Bootstrap Kubeflow on MicroK8s
 [[bootstrap_microk8s_kf]]
 ====
-[source, shell]
+[source, bash]
 ----
 include::examples/dev-setup/install-microk8s.sh[tags=bootstrapwithcanonicallabs]
 ----
@@ -428,7 +428,7 @@ While jsonnet is listed on PyPi, it doesn't install the command line tools which
 [[jsonnet_snap]]
 .Install jsonnet with snap (Ubuntu)
 ====
-[source, shell]
+[source, bash]
 ----
 include::examples/dev-setup/jsonnet.sh[tags=snap]
 ----
@@ -437,7 +437,7 @@ include::examples/dev-setup/jsonnet.sh[tags=snap]
 [[jsonnet_manual]]
 .Install jsonnet manually (everyone else)
 ====
-[source, shell]
+[source, bash]
 ----
 include::examples/dev-setup/jsonnet.sh[tags=manual]
 ----
