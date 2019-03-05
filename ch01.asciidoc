@@ -266,10 +266,58 @@ To support this you will need a local version of Kubernetes installed.
 Kubeflow has setup scripts which automatically download and attempt to set up Minikube, but this is not your only option.
 Ubuntu users in particular may find MicroK8s faster to set up.
 
+
 [TIP]
 ====
 You don't need to have a local Kubernetes cluster, but many data scientists and developers find having a local cluster to test with (be it Minikube or MicroK8s or other).
 ====
+
+[[set_up_multipass]]
+===== Setting up Multipass
+
+This part is optional, however you may find it easier to have a throw away system to do your learning in.
+Multipass (https://github.com/CanonicalLtd/multipass) is a system for orchestrating virtual machines in Linux or OSX.
+If you don't want multi-pass, feel free to skip ahead.
+
+[TIP]
+====
+Multipass is also very useful for OSX because the system set up can be more challanging, and multipass gives you a Linux enviroment to work in
+====
+
+
+To install `multipass` on OSX, go to https://github.com/CanonicalLtd/multipass/releases and download `*-Darwin.pkg` from
+the latest release.  Follow the instructions in the installer.
+
+To install `multipass` in a Linux environment using `snap` run the following at the command line interface:
+
+```
+sudo snap install multipass --beta --classic
+```
+
+====== Create Machine and Setup `microk8s`
+
+Now that you have multipass set up, you will want to make a machine you can expirement in.
+
+```
+multipass launch bionic -n kubeflow -m 8G -d 40G -c 4
+```
+
+This will create a VM based on `bionic-beaver` also known as Ubuntu 18.04.  We are naming the machine `kubeflow` and
+alloting it 8 GB of memory, 40 GB of disk space and 4 cpu cores. You may need to reduce those amount on smaller systems.
+
+Now that you have this VM created you can get a shell to it and start following the normal set up directions.
+
+
+```
+multipass shell kubeflow
+```
+
+To allow your machine to be able to connect to the web ui and other parts of the console you will need to change the iptables rules with:
+
+```
+sudo iptables -P FORWARD ACCEPT
+`
+
 
 [[setting_up_minikube]]
 ===== Minikube
@@ -307,8 +355,37 @@ include::examples/dev-setup/install-microk8s.sh[tags=installmicrok8s]
 ----
 ====
 
+MicroK8s requires some post installation set-up work.
+First off, if you want to use it's built in docker registry your going to want to turn it on and configure the host.
+Also, it ships with special versions of commands, including the `kubectl` and `docker` commands, which are accessed with as `microk8s.[command]`.
+Since Kubeflow uses the standard names, you will want to add an alias as shown in <<setup_microk8s>>
+
+[[setup_microk8s]]
+.Set up MicroK8s components and aliases
+====
+[source, shell]
+----
+include::examples/dev-setup/install-microk8s.sh[tags=setupmicrok8s]
+----
+====
+
+Once you're done using MicroK8s, or you otherwise want to access the regular versions of the commands you remove the alias as in <<unalias_microk8s>>.
+
+[[unalias_microk8s]]
+.Set up MicroK8s components and aliases
+====
+[source, shell]
+----
+include::examples/dev-setup/install-microk8s.sh[tags=unaliasmicrok8s]
+----
+====
+
+
+
 Once you have MicroK8s installed you can use the Canonical provided bootstrap scripts to set up Kubeflow on top of it <<bootstrap_microk8s_kf>>,
 or use it like a regular K8s cluster.
+
+
 
 .Bootstrap Kubeflow on MicroK8s
 [[bootstrap_microk8s_kf]]
@@ -318,6 +395,7 @@ or use it like a regular K8s cluster.
 include::examples/dev-setup/install-microk8s.sh[tags=bootstrapwithcanonicallabs]
 ----
 ====
+
 
 
 
