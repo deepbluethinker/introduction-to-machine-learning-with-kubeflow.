@@ -212,7 +212,11 @@ include::examples/dev-setup/install-ksonnet-and-kubectl.sh[tags=ksonnet]
 
 
 
-Kubectl is more widely packaged, with the different installation options covered in the link:$$https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl$$[kubernetes documentation https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl]. Ubuntu (snap) <<install_kubectl_snap>> and Homebrew users can install Kubectl <install_kubectl_homebrew>> the simplest with package manager, with others covered in the guide.
+Kubectl is more widely packaged, with the different installation options covered in the link:$$https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl$$[kubernetes documentation https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl].
+If you want to use a package manager to install kubectl,
+Ubuntu users can use snap <<install_kubectl_snap>> and
+Homebrew users can install Kubectl <<install_kubectl_homebrew>>,
+the simplest with package manager for this, with others covered in link:$$https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl$$[the guide].
 Kubectl can also be installed outside of your package manager <<install_kubectl_curl>>, although this requires manual updating.
 
 [[install_kubectl_snap]]
