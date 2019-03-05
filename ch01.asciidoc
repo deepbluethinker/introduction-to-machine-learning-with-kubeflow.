@@ -4,7 +4,7 @@
 
 Kubeflow solves the problem of needing to build portable, reliable, scalable machine learning pipelines and using the results.
 We hope Kubeflow is the right tool for you, although it may not be especially if your organization does not have Kubernetes deployed.
-We briefly look at some alternatives in <<brief_alternatives_to_kubeflow>> for you to explore.
+We briefly look at some alternatives in <<Brief Alternatives to Kubeflow>> for you to explore.
 
 
 [TIP]
@@ -456,7 +456,6 @@ If you get stuck here, or if your permissions/policies don't allow you to use mi
 ====
 
 
-[[brief_alternatives_to_kubeflow, brief alternatives to kubeflow section]]
 === Brief Alternatives to Kubeflow
 
 Within the research community, various alternatives exist that provide uniquely different functionality to that of Kubeflow.
