@@ -248,7 +248,7 @@ include::examples/dev-setup/install-ksonnet-and-kubectl.sh[tags=no-pkg-manager-k
 
 
 
-Once you have the dependencies installed, you can now install Kubeflow with <<install_kf_sh>>, and optionally add it to your path.
+Once you have the dependencies installed, you can now install Kubeflow with <<install_kf>>, and optionally add it to your path.
 
 [[install_kf]]
 .Install Kubeflow
