@@ -320,7 +320,7 @@ To allow your machine to be able to connect to the web ui and other parts of the
 
 ```
 sudo iptables -P FORWARD ACCEPT
-`
+```
 
 
 [[setting_up_minikube]]
