@@ -456,10 +456,10 @@ If you get stuck here, or if your permissions/policies don't allow you to use mi
 ====
 
 
-
+[[brief_alternatives_to_kubeflow]]
 === Brief Alternatives to Kubeflow
 
-[[brief_alternatives_to_kubeflow]]
+
 Within the research community, various alternatives exist that provide uniquely different functionality to that of Kubeflow.
 In recent research cadences, model development or training has received much attention and support with regards to advancements in infrastructure, theory, and systems.
 Prediction serving, on the other hand, has received relatively less attention.
