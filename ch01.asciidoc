@@ -255,7 +255,7 @@ Once you have the dependencies installed, you can now install Kubeflow with <<in
 ====
 [source, bash]
 ----
-include::examples/dev-setup/install-kf.sh[tags=no-pkg-manager-install]
+include::examples/dev-setup/install-kf.sh[tags=install]
 ----
 ====
 

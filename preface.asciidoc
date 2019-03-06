@@ -79,14 +79,13 @@ We will use warnings to indicate any situations where the resulting pipeline is 
 <!--PROD: Please reach out to author to find out if they will be uploading code examples to oreilly.com or their own site (e.g., GitHub). If there is no code download, delete this whole section. If there is, when you email digidist with the link, let them know what you filled in for title_title (should be as close to book title as possible, i.e., learning_python_2e). This info will determine where digidist loads the files.-->
 ++++
 
-Supplemental material (code examples, exercises, etc.) is available for download at link:$$https://github.com/intro-to-ml-with-kubeflow$$[]. These code examples are available under an Apache 2 license, or as described in <<using_code_examples>> at your choice.
+Supplemental material (code examples, exercises, etc.) is available for download at link:$$https://github.com/intro-to-ml-with-kubeflow$$[]. These code examples are available under an Apache 2 license, or as described in <<Using Code Examples>> at your choice.
 
 
 There are additional examples under their own respective licenses that you may find useful.
 The Kubeflow project it's self has an example repo at link:$$https://github.com/kubeflow/examples$$[], which at the time of the writing is available under an Apache 2 license.
 Canonical also has a set of resources at link:$$https://github.com/canonical-labs/kubeflow-tools$$[] which may be of special interest to MicroK8s users.
 
-[[using_code_exampless]]
 ==== Using Code Examples
 
 This book is here to help you get your job done. In general, if example code is offered with this book, you may use it in your programs and documentation. You do not need to contact us for permission unless you’re reproducing a significant portion of the code. For example, writing a program that uses several chunks of code from this book does not require permission. Selling or distributing a CD-ROM of examples from O’Reilly books does require permission. Answering a question by citing this book and quoting example code does not require permission. Incorporating a significant amount of example code from this book into your product’s documentation does require permission.
