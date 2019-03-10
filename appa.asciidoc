@@ -95,6 +95,12 @@ image::images/4_noiap_success.png["Successful click-to-deploy without IAP"]
 //TODO(holden): Footnote or link jumphost?
 Once you have your Kubeflow cluster up and running you can go ahead and connect by clicking on the "Cloud shell" button in <<4_noiap_success>>.
 
+[TIP]
+====
+If you use cloudshell through the Google Cloud console, you will want to enable link:$$https://cloud.google.com/shell/docs/features#boost_mode$$[boost mode] to provide sufficient resources.
+====
+
+
 [WARNING]
 ====
 If you use multiple google accounts, click-to-deploy assumes that the account you are using Google cloud with is also the first Google account (in priority order) as signed in on your browser (.e.g it is `/u/0`). This is a known issue and is tracked in link:$$https://github.com/kubeflow/kubeflow/issues/2267$$.
@@ -130,11 +136,7 @@ Using click-to-deploy to set up Kubeflow with identity aware proxy mode will all
 IAP access can take some time to set up, the guide says "20 minutes", if it takes longer you may need to double check your oauth tokens and possibly submit them for verification if they access restricted scopes.
 ====
 
-[TIP]
-====
-If you use cloudshell through the Google Cloud console, you will want to enable link:$$https://cloud.google.com/shell/docs/features#boost_mode$$[boost mode] to provide sufficient resources.
-====
-
+// TODO: Holden finish once IAP mode works in click to deploy
 
 
 
@@ -684,11 +686,21 @@ $ kubectl -n kubeflow get all
 
 [appendix]
 [[appendix_cloud_specific]]
-== Cloud specific Debugging
+== Cloud Specific  Tools
 
 Once you starting working with a project it's only a matter of time time before you need to start debugging it. We talk about general debugging tools in [[debugging]], but there are some additional tools available on different commercial cloud offerings which may also be of use.
 
-=== Google cloud: stack driver
+=== Google cloud
+
+==== Debugging With Stack Driver
+
+[[setup_iap]]
+==== Setting up Identity-Aware-Proxy
+
+Google Cloud has a product called link:$$https://cloud.google.com/iap/$$[Identity Aware Proxy (IAP)] to simplify access to cloud resources without requiring a special VPN client.
+If you're deploying on GKE and wish to access your Kubeflow installation without having to set up port-forwarding, IAP can be a secure solution.
+
+// TODO(holden) finish
 
 
 
