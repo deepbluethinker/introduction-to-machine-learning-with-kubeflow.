@@ -43,6 +43,7 @@ Before we get started, we will need to make a Kubeflow project for us to work in
 The script `kfctl.sh`, in the scripts directory of your Kubeflow installation,
 allows you to create projects. We'll start with an example project in <<create_example_project>>.
 
+[[create_example_project]]
 .Create first example project
 ====
 [source, shell]
