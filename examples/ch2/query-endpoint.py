@@ -41,11 +41,15 @@ features = ["X"+str(i+1) for i in range (0,784)]
 request = {"data":{"names":features,"ndarray":data.tolist()}}
 
 deploymentName = "mnist-classifier"
-AMBASSADOR_API_IP="10.53.148.125:30882"
+AMBASSADOR_API_IP="10.53.148.167:30134"
+namespace='kubeflow'
+
+uri = "http://"+AMBASSADOR_API_IP+"/seldon/"+deploymentName+"/api/v0.1/predictions"
+
 
 # update endpoint: https://github.com/SeldonIO/seldon-core/blob/master/notebooks/seldon_utils.py#L102
 response = requests.post(
-    "http://"+AMBASSADOR_API_IP+"/seldon/"+deploymentName+"/api/v0.1/predictions",
+    uri,
     json=request)
 
 print(response.status_code)

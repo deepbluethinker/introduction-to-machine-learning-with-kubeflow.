@@ -10,9 +10,6 @@ Introduction
 We assume the user has installed, Helm, Tiller, KSonnet, and Argo. If you don't have all of these requirements already installed,
 please install them first. TODO: Trevor- Version?
 
-==== Cloning our Example
-
-
 ==== Creating a Kubeflow project (H)
 
 Before we get started, we will need to make a Kubeflow project for us to work in.
@@ -36,7 +33,7 @@ If you haven't added the scripts directory to your path for easy access you will
 
 [NOTE]
 ====
-This fails with `ERROR handle object: patching object from cluster: merging object with existing state: unable to recognize "/tmp/ksonnet-mergepatch923988339": no matches for kind "Application" in version "app.k8s.io/v1beta1" `... But then it worked the second time :(
+This fails with `ERROR handle object: patching object from cluster: merging object with existing state: unable to recognize "/tmp/ksonnet-mergepatch923988339": no matches for kind "Application" in version "app.k8s.io/v1beta1" `... But always works on round 2
 ====
 
 ==== Setting up our components (H)
@@ -70,7 +67,7 @@ The example source can be cloned with git <<get_seldon_example_source>>.
 ====
 [source, shell]
 ----
-include::examples/ch2/setup_example.sh[tags=clone]
+include::examples/ch2/setup_example.sh[tags=cloneSeldonExample]
 ----
 ====
 
@@ -106,104 +103,120 @@ understand:
 IMPORTANT: The `PeristentVolumeClaim` is where the trained model is stored, and then loaded for serving.
 
 
-=== Training a Model
+=== Training and deploying a Model
 
 note intro
 
 ==== Building a Training Image (T)
 
-It might seem a bit strange that in a "Hello World" of a system that is all about building, training and serving machine
-learning models, that this is just a short section at the end, but here we are.  Kubeflow is about setting up pipelines
-to make it easy for data scientists to build, train, and serve models- and it is up to you the reader to make that
-process easy for them (unless you're a data scientist who is just reading this for fun).
 
-In the `kubeflow` virutal machine (or wherever you've been running all of this stuff) let's head back to the
+Let's head back to the
 `example-seldon/models/sk_mnist/train` directory.  In this directory you'll see a Dockerfile, and `create_model.py`.
 What `create_model.py` does is download the MNIST dataset, train a RandomForrestClassifier on the data within, and save
 trained model to `/data/sk.pkl`, which is our `PersistentVolumeClaim`.   The Dockerfile just installs `requirements.txt`
 and waits for `/data` to be mounted before running `create_model.py`.
 
-We're going to push the model to our local Docker repository, which in `microk8s` is available on port 32000.
-
-```
-cd ~/example-seldon/models/sk_mnist/train
-
-docker build . -t localhost:32000/skmnistclassifier_trainer:latest
-docker push localhost:32000/skmnistclassifier_trainer:latest
-```
 
 ==== Training and Monitoring Training Progress (T)
 
-Now, to actually train the model- we go back to the directory containing the `training-sk-mnist-workflow.yaml` workflow
-we updated earlier.  We use `argo` to submit this workflow in the `kubeflow` namespace.
+Now, to actually train the model- let's go to the directory containing the `training-sk-mnist-workflow.yaml` workflow.  We use `argo` to submit this workflow in the `kubeflow` namespace.
 
 ```
 cd ~/example-seldon/workflows
 argo submit training-sk-mnist-workflow.yaml -n kubeflow
 ```
 
-Now we can "watch" our model being trained (or at least the argo workflow).  Get the IP address of the multipass virtual
- machine by typing this into a terminal on your host machine.
-
-```
-multipass list
+To see model training progress (there is a UI, but for simple "Hello World" we're skipping it for now).
+```bash
+ kubectl get pods -n kubeflow | grep sk-train
 ```
 
-Then in the kubeflow machine shell
-
+Should yeild something like this:
 ```
-kubectl get pods -n kubeflow | grep ambassador
+kubeflow-sk-train-wnbgj-1046465934                        0/1     Completed   0          5m11s
+sk-train-kmpcr                                            0/1     Completed   0          4m31s
 ```
-
-And get the port ambassador is being served on.
-
-Finally serf to http://<your-vm-ip>:<ambassador-port>/argo/  Training time will vary.
-
-
-===== And when things go wrong...
-
-note we hope they dont, but ineveitably they will
-
-=== Serving a Model
 
 ==== Building and Deploying Serving Images
 
 note why, how, expected results
 
-Once training is done, we want to serve the model using Seldon Core. To do that we have one last install we must do-
-`s2i`, otherwise known as `source2image` which wraps our model serving code into an image for serving.  To install `s2i`
-follow this recipe in the virtual machine.
-
 ```bash
-sudo apt install make
-sudo snap install go --classic
-wget https://github.com/openshift/source-to-image/releases/download/v1.1.13/source-to-image-v1.1.13-b54d75d3-linux-amd64.tar.gz
-tar -xzf source-to-image-v1.1.13-b54d75d3-linux-amd64.tar.gz
-sudo cp ~/s2i /usr/local/bin
-```
-
-Now we can use `s2i` to create the serving image in `example-seldon/models/sk_mnist/runtime`.  We are using the
-`seldon-core` python2  base image.  Obviously you will want to use python3 as python2 has been deprecated for sometime
-now.  We then push that image into our local Docker repository, and launch the job with `argo`
-
-```bash
-cd example-seldon/models/sk_mnist/runtime
-s2i build . seldonio/seldon-core-s2i-python2:0.4 localhost:32000/skmnistclassifier_runtime:0.2
-docker push localhost:32000/skmnistclassifier_runtime:0.2
 argo submit serving-sk-mnist-workflow.yaml -n kubeflow -p deploy-model=true
 ```
 
 TIP: `-p deploy-model=true` is a feature of that particular workflow, and not nessicary for all kubeflow serving.
 
+
+```bash
+kubectl get pods -n kubeflow | grep sk-deploy
+```
+
 ==== Test Query
 
 note why, how, expected results
-The model will be available at http://<AMBASSADOR_IP>:<AMBASSADOR_PORT>/seldon/<DEPLOYMENT_NAME>/api/v0.1/predictions
+
+```bash
+$ kubectl get services -n kubeflow | grep ambassador
+ambassador                                           NodePort    10.152.183.112   <none>        80:30134/TCP        61m
+ambassador-admin                                     ClusterIP   10.152.183.204   <none>        8877/TCP            61m
+```
+
+The model will be available at http://<MACHINE_IP>:<AMBASSADOR_PORT>/seldon/<DEPLOYMENT_NAME>/api/v0.1/predictions
 
 There is a python script available at (insert path, it's in atlas) for pulling an image from the MNIST dataset, turning
 into a vector, displaying the image, and sending to to the model.  The model returns a json of the 10 digits and the
 probabiltiy that submitted image is what digit.
 
+http://<MACHINE_IP>:<GRAFANA_PORT>/dashboard/db/prediction-analytics?refresh=5s&orgId=1
+uid admin, pwd password
+
+
+Load test:
+```bash
+kubectl label nodes $(kubectl get nodes -o jsonpath='{.items[0].metadata.name}') role=locust
+
+helm install seldon-core-loadtesting --name loadtest  \
+    --namespace kubeflow \
+    --repo https://storage.googleapis.com/seldon-charts \
+    --set locust.script=mnist_rest_locust.py \
+    --set locust.host=http://mnist-classifier:8000 \
+    --set oauth.enabled=false \
+    --set oauth.key=oauth-key \
+    --set oauth.secret=oauth-secret \
+    --set locust.hatchRate=1 \
+    --set locust.clients=1 \
+    --set loadtest.sendFeedback=1 \
+    --set locust.minWait=0 \
+    --set locust.maxWait=0 \
+    --set replicaCount=1 \
+    --set data.size=784
+```
+
+
+```
+{'data': {'names': ['class:0',
+                    'class:1',
+                    'class:2',
+                    'class:3',
+                    'class:4',
+                    'class:5',
+                    'class:6',
+                    'class:7',
+                    'class:8',
+                    'class:9'],
+          'ndarray':[[0.03333333333333333,
+                      0.26666666666666666,
+                      0.03333333333333333,
+                      0.13333333333333333, ## It was actually this
+                      0.1,
+                      0.06666666666666667,
+                      0.1,
+                      0.26666666666666666,
+                      0.0,
+                      0.0]]},
+ 'meta': {'puid': 'tb02ff58vcinl82jmkkoe80u4r', 'routing': {}, 'tags': {}}}
+```
 
 ==== Things to come
 

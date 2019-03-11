@@ -6,6 +6,14 @@ kfctl.sh init hello_kubeflow --platform none
 pushd hello_kubeflow
 source env.sh
 kfctl.sh generate k8s
+pushd ks_app
+## Install Seldon
+ks param set ambassador ambassadorServiceType NodePort
+ks pkg install kubeflow/seldon
+ks generate seldon seldon
+ks apply default -c seldon
+## end install seldon
+popd
 kfctl.sh apply k8s
 pushd ks_app
 #end::generate_kf_app[]
@@ -24,12 +32,14 @@ helm install seldon-core-analytics --name seldon-core-analytics --set grafana_pr
 ## TODO check if nfs-1 exists before trying to create
 #tag::createPV[]
 export NAMESPACE=kubeflow
-kubectl create -f https://git.atlas.oreilly.com/oreillymedia/introduction-to-machine-learning-with-kubeflow/raw/master/examples/ch2_seldon_examples/pv-claim.yaml -n $NAMESPACE
-kubectl create -f https://git.atlas.oreilly.com/oreillymedia/introduction-to-machine-learning-with-kubeflow/raw/master/examples/ch2_seldon_examples/pv-claim.yaml -n $NAMESPACE
+# TODO change these to oreilly target
+kubectl create -f https://raw.githubusercontent.com/rawkintrevo/intro-to-ml-with-kubeflow-examples/master/ch2_seldon_examples/pv-volume.yaml -n $NAMESPACE
+kubectl create -f https://raw.githubusercontent.com/rawkintrevo/intro-to-ml-with-kubeflow-examples/master/ch2_seldon_examples/pv-claim.yaml -n $NAMESPACE
 #end:createPV[]
 
 # TODO(trevor): what version/tag?
 #tag::cloneSeldonExample[]
 # Clone the base seldon example
+cd ~/
 git clone https://github.com/kubeflow/example-seldon
 #end::cloneSeldonExample[]
