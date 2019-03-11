@@ -121,6 +121,12 @@ Congratulations, you now have Kubeflow deployed!
 
 [WARNING]
 ====
+If you're done with cluster, even with auto-scaling, the cluster will not be deleted and you may incur costs (depending on your account type). You can delete the cluster from the dashboard at link:$https://console.cloud.google.com/kubernetes/list$[] or in the command line in <<delete_gke_cluster>>.
+====
+
+
+[WARNING]
+====
 As awesome and amazing as cloudshell can be for getting started, it does not persist items outside of your home directory, so system packages installed may disappear between access.
 ====
 
