@@ -18,7 +18,7 @@ While you don't need to deploy Kubeflow to it's own cluster, while you are in th
 Kubeflow can be easily deployed on Google Cloud Platform (GCP), using the Google Kubernetes Engine (GKE) & storage Google Cloud Storage (GCS). Other tools like Dataflow can be used, although doing so will reduce the portability of your Kubeflow pipelines so we will call out any such instances along with portable alternatives. Specialized resources, like Tensor-Processing-Units (TPUs) can also be accessed, and while not available on other providers do not reduce portability since they primarily accelerate your standard workflow.
 
 
-There are two primary ways to get started with Kubeflow on, one is the standard command line tools, and an even easier link:$$https://deploy.kubeflow.cloud/$$[$"click-to-deploy"] system.
+There are two primary ways to get started with Kubeflow on, one is the standard command line tools, and an even easier link:$$https://deploy.kubeflow.cloud/$$[click-to-deploy] system.
 // TODO(holden): Verify is this the recommendation we want to give? It's the one I want -- I don't trust GUIs
 Click-to-deploy is recommended for users on locked down corporate machines, tutorials, and getting started. For longer term and portable deployments the authors have found the traditional command line tools give them more flexibility and reduced dependence on magic.
 
@@ -158,7 +158,7 @@ However if you don't have sudo permissions or want a different version installed
 ====
 [source, shell]
 ----
-include::examples/gcp/setup-gcp.sh[tags=ubuntu]
+include::examples/gcp-setup/setup-gcp.sh[tags=ubuntu]
 ----
 ====
 
@@ -167,7 +167,7 @@ include::examples/gcp/setup-gcp.sh[tags=ubuntu]
 ====
 [source, shell]
 ----
-include::examples/gcp/setup-gcp.sh[tags=general]
+include::examples/gcp-setup/setup-gcp.sh[tags=general]
 ----
 ====
 
