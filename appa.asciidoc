@@ -147,10 +147,8 @@ The command line deployment of Kubeflow on Google cloud is fairly simple. If you
 
 [[set_up_gke_cluster_cli]]
 ===== Setting up your GKE cluster
-You will need to enable Google's Kubernetes Engine (GKE) in your account, if you have not already done so before, which you can do by visiting link:$$https://console.cloud.google.com/kubernetes$$.
 
-
-After you have GKE enabled you will want to install the command line Google cloud tools so you can create, modify, and delete your clusters from the command line. Many users can install the "Google Cloud SDK" package or some variant from their package manager <<install-gcloud-ubuntu>>.
+The Google cloud tools command line tools  allow you can create, modify, and delete your clusters from the command line. Many users can install the "Google Cloud SDK" package or some variant from their package manager <<install-gcloud-ubuntu>>.
 However if you don't have sudo permissions or want a different version installed you can install gcloud using the installation script at <<install-gcloud-general>>.
 
 [[install-gcloud-ubuntu]]
@@ -171,16 +169,54 @@ include::examples/gcp-setup/setup-gcp.sh[tags=general]
 ----
 ====
 
-Once you have the Google Cloud SDK installed you will want to go ahead and create your cluster. For initial explorations you will only need a small cluster, and we can use either dynamic scaling or make a larger cluster later on.
+
+The Google Kubernetes Engine (GKE) APIs need to be enabled in your account before you can create a cluster. They can be enabled with the command line <<enable_gke_apis>> or in the web UI
+ link:$https://console.cloud.google.com/kubernetes$[].
+
+[[enable_gke_apis]]
+.Enable GKE APIs
+====
+[source, shell]
+----
+include::examples/gcp-setup/setup-gcp.sh[tags=enable_container_apis]
+----
+====
+
+
+Once you have the Google Cloud SDK installed and GKE APIs enabled you can now create your first cluster <<create_gke_cluster>>.
+Creating a first cluster will add an initial node pool with a specific machine type, but don't worry you can add node-pools of other special machine types later.
+
+[[create_gke_cluster]]
+.Create a GKE cluster
+====
+[source, shell]
+----
+include::examples/gcp-setup/setup-gcp.sh[tags=launch_cluster]
+----
+====
+
+
+[TIP]
+====
+For initial explorations you will only need a small cluster, and we can use either dynamic scaling or make a larger cluster later on.
+====
+
+Even with auto-scaling, your cluster will not scale to zero so if you are done with your explorations you may wish to delete the cluster with <<delete_gke_cluster>>.
+
+[[delete_gke_cluster]]
+.Delete a GKE cluster
+====
+[source, shell]
+----
+include::examples/gcp-setup/setup-gcp.sh[tags=delete_cluster]
+----
+====
+
 
 //TODO(holden): Include tip with error message for not enabled GKE
 
 
 
-[[using_your_gke_cluster]]
-===== Using your GKE cluster with Kubeflow
-
-While you can use your GKE cluster like any generic Kubernetes cluster, there are some extra bits of magic to simplify your life available. To be able to use Kubeflow on your machine you going to need to install the Kubeflow dependencies mentioned in <<setting_up_kubeflow_dependencies>>.
 
 
 
@@ -691,6 +727,21 @@ $ kubectl -n kubeflow get all
 Once you starting working with a project it's only a matter of time time before you need to start debugging it. We talk about general debugging tools in [[debugging]], but there are some additional tools available on different commercial cloud offerings which may also be of use.
 
 === Google cloud
+
+==== TPU and GPU accelerated instances
+
+Different parts of the machine learning process can benefit from not only different numbers of machines, but also different types of machines.
+The most common example is with model serving, often lots of low memory machines can perform reasonably well, but for model training high-memory or GPU/TPU accelerated machines can offer greater benefits.
+
+
+
+// TODO(holden) -- finish this
+
+[WARNING]
+====
+TPU nodes are only available in certain regions, check link:$https://cloud.google.com/tpu/docs/kubernetes-engine-setup$ for a list of supported regions.
+====
+
 
 ==== Debugging With Stack Driver
 
