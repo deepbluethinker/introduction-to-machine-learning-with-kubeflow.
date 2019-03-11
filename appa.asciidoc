@@ -201,11 +201,12 @@ include::examples/gcp-setup/setup-gcp.sh[tags=launch_cluster]
 ----
 ====
 
-
 [TIP]
 ====
-For initial explorations you will only need a small cluster, and we can use either dynamic scaling or make a larger cluster later on.
+For initial explorations you will only need a small cluster, and we can use either dynamic scaling, add a new node pool, or make a fresh larger cluster later on.
 ====
+
+Once you have a cluster set up you will need to // TODO: connect to GKE cluster
 
 Even with auto-scaling, your cluster will not scale to zero so if you are done with your explorations you may wish to delete the cluster with <<delete_gke_cluster>>.
 
@@ -221,7 +222,14 @@ include::examples/gcp-setup/setup-gcp.sh[tags=delete_cluster]
 
 //TODO(holden): Include tip with error message for not enabled GKE
 
+[[using_gke_cluster]]
+===== Generating a Kubeflow project with GKE
 
+Now that you have your GKE cluster up and running it's time to deploy Kubeflow to it.
+The general set-up instructions in <<general_set_up_kubeflow>> still apply.
+Once you have Kubeflow installed, when you go to generate Kubeflow projects, as in
+<<create_example_project>> you should replace `--platform none` with `--platform gke`.
+There are some additional special services that are unique to GKE we cover in <<google_cloud_specific>>.
 
 
 
@@ -728,10 +736,11 @@ $ kubectl -n kubeflow get all
 
 [appendix]
 [[appendix_cloud_specific]]
-== Cloud Specific  Tools
+== Cloud Specific Tools & Configuration
 
 Once you starting working with a project it's only a matter of time time before you need to start debugging it. We talk about general debugging tools in [[debugging]], but there are some additional tools available on different commercial cloud offerings which may also be of use.
 
+[[google_cloud_specific]]
 === Google cloud
 
 ==== TPU and GPU accelerated instances
