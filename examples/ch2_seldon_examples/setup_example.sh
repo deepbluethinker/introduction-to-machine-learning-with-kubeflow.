@@ -23,8 +23,9 @@ helm install seldon-core-analytics --name seldon-core-analytics --set grafana_pr
 
 ## TODO check if nfs-1 exists before trying to create
 #tag::createPV[]
-kubectl create -f ch2_seldon_examples/pv-volume.yaml -n $NAMESPACE
-kubectl create -f ch2_seldon_examples/pv-claim.yaml -n $NAMESPACE
+export NAMESPACE=kubeflow
+kubectl create -f https://git.atlas.oreilly.com/oreillymedia/introduction-to-machine-learning-with-kubeflow/raw/master/examples/ch2_seldon_examples/pv-claim.yaml -n $NAMESPACE
+kubectl create -f https://git.atlas.oreilly.com/oreillymedia/introduction-to-machine-learning-with-kubeflow/raw/master/examples/ch2_seldon_examples/pv-claim.yaml -n $NAMESPACE
 #end:createPV[]
 
 # TODO(trevor): what version/tag?
