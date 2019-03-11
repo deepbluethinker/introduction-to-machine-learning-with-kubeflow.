@@ -1,4 +1,92 @@
 [[simple_training_ch]]
+== Old stuff starts here- (Trevo's refactor)
+
+== Hello Kubeflow
+
+Introduction
+
+=== Setup
+
+We assume the user has installed, Helm, Tiller, KSonnet, and Argo. If you don't have all of these requirements already installed,
+please install them first. TODO: Trevor- Version?
+
+==== Cloning our Example
+
+If you haven't already cloned the examples that go with the book, let's start by doing that. This repository contains
+examples that will be used throughout the course of the book.
+
+```bash
+git clone https://github.com/intro-to-ml-with-kubeflow/intro-to-ml-with-kubeflow-examples.git
+```
+
+TIP: This example is a slightly modified version of another example. While we will make every
+effort to maintain a working version, if you have an issue- check the Issues on this repository.
+
+
+==== Creating a Persistent Volume
+
+Why do we need a persistent volume? TODO
+
+The original example used an https://kubernetes.io/docs/concepts/storage/volumes/#nfs[Network File System (NFS) Mount].
+  While this is an ideal way to share information between systems in production, it is a bit complicated to set up "locally"
+  (read `minikube` or `microk8s`).  We have updated the example to use
+
+While the user is encouraged to https://kubernetes.io/docs/concepts/storage/persistent-volumes/[learn more] about the various options of `PersistentVolumes` it will be sufficient for
+this example to follow the steps below to simply create one.
+
+To create the `PersistantVolume` and `PersistantVolumeClaim`:
+
+```bash
+cd $KF_EXAMPLES_DIR
+include::examples/ch2_seldon_examples/setup_example.sh[tags=createPV]
+```
+
+The first command will create a `PersistentVolume`, which is an allocation of storage space from an administrator which
+independent of pod lifecycles.  The second command is for a `PersistentVolumeClaim` which is a request by a user for a
+piece of the storace allotted in the `PersistentVolume` which can then be mounted to a pod.  We must have a `PeristentVolume`
+from which a `PersistentVolumeClaim` can be made.
+
+Also- notice we added the flag `-n kubeflow`
+
+If that whole paragraph feels like I'm talking in circles- that's OK for now. Here is the important thing you need to
+understand:
+
+IMPORTANT: The `PeristentVolumeClaim` is where the trained model is stored, and then loaded for serving.
+
+
+=== Training a Model
+
+note intro
+
+==== Building a Training Image
+
+note why are we building a training image?
+
+==== Deploying and Monitoring Training Progress
+
+note w argo
+
+===== And when things go wrong...
+
+note we hope they dont, but ineveitably they will
+
+=== Serving a Model
+
+==== Building and Deploying Serving Images
+
+note why, how, expected results
+
+==== Test Query
+
+note why, how, expected results
+
+==== Things to come
+
+Preview of chapter X
+
+=== Conclusion
+
+
 == Training and Serving a Simple Model with `sklearn`
 
 In this chapter we're going to do a "Hello World" of Kubeflow.  Kubeflow is a large and complicated system, and we're
