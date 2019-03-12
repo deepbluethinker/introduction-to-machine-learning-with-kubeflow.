@@ -31,25 +31,21 @@ def gen_image(arr):
     plt.imshow(two_d,cmap=plt.cm.gray_r, interpolation='nearest')
     return plt
 
-mnist = download_mnist()
+AMBASSADOR_API_IP="10.53.148.167:30134"
 
+#tag::scriptGuts[]
+mnist = download_mnist()
 batch_xs, batch_ys = mnist.train.next_batch(1)
 chosen=0
 gen_image(batch_xs[chosen]).show()
 data = batch_xs[chosen].reshape((1,784))
 features = ["X"+str(i+1) for i in range (0,784)]
 request = {"data":{"names":features,"ndarray":data.tolist()}}
-
 deploymentName = "mnist-classifier"
-AMBASSADOR_API_IP="10.53.148.167:30134"
-namespace='kubeflow'
-
 uri = "http://"+AMBASSADOR_API_IP+"/seldon/"+deploymentName+"/api/v0.1/predictions"
 
-
-# update endpoint: https://github.com/SeldonIO/seldon-core/blob/master/notebooks/seldon_utils.py#L102
 response = requests.post(
     uri,
     json=request)
-
+#end::scriptGuts[]
 print(response.status_code)

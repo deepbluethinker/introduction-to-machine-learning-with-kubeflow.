@@ -1,7 +1,14 @@
 [[simple_training_ch]]
 == Hello Kubeflow
 
-Introduction
+Welcome to your first steps into the exciting world of Kubeflow! This example will cover a lot of ground, and for a fair
+bit of it- it might seem like we are instructing you to mindlessly enter commands. For this example we just want to help you
+get you first model up and running.  We assume you're doing this on a local machine for testing, and that you have a bit of
+familiarity with Kubernetes.   While we will point you to the config files and Docker containers that are driving all of this,
+they are not the focus of this chapter.  The focus of this chapter is to provide an end to end example that you can follow along
+with at home.  In future chapters we will dig in to the "why" of everything we're doing in the chapters that follow, we promise.
+
+For now just enjoy the ride.
 
 === Setup
 
@@ -200,60 +207,87 @@ image::images/ch2_argo_screenshot.png[argo-ui,909,510]
 
 ==== Building and Deploying Serving Images (I'mt here)
 
-note why, how, expected results
+As stated earlier, Kubeflow decouples model training and serving.  Consider the following scenarios:
 
-```bash
-argo submit serving-sk-mnist-workflow.yaml -n kubeflow -p deploy-model=true
-```
+1. A simple model, on a small dataset, serving only on the local machine.
+2. A simple model, on a large dataset, serving to a large production system.
+3. A complex model, on a large dataset, serving to a rapidly scaling number of users.
+4. A complex model, on a large dataset, serving only to a small number of users.
+5. A set of models that need to be managed and swapped out of live production systems.
+
+Models can be simple or complex, datasets can be prohibitivly large or trivially small, serving can be to a small or large
+number of users and may need to scale back and forth. Finally, models don't last forever, their value degrades over time.
+Kubeflow is an ideal system for all cases but number one above (it would still work for number one, its just a bit overkill).
+
+The serving layer of Kubeflow is based on something called `seldon-core` which the user is (as always) encouraged to https://www.seldon.io[read
+more about on their own].  Seldon allows users to scale model serving deployments up and down on Kubernetes in response to
+variable amounts of load, as well as do A/B and multi-armed bandit testing.
+
+
+As with the other workflow yamls, the details and specifics aren't important at the moment, however the user is free and
+encouraged to https://github.com/kubeflow/example-seldon/blob/master/workflows/serving-sk-mnist-workflow.yaml[inspect the yaml for familiarity]
+as well as the https://github.com/kubeflow/example-seldon/tree/master/models/sk_mnist/runtime[source files].
+Seldon uses a program called https://github.com/openshift/source-to-image[`s2i`] to package the model into a Docker image,
+however we don't need to build this as a prebuilt version exists in DockerHub. See the <<model_serving>> for how to do this.
+
+.Submitting Model Serving Workflow Example
+[[model_serving]]
+====
+[source, shell]
+----
+include::examples/ch2_seldon_examples/tagable_bs.sh[tags=submitSeldon]
+----
+====
+
 
 TIP: `-p deploy-model=true` is a feature of this particular workflow, but not nessicary for all kubeflow serving.
 
+To check that the serving layer is running you can follow the same steps as in checking the progress of the training model
+(last section)
 
-```bash
-kubectl get pods -n kubeflow | grep sk-deploy
-```
+1. `kubectl get pods -n kubeflow | grep sk-deploy`
+2. `argo list -n kubeflow`
+3. Check the WebUI
+
 
 ==== Test Query
 
-note why, how, expected results
-
-```bash
-$ kubectl get services -n kubeflow | grep ambassador
-ambassador                                           NodePort    10.152.183.112   <none>        80:30134/TCP        61m
-ambassador-admin                                     ClusterIP   10.152.183.204   <none>        8877/TCP            61m
-```
-
-The model will be available at http://<MACHINE_IP>:<AMBASSADOR_PORT>/seldon/<DEPLOYMENT_NAME>/api/v0.1/predictions
-
-There is a python script available at (insert path, it's in atlas) for pulling an image from the MNIST dataset, turning
-into a vector, displaying the image, and sending to to the model.  The model returns a json of the 10 digits and the
-probabiltiy that submitted image is what digit.
-
-http://<MACHINE_IP>:<GRAFANA_PORT>/dashboard/db/prediction-analytics?refresh=5s&orgId=1
-uid admin, pwd password
+Finally, lets examine how to query our model and monitor the results it is producing. Always a good step to sanity check
+new models when you put them into a production (or quasi-production) environment.
 
 
-Load test:
-```bash
-kubectl label nodes $(kubectl get nodes -o jsonpath='{.items[0].metadata.name}') role=locust
+Recall the `ambassador` port you got earlier when trying to get to the `argo` WebUI.  We're going to need that and the machine
+IP again.  If you weren't able to log on to the `argo` UI, this machine might not be reachable or something else might be
+configured wrong.
 
-helm install seldon-core-loadtesting --name loadtest  \
-    --namespace kubeflow \
-    --repo https://storage.googleapis.com/seldon-charts \
-    --set locust.script=mnist_rest_locust.py \
-    --set locust.host=http://mnist-classifier:8000 \
-    --set oauth.enabled=false \
-    --set oauth.key=oauth-key \
-    --set oauth.secret=oauth-secret \
-    --set locust.hatchRate=1 \
-    --set locust.clients=1 \
-    --set loadtest.sendFeedback=1 \
-    --set locust.minWait=0 \
-    --set locust.maxWait=0 \
-    --set replicaCount=1 \
-    --set data.size=784
-```
+The model will be available at http://<MACHINE_IP>:<AMBASSADOR_PORT>/seldon/mnist-classifier/api/v0.1/predictions .
 
+There is a python https://git.atlas.oreilly.com/oreillymedia/introduction-to-machine-learning-with-kubeflow/raw/master/examples/ch2/query-endpoint.py[script available]
+ for pulling an image from the MNIST dataset, turning
+into a vector, displaying the image, and sending to to the model.  The <<model_serving>> is a fairly clear python example
+ of how one can query the model. The model returns a json of the 10 digits and the
+probabiltiy that submitted image is what digit.  Specifically we need an image of a handwritten digit which we can turn
+into an array of values.
+
+.Model Query Example
+[[model_serving]]
+====
+[source, python]
+----
+include::examples/ch2/query-endpoint.py[tags=scriptGuts]
+----
+====
+
+For example, the handwritten '3':
+
+
+.Handwritten '3'
+[#img-3]
+[caption="Figure 2: "]
+image::images/ch2_query-image.png[argo-ui,909,510]
+
+
+returns the following:
 
 ```
 {'data': {'names': ['class:0',
@@ -279,9 +313,32 @@ helm install seldon-core-loadtesting --name loadtest  \
  'meta': {'puid': 'tb02ff58vcinl82jmkkoe80u4r', 'routing': {}, 'tags': {}}}
 ```
 
-==== Things to come
+We can see that even though we wrote a pretty clear '3' the model's best guess was '7'. That being said, `RandomForrestClassifier`
+is a bad model for handwriting recognition- so this isn't exactly a shock.
 
-Preview of chapter X
+In addition to monitoring that the workflow has successfully run in `argo` we can also use `grafanna` to observe how much
+useage and other model metrics. We can log onto the following webs address with the user id `admin` and the password `password`.
+
+
+**todo how to get grafana port**
+http://<MACHINE_IP>:<GRAFANA_PORT>/dashboard/db/prediction-analytics
+
+**todo screen shot**
+
+
+Because we are (probably) scaling this model up for production, we may also wish to loadtest our model. We can see how simply
+this can be done in the <<load_test>>.
+
+.Load Testing Example
+[[load_test]]
+====
+[source, shell]
+----
+include::examples/ch2_seldon_examples/tagable_bs.sh[tags=loadTest]
+----
+====
+
+
 
 === Conclusion
 
