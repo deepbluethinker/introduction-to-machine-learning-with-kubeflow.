@@ -1,2 +1,18 @@
 [[case_studies_and_feature_prep_ch]]
-== Feature Prep & Introducing our case studies
+==  Introducing our case studies
+
+
+
+=== GitHub Data (Pull Requests & Search)
+
+
+
+
+
+=== Financial Data (Order Book)
+
+=== IoT Data
+
+=== Conclusion
+
+These case studies will continue throughout the book, with each one showing you how different and similar ML pipelines can be.
