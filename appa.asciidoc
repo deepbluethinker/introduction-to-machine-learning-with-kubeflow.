@@ -161,6 +161,8 @@ As awesome and amazing as cloudshell can be for getting started, it does not per
 ===== Identity Aware Proxy Mode
 
 Using click-to-deploy to set up Kubeflow with identity aware proxy mode will allow you to skip having to interact with Google Cloud shell and directly access the Kubeflow UI using your Google credentials.
+The name of your Kubeflow application is used in the name of the deployment, which will need to match that of the scope you configured in <<setup_iap>> (you can also add additional scopes).
+
 
 
 
@@ -180,9 +182,23 @@ The cluster generation step currently is hardcoded to assume that you will be us
 You can also create your own cluster by hand, as in <<set_up_gke_cluster_cli>> or use an existing cluster as in <<using_gke_cluster>> both of which can be done with or without IAP.
 
 
-Once you have kubeflow installed and on your path, as covered in <<who_is_kubeflow_for_ch>>, you can now generate a GCP platform.
+Once you have kubeflow installed and on your path, as covered in
+<<who_is_kubeflow_for_ch>>,
+ you can now generate and apply a GCP platform,
+<<generate_apply_gcp>>.
+The name of your Kubeflow application is used in the name of the deployment, which will need to match that of the scope you configured in <<setup_iap>> (you can also add additional scopes).
+
+[[generate_apply_gcp]]
+.Generate a kubeflow project with GCP platform to set up everything
+[source, shell]
+----
+include::examples/gcp-setup/cloudshell_script.sh[tags=kfctl_platform]
+----
+
+
 The platform represents all of the non-Kubernetes specific configuration (from enabling file storage APIs to creating a GKE cluster).
-The name of your Kubeflow application is used in the name of the deployment, which will need to match that of the scope you configured in <<>> (you can also add additional scopes).
+
+
 
 
 [WARNING]
@@ -276,8 +292,13 @@ So that Kubeflow can talk to your cluster you will need to configure kubectl to 
 
 
 
-The general set-up instructions in <<general_set_up_kubeflow>> still apply.
+The general set-up instructions in <<general_set_up_kubeflow>> are now all that you need.
 There are some additional special services that are unique to GKE we cover in <<google_cloud_specific>>.
+
+[WARNING]
+====
+Do not specify `--platform gcp` when using `kfctl` and a custom GKE cluster as this will create a configuration for a new cluster.
+====
 
 
 
