@@ -1,6 +1,4 @@
 [[simple_training_ch]]
-== New stuff starts here- (Trevo's refactor)
-
 == Hello Kubeflow
 
 Introduction
@@ -70,7 +68,7 @@ The example source can be cloned with git <<get_seldon_example_source>>.
 ====
 [source, shell]
 ----
-include::examples/ch2/setup_example.sh[tags=cloneSeldonExample]
+include::examples/ch2_seldon_examples/setup_example.sh[tags=cloneSeldonExample]
 ----
 ====
 
@@ -127,35 +125,80 @@ they don't really care.  We will point out where the reader may see the training
 
 Let's head back to the
 `example-seldon/models/sk_mnist/train` directory.  In this directory you'll see a Dockerfile, and `create_model.py`.
-What `create_model.py` does is download the MNIST dataset, train a RandomForrestClassifier on the data within, and save
-trained model to `/data/sk.pkl`, which is our `PersistentVolumeClaim`.   The Dockerfile just installs `requirements.txt`
+`create_model.py` downloads the MNIST dataset, train a RandomForrestClassifier on the data within, and saves
+the trained model to `/data/sk.pkl`, which is our `PersistentVolumeClaim`.   The Dockerfile installs `requirements.txt`
 and waits for `/data` to be mounted before running `create_model.py`.
 
 While this process is intersting, and worth taking a look at, it is not required for this simple example.  We only point
 it out to show that there is no magic happening here, and to give the reader a preview of things to come.
 
-==== Training and Monitoring Training Progress (TODO)
+==== Training and Monitoring Training Progress
 
-Now, to actually train the model- let's go to the directory containing the `training-sk-mnist-workflow.yaml` workflow.
-We use `argo` to submit this workflow in the `kubeflow` namespace.
+The next step is to train the model.  This is done via an `argo` workflow.  This will take the training container we just
+discussed, and launch it in the cluster. There are various reasons for wanting to conduct training on a cluster instead
+of a laptop including, the data exists in a place adjacent to the Kubernetes cluster or you need more power than your laptop
+can provide, to name a few.
 
-```
-cd ~/example-seldon/workflows
-argo submit training-sk-mnist-workflow.yaml -n kubeflow
-```
+In the <<create_training_workflow>>, we see how to submit the model training workflow with `argo`.
 
-To see model training progress (there is a UI, but for simple "Hello World" we're skipping it for now).
-```bash
- kubectl get pods -n kubeflow | grep sk-train
-```
+.Create Training Workflow Example
+[[create_training_workflow]]
+====
+[source, shell]
+----
+include::examples/ch2_seldon_examples/tagable_bs.sh[tags=createTrainingWorkflow]
+----
+====
 
-Should yeild something like this:
-```
-kubeflow-sk-train-wnbgj-1046465934                        0/1     Completed   0          5m11s
-sk-train-kmpcr                                            0/1     Completed   0          4m31s
-```
+There are two ways to "monitor" the progress of training.  The simplest is to do so via the CLI. If the later GUI methods
+don't work for you, please don't fret- simply 'watch' the progress via the command line interface as is shown in
+<<monitor_training_workflow_cli>>.
 
-==== Building and Deploying Serving Images
+.Monitor Training Workflow Example
+[[monitor_training_workflow_cli]]
+====
+[source, shell]
+----
+include::examples/ch2_seldon_examples/tagable_bs.sh[tags=cliTrainingCheck]
+----
+====
+
+The CLI (Command Line Interface) is a perfectly acceptable way to monitor a job, but there is a prettier option available.
+
+IMPORTANT: There are as many ways for this next part to go wrong as their are places to deploy Kubernetes (i.e. as there
+are stars in the sky).  The important thing is that your model trains.  Try this next part but if it doesn't work, that
+is OK. Don't get hung up here if it doesn't work out perfect.
+
+You can go to the `ambassador` UI, and add `/argo/` to the end of the URL. If you are running Kubernetes in `minikube` or
+`microk8s`, you will need your IP address (or your VMs IP address), and the `ambassador` port.  To get your `ambassador`
+port follow <<get_ambassador_port>>.
+
+.Getting Ambassador Port Example
+[[get_ambassador_port]]
+====
+[source, shell]
+----
+include::examples/ch2_seldon_examples/tagable_bs.sh[tags=getAmbassadorPort]
+----
+====
+
+The URI you want is http://<machine_ip>:<ambassador_port>/argo/
+
+For me that is http://10.53.148.167:30134/argo/  The observent reader will notice, that the `ambassador` IP address listed
+in the prior example, is not the same as the machine IP address.
+
+WARNING: The machine IP address is not the same as the ambassador IP address.
+
+If everything goes correctly (and it's OK for now if it doesn't), you will see something like this.
+
+.Argo WebUI
+[#img-argo]
+[caption="Figure 1: "]
+image::images/ch2_argo_screenshot.png[argo-ui,909,510]
+
+
+
+==== Building and Deploying Serving Images (I'mt here)
 
 note why, how, expected results
 
@@ -245,80 +288,3 @@ Preview of chapter X
 We hope that your first adventure into Kubeflow has been a success.
 In the next chapter we are going to introduce the case studies that we will develop
 throughout the rest of the book.
-
-//
-//== Training and Serving a Simple Model with `sklearn`
-//
-//In this chapter we're going to do a "Hello World" of Kubeflow.  Kubeflow is a large and complicated system, and we're
-// not going to turn every knob, set every dial, or utilize every feature.  What we are going to do is present a "simple"
-// getting started-first pass attempt to achieve three things:
-//
-//- Train a simple `sklearn` model
-//- Serve that model using `seldon-core`
-//- Query that model to make sure it is (technically) functional .
-//
-//The first question the reader might ask is, "Why `sklearn`?  That's not Tensorflow"
-//Well, maybe- but it's also one of
-//the most widely used machine learning packages today, and while there is plenty of documentation about deploying
-//fancy-pants deep learning models, there isn't much available for the old workhorse `sklearn`.  We are following an
-//example that uses sklearn but was focused on `TensorFlow` so if you feel so inclined- you are welcome to change over to
-//that.
-//
-//The second question the reader might ask is, "What do you mean by "technically" functional?"  In this example we're
-//going to read handwritten digits via `RandomForrestClassifier` which is really the wrong tool for the job and does not
-//perform well.  We really just care that we have a model, we can send it a digit (or at least a matrix repreesntation of
-//digit), and it will respond with the digits zero through nine, and the models "guess" at how likely it is to be each of
-//digits.
-//
-//The third question the reader might ask is, "Why are we using `seldon-core`? Flask is much easier." I would agree that
-//_every thing in this entire book_ might seem like an unnessicarily long and overly complex approach to seemingly simple
-//problems.  The reader should only be here if they are attempting to scale simple laptop problems to robust production
-//systems.  The underlying idea here is that deploying to production is complex, data scientists do a poor job of handling
-//complex things, and we would rather do hard work once to keep the data scientists away from the complexity because we
-//know what we're doing.
-//
-//This chapter will consist of the following sections:
-//
-//- Cloning and modifying `example-seldon`
-//- Training and observing the training of the model
-//- Serving the model and checking that it "works"
-//
-//=== Hello World
-//
-//
-//
-//
-//If you create your own persistent volume clain and name it something else, simply enter that here.
-//
-//Secondly, we are going to update the image to use. A few lines up (appoximately line 87) you will see:
-//
-//```
-//{{workflow.parameters.docker-user}}/skmnistclassifier_trainer:{{workflow.parameters.version}}
-//```
-//
-//We want to change that to
-//
-//```
-//localhost:32000/skmnistclassifier_trainer:latest
-//```
-//
-//The observant reader will have noticed that we didn't _need_ to change that, instead we could have simply set `docker-user`
-//and `version` however, we want the reader to see where this is being set with the idea they will be writing their own someday
-//soon.
-//
-//Next we're going to edit `$EXAMPLE_SELDON_CLONE_DIR/workflows/serving-sk-mnist-workflow.yaml`.
-//The steps are similar. `claimName: "nfs-1"` is a few lines from the bottom (not the dead last line as previously).
-//The `image` is a few lines above that.
-//
-//=== Building Images, Training, and Serving
-//
-//
-//====== Serving
-//
-//
-//
-//== Querying the Model
-//
-//
-//== Conclusion
-//
