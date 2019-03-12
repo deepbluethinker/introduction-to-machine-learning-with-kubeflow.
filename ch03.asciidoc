@@ -1,2 +1,26 @@
 [[case_studies_and_feature_prep_ch]]
-== Feature Prep & Introducing our case studies
+==  Introducing our case studies
+
+
+Machine learning can happen on many different types of data, and the approaches and tools may differ.
+For the rest of the book, when possible, we will use data from these three case studies to explore Kubeflow and some of it's components.
+
+
+
+=== GitHub Data
+
+GitHub is one of the largest open collections of source code, and the wonderful folks at link:$https://www.gharchive.org/$[GH Archive] have created and archive of all of the public interactions on GitHub.
+This data has been used for many interesting machine learning projects, including
+link:$https://towardsdatascience.com/how-to-create-data-products-that-are-magical-using-sequence-to-sequence-models-703f86a231f8$[issue summarization] and
+link:$https://githubengineering.com/towards-natural-language-semantic-code-search/$[semantic language code search] both with Kubeflow.
+Using the GitHub dataset we will explore training two different models: one to generate "good" commit messages and another to predict chunks of code likely to result in a comment.
+
+
+
+=== Financial Data (Order Book)
+
+=== IoT Data
+
+=== Conclusion
+
+These case studies will continue throughout the book, with each one showing you how different and similar ML pipelines can be.
