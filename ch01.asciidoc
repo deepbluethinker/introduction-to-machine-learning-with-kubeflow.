@@ -148,7 +148,7 @@ The fastest way to get started with Kubeflow is using the simplified click-to-de
 ====
 
 
-[[set_up_kubeflow]]
+[[general_set_up_kubeflow]]
 ==== Installing Kubeflow & its dependencies
 
 The biggest requirement for Kubeflow is access to a Kubernetes cluster, be it local (like Minikube, MicroK8s) or a remote cluster.

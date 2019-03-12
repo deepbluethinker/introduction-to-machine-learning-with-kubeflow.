@@ -4,12 +4,20 @@
 
 While you can do much of your development locally on minikube, once you're ready to start training and predicting real production workloads you'll want to go beyond what can be accomplished on a single machine. This doesn't mean you _shouldn't_ set up minikube, it's an amazing resource for developing and testing locally.
 
-If you don't have a Kubernetes cluster set up in your cloud simply jump to the provider(s) of your choice bellow and see how to set up a Kubeflow cluster. If you're in a multi-cloud deployment, don't fret we can set up Kubeflow to run on multiple clouds by configuring different environments.
-
 [TIP]
 ====
 While you don't need to deploy Kubeflow to it's own cluster, while you are in the process of learning we recommend having a separate cluster you can experiment with.
 ====
+
+
+If you don't have a Kubernetes cluster set up in your cloud simply jump to the provider(s) of your choice bellow and see how to set up a Kubeflow cluster. If you're in a multi-cloud deployment, don't fret we can set up Kubeflow to run on multiple clouds by configuring different environments.
+
+
+[TIP]
+====
+If you have multiple clusters (e.g. GKE, Minikube, etc.) you may wish to explore using link:$https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/$[`use-context` to switch between configurations.]
+====
+
 
 
 [[gcp_install]]
@@ -37,6 +45,26 @@ Regardless of which deployment you go with you will want a GCP project to deploy
 ====
 Pick a project name which is easy to type and doesn't require shell escaping, you will thank yourself later.
 ====
+
+[[setup_iap]]
+==== Google's Identity-Aware-Proxy
+
+Google Cloud has a product called link:$$https://cloud.google.com/iap/$$[Identity Aware Proxy (IAP)] to simplify access to cloud resources without requiring a special VPN client.
+If you're deploying on GKE and wish to access your Kubeflow installation without having to set up port-forwarding, IAP an excellent option.
+However setting up IAP requires some extra leg-work, and can slow down your initial deployment (by ~20 minutes if you make zero mistakes).
+
+
+If you wish to use the identity aware proxy, regardless of the deployment mechanism you choose, you'll need to create OAuth tokens for the proxy to use. The instructions to do this are at link:$https://www.kubeflow.org/docs/started/getting-started-gke/#create-oauth-client-credentials$[].
+
+// TODO: holden 
+
+[TIP]
+====
+If you're OAuth consent screen contains scopes items beyond the pre-populated options,
+you receive warnings about needing to receive authorization, thankfully the restricted mode
+is sufficient for IAP.
+====
+
 
 
 
@@ -76,7 +104,7 @@ Regardless of the deployment method you chose, you start the process at link:$$h
 
 
 [[google_click_to_deploy_cloudshell]]
-===== No identity aware proxy (IAP) mode (simplest)
+===== No identity aware proxy (IAP) mode (fastest)
 
 
 If you choose to skip IAP mode you can be up and running inside the matter of minutes. Navigate your browser to the click to deploy service at link:$$https://deploy.kubeflow.cloud/$$ and select the account you wish to use, and selecting "Skip IAP" <<1_click_to_deploy_root>>.
@@ -115,8 +143,6 @@ If the automatic launching of cloud-shell did not work for you, you can run the 
 include::examples/gcp-setup/cloudshell_script.sh[tags=cloudshell_script]
 ----
 
-If later on you find your self wishing you had a proxy to simplify access, you can check out the section on setting up IAP <<setup_iap>>.
-
 Congratulations, you now have Kubeflow deployed!
 
 [WARNING]
@@ -134,22 +160,43 @@ As awesome and amazing as cloudshell can be for getting started, it does not per
 [[gogole_click_to_deploy_iap]]
 ===== Identity Aware Proxy Mode
 
-Using click-to-deploy to set up Kubeflow with identity aware proxy mode will allow you to skip having to interact with Google Cloud shell and directly access the Kubeflow UI using your Google credentials. However, doing so may be challenging, especially for accounts without custom domains configured which involve configuring restricted scope.
+Using click-to-deploy to set up Kubeflow with identity aware proxy mode will allow you to skip having to interact with Google Cloud shell and directly access the Kubeflow UI using your Google credentials.
+
 
 
 [WARNING]
 ====
-IAP access can take some time to set up, the guide says "20 minutes", if it takes longer you may need to double check your oauth tokens and possibly submit them for verification if they access restricted scopes.
+IAP access can take some time to set up, the guide says "20 minutes", if it takes longer you may need to double check your oauth tokens.
 ====
 
 // TODO: Holden finish once IAP mode works in click to deploy
 
 
+[[set_up_gke_kfctl]]
+==== Generating a new cluster with kfctl
+
+Similar to click-to-deploy, kfctl's platform mode allows you to automatically enable and create the resources used by Kubeflow.
+The cluster generation step currently is hardcoded to assume that you will be using Google's IAP.
+You can also create your own cluster by hand, as in <<set_up_gke_cluster_cli>> or use an existing cluster as in <<using_gke_cluster>> both of which can be done with or without IAP.
+
+
+Once you have kubeflow installed and on your path, as covered in <<who_is_kubeflow_for_ch>>, you can now generate a GCP platform.
+The platform represents all of the non-Kubernetes specific configuration (from enabling file storage APIs to creating a GKE cluster).
+The name of your Kubeflow application is used in the name of the deployment, which will need to match that of the scope you configured in <<>> (you can also add additional scopes).
+
+
+[WARNING]
+====
+Re-using project names with kfctl can cause issues with IAP SSL certificates.
+====
+
+
+
 
 [[gcp_cli_deploy]]
-==== Command line Deployment
+==== Using a custom cluster
 
-The command line deployment of Kubeflow on Google cloud is fairly simple. If you already have a Google Kubernetes Engine (GKE) cluster up and running you, and local SDK tools installed, can skip ahead to <<using_gke_cluster>>.
+The command line deployment of Kubeflow on Google cloud is fairly simple. If you already have a Google Kubernetes Engine (GKE) cluster up and running you wish to use, and local SDK tools installed, can skip ahead to <<using_gke_cluster>>.
 
 [[set_up_gke_cluster_cli]]
 ===== Setting up your GKE cluster
@@ -206,8 +253,6 @@ include::examples/gcp-setup/setup-gcp.sh[tags=launch_cluster]
 For initial explorations you will only need a small cluster, and we can use either dynamic scaling, add a new node pool, or make a fresh larger cluster later on.
 ====
 
-Once you have a cluster set up you will need to // TODO: connect to GKE cluster
-
 Even with auto-scaling, your cluster will not scale to zero so if you are done with your explorations you may wish to delete the cluster with <<delete_gke_cluster>>.
 
 [[delete_gke_cluster]]
@@ -223,12 +268,15 @@ include::examples/gcp-setup/setup-gcp.sh[tags=delete_cluster]
 //TODO(holden): Include tip with error message for not enabled GKE
 
 [[using_gke_cluster]]
-===== Generating a Kubeflow project with GKE
+===== Using a GKE cluster
 
 Now that you have your GKE cluster up and running it's time to deploy Kubeflow to it.
+So that Kubeflow can talk to your cluster you will need to configure kubectl to talk to it.
+
+
+
+
 The general set-up instructions in <<general_set_up_kubeflow>> still apply.
-Once you have Kubeflow installed, when you go to generate Kubeflow projects, as in
-<<create_example_project>> you should replace `--platform none` with `--platform gke`.
 There are some additional special services that are unique to GKE we cover in <<google_cloud_specific>>.
 
 
@@ -749,7 +797,6 @@ Different parts of the machine learning process can benefit from not only differ
 The most common example is with model serving, often lots of low memory machines can perform reasonably well, but for model training high-memory or GPU/TPU accelerated machines can offer greater benefits.
 
 
-
 // TODO(holden) -- finish this
 
 [WARNING]
@@ -760,13 +807,6 @@ TPU nodes are only available in certain regions, check link:$https://cloud.googl
 
 ==== Debugging With Stack Driver
 
-[[setup_iap]]
-==== Setting up Identity-Aware-Proxy
-
-Google Cloud has a product called link:$$https://cloud.google.com/iap/$$[Identity Aware Proxy (IAP)] to simplify access to cloud resources without requiring a special VPN client.
-If you're deploying on GKE and wish to access your Kubeflow installation without having to set up port-forwarding, IAP can be a secure solution.
-
-// TODO(holden) finish
 
 
 
