@@ -7,10 +7,17 @@ Introduction
 
 === Setup
 
-We assume the user has installed, Helm, Tiller, KSonnet, and Argo. If you don't have all of these requirements already installed,
-please install them first. TODO: Trevor- Version?
+We assume the user has the following already installed:
 
-==== Creating a Kubeflow project (H)
+* Kubernetes, v1.13.3
+* Helm, v2.13.0
+* KSonnet, v0.13.1
+* Argo, v2.2.1
+* Kubeflow, v0.4.1
+
+If you don't have all of these requirements already installed, please install them first.
+
+==== Creating Our First Kubeflow Project
 
 Before we get started, we will need to make a Kubeflow project for us to work in.
 The script `kfctl.sh`, in the scripts directory of your Kubeflow installation,
@@ -31,12 +38,12 @@ include::examples/ch2_seldon_examples/setup_example.sh[tags=generate_kf_app]
 If you haven't added the scripts directory to your path for easy access you will to use the full path to your Kubeflow install.
 ====
 
-[NOTE]
+[EDITOR]
 ====
 This fails with `ERROR handle object: patching object from cluster: merging object with existing state: unable to recognize "/tmp/ksonnet-mergepatch923988339": no matches for kind "Application" in version "app.k8s.io/v1beta1" `... But always works on round 2
 ====
 
-==== Setting up our components (H)
+==== Setting Up Components
 
 Kubeflow project's can have all kinds of different components.
 Many common ones, like seldon, are automatically installed by kfctl automatically.
@@ -51,14 +58,10 @@ include::examples/ch2_seldon_examples/setup_example.sh[tags=setup_components]
 ====
 
 
-==== Clone `example-seldon` (H)
+==== Cloning the Example
 
 
 For this simple example we are going to follow along with an example you can find at https://github.com/kubeflow/example-seldon.
-
-Though we will be loosely following this example, we will be updating the version of `seldon-core` and changing the
-persistant volume claim (storage) from Google Cloud to local disk.  We will also be building the docker containers
-and pushing them to our own local registry.
 
 The example source can be cloned with git <<get_seldon_example_source>>.
 
@@ -72,30 +75,40 @@ include::examples/ch2/setup_example.sh[tags=cloneSeldonExample]
 ====
 
 
-==== Creating a Persistent Volume (T)
+==== Creating a Persistent Volume
 
-Why do we need a persistent volume? TODO
+Kubeflow is a system that decouples the training and serving of models. In other words, models are trained in one
+container and served in a different container.  The actual trained model must be shared from the container that trains
+the model to the container that is serving it.  There are several ways to achieve this goal, but the easiest is a
+`PersistentVolume`.  A `PersistentVolume` is an allocation fo disk space that survives beyond a pods lifecycle.
 
 The original example used an https://kubernetes.io/docs/concepts/storage/volumes/#nfs[Network File System (NFS) Mount].
   While this is an ideal way to share information between systems in production, it is a bit complicated to set up "locally"
-  (read `minikube` or `microk8s`).  We have updated the example to use
+  (read `minikube` or `microk8s`).  We have updated the example to use a `local` mount. Please note, if you using GCP to
+  do this example, you can skip this step.  This step is only to create a local `PersistentVolume` and
+  `PersistentVolumeClaim`
 
 While the user is encouraged to https://kubernetes.io/docs/concepts/storage/persistent-volumes/[learn more] about the various options of `PersistentVolumes` it will be sufficient for
 this example to follow the steps below to simply create one.
 
-To create the `PersistantVolume` and `PersistantVolumeClaim`:
+To create the `PersistantVolume` and `PersistantVolumeClaim` see <<create_pv>>.
 
-```bash
-cd $KF_EXAMPLES_DIR
+
+.Create Persistent Volume Example
+[[create_pv]]
+====
+[source, shell]
+----
 include::examples/ch2_seldon_examples/setup_example.sh[tags=createPV]
-```
+----
+====
+
+
 
 The first command will create a `PersistentVolume`, which is an allocation of storage space from an administrator which
 independent of pod lifecycles.  The second command is for a `PersistentVolumeClaim` which is a request by a user for a
 piece of the storace allotted in the `PersistentVolume` which can then be mounted to a pod.  We must have a `PeristentVolume`
 from which a `PersistentVolumeClaim` can be made.
-
-Also- notice we added the flag `-n kubeflow`
 
 If that whole paragraph feels like I'm talking in circles- that's OK for now. Here is the important thing you need to
 understand:
@@ -103,12 +116,14 @@ understand:
 IMPORTANT: The `PeristentVolumeClaim` is where the trained model is stored, and then loaded for serving.
 
 
-=== Training and deploying a Model
+=== Training and Deploying a Model
 
-note intro
+In traditional "machine learning" texts, this phase is the one that most of the book is dedicated to, with a few simple
+examples on deployment, and very little treatment on model management.  In this text however, we assume chosing what
+algorithm/model to use is either something the practitioner is very familiar with or not the practitioners job, and so
+they don't really care.  We will point out where the reader may see the training code as we drive by and not dive into it at all.
 
-==== Building a Training Image (T)
-
+==== Building a Training Image
 
 Let's head back to the
 `example-seldon/models/sk_mnist/train` directory.  In this directory you'll see a Dockerfile, and `create_model.py`.
@@ -116,10 +131,13 @@ What `create_model.py` does is download the MNIST dataset, train a RandomForrest
 trained model to `/data/sk.pkl`, which is our `PersistentVolumeClaim`.   The Dockerfile just installs `requirements.txt`
 and waits for `/data` to be mounted before running `create_model.py`.
 
+While this process is intersting, and worth taking a look at, it is not required for this simple example.  We only point
+it out to show that there is no magic happening here, and to give the reader a preview of things to come.
 
-==== Training and Monitoring Training Progress (T)
+==== Training and Monitoring Training Progress (TODO)
 
-Now, to actually train the model- let's go to the directory containing the `training-sk-mnist-workflow.yaml` workflow.  We use `argo` to submit this workflow in the `kubeflow` namespace.
+Now, to actually train the model- let's go to the directory containing the `training-sk-mnist-workflow.yaml` workflow.
+We use `argo` to submit this workflow in the `kubeflow` namespace.
 
 ```
 cd ~/example-seldon/workflows
@@ -145,7 +163,7 @@ note why, how, expected results
 argo submit serving-sk-mnist-workflow.yaml -n kubeflow -p deploy-model=true
 ```
 
-TIP: `-p deploy-model=true` is a feature of that particular workflow, and not nessicary for all kubeflow serving.
+TIP: `-p deploy-model=true` is a feature of this particular workflow, but not nessicary for all kubeflow serving.
 
 
 ```bash
