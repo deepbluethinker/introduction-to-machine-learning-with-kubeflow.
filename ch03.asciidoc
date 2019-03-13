@@ -19,7 +19,23 @@ Using the GitHub dataset we will explore training two different models: one to g
 
 === Financial Data (Order Book)
 
-=== IoT Data
+=== Connected City / IoT Data
+
+Connected cities are becoming more and more of a thing as we enter an Internet of Things World.  For this example we are
+going to look at the connected city of Chicago because they are one of the most connected cities in the world, and the
+pizza available there is orders of magnitude better than all other connected cities (in this author's totally unbiased
+opinion).
+
+In this example we will be considering a plethora of sources including
+
+- https://arrayofthings.docs.apiary.io/#[Array of Things]: Which are nodes throughout Chicago measuring temperature, humidity, light, and particulant matter.
+- https://www.divvybikes.com/system-data[Divvy Bike Shares] and https://www.transitchicago.com/data/[The Chicago Transit Authority] (data on busses and trains).
+- http://311api.cityofchicago.org[Chicago 311 Requests]: 311 is a non-emergency hotline.
+- https://dev.socrata.com/foundry/data.cityofchicago.org/n4j6-wkkf[Chicago Traffic Congestion]: Even though we have one of the best public trasportation systems in the country, suburbanites still love to drive.
+- And more!
+
+
+
 
 === Conclusion
 
