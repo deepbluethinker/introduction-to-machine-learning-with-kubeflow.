@@ -150,7 +150,7 @@ Kubeflow supports a few different tools for this:
 === Getting Set Up with Kubeflow
 
 One of the great things about Kubeflow is the ability to do our initial development and exploration locally, moving into more powerful and distributed tools later on.
-Deploying Kubeflow locally can be a great way to get started, and gives us access to a few debugging cheats we can use during our initial exploration.
+
 
 [TIP]
 ====
@@ -165,7 +165,10 @@ The fastest way to get started with Kubeflow is using the simplified click-to-de
 
 The biggest requirement for Kubeflow is access to a Kubernetes cluster, be it local (like Minikube, MicroK8s) or a remote cluster.
 In addition to a Kubernetes cluster you need some extra tools, but less than you would expect since the containers contain all there own dependencies.
+
+
 Kubeflow ships with scripts to automate the set up of the system dependencies as well as a local Kubernetes cluster, called Minikube.
+Canonical separately provides a script which does the same, except with Micro K8s instead of Minikube.
 You don't need to install Kubeflow with these scripts, but the automatic setup tools can help you get up and running faster even if you don't plan on using Minikube.
 
 [TIP]
@@ -207,7 +210,7 @@ These will modify your system packages installing and require root/super user pe
 
 If you don't want to install Minikube, you can manually install Kubeflow's dependencies: ksonnet and kubectl.
 // TODO(holden): Where to check the versions
-Ksonnet is on github, with its release posted at link:$$https://github.com/ksonnet/ksonnet/releases$$[https://github.com/ksonnet/ksonnet/releases], and you can install it with <<<install_ksonnet_sh>>.
+Ksonnet is on github, with its release posted at link:$$https://github.com/ksonnet/ksonnet/releases$$[https://github.com/ksonnet/ksonnet/releases], and you can install it with <<install_ksonnet_sh>>.
 
 [NOTE]
 ====
@@ -261,7 +264,7 @@ include::examples/dev-setup/install-ksonnet-and-kubectl.sh[tags=no-pkg-manager-k
 
 
 
-Once you have the dependencies installed, you can now install Kubeflow with <<install_kf>>, and optionally add it to your path.
+Once you have the dependencies installed, you can now install Kubeflow as in <<install_kf>>.
 
 [[install_kf]]
 .Install Kubeflow

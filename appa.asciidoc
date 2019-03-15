@@ -2,7 +2,8 @@
 [[appendix_installing]]
 == Setting Kubeflow up on your provider(s) of choice
 
-While you can do much of your development locally on minikube, once you're ready to start training and predicting real production workloads you'll want to go beyond what can be accomplished on a single machine. This doesn't mean you _shouldn't_ set up minikube, it's an amazing resource for developing and testing locally.
+While you can do much of your development locally on Minikube or MicroK8s, once you're ready to start training and predicting production workloads you'll want to go beyond what can be accomplished on a single machine.
+This doesn't mean you _shouldn't_ set up a local cluster, it's an amazing resource for developing and testing locally.
 
 [TIP]
 ====
@@ -23,7 +24,12 @@ If you have multiple clusters (e.g. GKE, Minikube, etc.) you may wish to explore
 [[gcp_install]]
 === Google Cloud Platform (GCP) w/ Google Kubernetes Engine (GKE)
 
-Kubeflow can be easily deployed on Google Cloud Platform (GCP), using the Google Kubernetes Engine (GKE) & storage Google Cloud Storage (GCS). Other tools like Dataflow can be used, although doing so will reduce the portability of your Kubeflow pipelines so we will call out any such instances along with portable alternatives. Specialized resources, like Tensor-Processing-Units (TPUs) can also be accessed, and while not available on other providers do not reduce portability since they primarily accelerate your standard workflow.
+Kubeflow can be easily deployed on Google Cloud Platform (GCP).
+Specialized resources, like Tensor-Processing-Units (TPUs) can also be accessed, and while not available on other providers do not reduce portability since they primarily accelerate your standard workflow.
+
+
+Other tools like Dataflow can be used, although doing so will reduce the portability of your Kubeflow pipelines so we will call out any such instances along with portable alternatives.
+
 
 
 There are two primary ways to get started with Kubeflow on, one is the standard command line tools, and an even easier link:$$https://deploy.kubeflow.cloud/$$[click-to-deploy] system.
@@ -39,7 +45,9 @@ You can use click-to-deploy even if you don't have Kubernetes installed locally,
 
 
 
-Regardless of which deployment you go with you will want a GCP project to deploy Kubeflow into. This does not need to be a separate project, however there are benefits to isolating your exploration work from your regular work. If you decide to create a separate project, the current steps are described at link:$$https://cloud.google.com/resource-manager/docs/creating-managing-projects$$.
+Regardless of which deployment you go with you need a GCP project to deploy Kubeflow into.
+This does not need to be a separate project from your existing ones,
+however there are benefits to isolating your exploration work from your regular work. If you decide to create a separate project, the current steps are described at link:$$https://cloud.google.com/resource-manager/docs/creating-managing-projects$$[].
 
 [TIP]
 ====
@@ -53,8 +61,14 @@ Google Cloud has a product called link:$$https://cloud.google.com/iap/$$[Identit
 If you're deploying on GKE and wish to access your Kubeflow installation without having to set up port-forwarding, IAP an excellent option.
 However setting up IAP requires some extra leg-work, and can slow down your initial deployment (by ~20 minutes if you make zero mistakes).
 
+[WARNING]
+====
+Re-using project names with kfctl can cause issues with IAP SSL certificates.
+====
 
-If you wish to use the identity aware proxy, regardless of the deployment mechanism you choose, you'll need to create OAuth tokens for the proxy to use. The instructions to do this are at link:$https://www.kubeflow.org/docs/started/getting-started-gke/#create-oauth-client-credentials$[].
+
+
+If you wish to use the identity aware proxy, regardless of the deployment mechanism you choose, you'll need to create OAuth tokens for the proxy to use. The instructions to do this are at link:$$https://www.kubeflow.org/docs/started/getting-started-gke/#create-oauth-client-credentials$$[].
 
 // TODO: holden 
 
@@ -97,10 +111,10 @@ Click-to-deploy Kubeflow attempts to enable some services on GCP which require b
 image::images/3b_iap_no_billing_failure.png["Click to deploy billing failure with error message Deployment Error programmerboo@gmail.com: Error trying to enable this required service: container.googleapis.com. Error: Errors enabling service: Operation does not satisfy the following requirements: billing-enabled {Billing must be enabled for activation of service '' in project 'kf-click-to-delpoy-no-iap' to proceed., link:$$https://console.developers.google.com/project/kf-click-to-delpoy-no-iap/settings$$}"]
 
 
-Click-to-deploy has two different access modes available, identity aware proxy (IAP) and non-AIP modes. In IAP mode, click-to-deploy creates a gateway you can use to access your cluster with oauth, and in non-IAP mode you access your cluster through cloud shell or other means footnote:[Personally I often use a jump host along with sshuttle, but it is a matter of personal preference.]. If you are in a hurry to get started you may find that skipping IAP deployment mode makes it easier to get started. If you find your self wanting IAP access later on, you can always deploy the IAP component to your cluster at a later date.
+Click-to-deploy has two different access modes available, identity aware proxy (IAP) and non-AIP modes. In IAP mode, click-to-deploy creates a gateway you can use to access your cluster with oauth, and in non-IAP mode you access your cluster through cloud shell or other means footnote:[Personally I often use a jump host along with sshuttle, but it is a matter of personal preference.]. If you are in a hurry to get started you may find that skipping IAP deployment mode makes it easier to get started.
 
 
-Regardless of the deployment method you chose, you start the process at link:$$https://deploy.kubeflow.cloud/$$.
+Regardless of the deployment method you chose, you start the process at link:$$https://deploy.kubeflow.cloud/$$[].
 
 
 [[google_click_to_deploy_cloudshell]]
@@ -134,14 +148,17 @@ If you use cloudshell through the Google Cloud console, you will want to enable 
 If you use multiple google accounts, click-to-deploy assumes that the account you are using Google cloud with is also the first Google account (in priority order) as signed in on your browser (.e.g it is `/u/0`). This is a known issue and is tracked in link:$$https://github.com/kubeflow/kubeflow/issues/2267$$.
 ====
 
-If the automatic launching of cloud-shell did not work for you, you can run the command <<cloudshell_connect_to_project>>. If you launched your Kubeflow cluster with IAP enabled hhowever, the repo will not exist.
+If the automatic launching of cloud-shell did not work for you, you can run the script <<cloudshell_connect_to_project>>.
+If you launched your Kubeflow cluster with IAP enabled hhowever, the repo will not exist.
 
 [[cloudshell_connect_to_project]]
 .Command to run in cloudshell to connect to a click-to-deploy Kubeflow cluster
+====
 [source, shell]
 ----
 include::examples/gcp-setup/cloudshell_script.sh[tags=cloudshell_script]
 ----
+====
 
 Congratulations, you now have Kubeflow deployed!
 
@@ -173,12 +190,13 @@ IAP access can take some time to set up, the guide says "20 minutes", if it take
 
 // TODO: Holden finish once IAP mode works in click to deploy
 
+// TODO: Holden -- screenshots
 
 [[set_up_gke_kfctl]]
 ==== Generating a new cluster with kfctl
 
 Similar to click-to-deploy, kfctl's platform mode allows you to automatically enable and create the resources used by Kubeflow.
-The cluster generation step currently is hardcoded to assume that you will be using Google's IAP.
+The GCP platform generation step requires setting up IAP.
 You can also create your own cluster by hand, as in <<set_up_gke_cluster_cli>> or use an existing cluster as in <<using_gke_cluster>> both of which can be done with or without IAP.
 
 
@@ -201,16 +219,8 @@ The platform represents all of the non-Kubernetes specific configuration (from e
 
 
 
-[WARNING]
-====
-Re-using project names with kfctl can cause issues with IAP SSL certificates.
-====
-
-
-
-
 [[gcp_cli_deploy]]
-==== Using a custom cluster
+==== Deploying without the platform generation
 
 The command line deployment of Kubeflow on Google cloud is fairly simple. If you already have a Google Kubernetes Engine (GKE) cluster up and running you wish to use, and local SDK tools installed, can skip ahead to <<using_gke_cluster>>.
 
