@@ -14,12 +14,12 @@ This book is not intended to serve as your first introduction to machine learnin
 This book assumes that you either understand how to train models locally, or are working with someone who does. If you don't, there are many excellent introduction books on machine learning to get you started, including link:$$https://amzn.to/2WPOGJj$$["Hands-On Machine Learning with Scikit-Learn and TensorFlow: Concepts, Tools, and Techniques to Build Intelligent Systems" by Aurélien Géron].
 
 
-We also assume you have the tools, or work with someone who does, to get the data needed for training your models. If you don't pass:[<a class="orm:hideurl" href="http://shop.oreilly.com/product/0636920028512.do"><em>Learning Spark</em> by Karau, Konwinski, Wendell, and Zaharia</a>] is an excellent introduction,.footnote:[Though we may be biased.]
+We also assume you have the tools, or work with someone who does, to get the data needed for training your models. If you don't pass:[<a class="orm:hideurl" href="http://shop.oreilly.com/product/0636920028512.do"><em>Learning Spark</em> by Karau, Konwinski, Wendell, and Zaharia</a>] is an excellent introduction to Apache Spark, one of the most popular big data tools.footnote:[Though we may be biased.]
 
 // TODO -- More resources here
 
 Containers and Kubernetes are a wide area of practice, which is rapidly evolving.
-If you want to depend your knowledge of Kubernetes we recommend looking at link:$$https://amzn.to/2EdYoho$$[Cloud Native Infrastructure: Patterns for Scalable Infrastructure and Applications in a Dynamic Environment by  Justin Garrison  and Kris Nova], or link:$$https://amzn.to/2EfiRTi$$[Kubernetes: Up and Running: Dive into the Future of Infrastructure by  Kelsey Hightower, Brendan Burns, and Joe Beda].
+If you want to deepen your knowledge of Kubernetes we recommend looking at link:$$https://amzn.to/2EdYoho$$[Cloud Native Infrastructure: Patterns for Scalable Infrastructure and Applications in a Dynamic Environment by  Justin Garrison  and Kris Nova], or link:$$https://amzn.to/2EfiRTi$$[Kubernetes: Up and Running: Dive into the Future of Infrastructure by  Kelsey Hightower, Brendan Burns, and Joe Beda].
 // TODO (holden)
 
 === Your responsibility as a practitioner
@@ -27,20 +27,25 @@ If you want to depend your knowledge of Kubernetes we recommend looking at link:
 This book helps you put your machine learning models into production and solve real world problems. Solving real world problems with machine learning is great, but as you go forth and apply your skills to the real world, remember to think about the impact.
 
 
-First, it's important to make sure your models are sufficiently accurate, and their are great tools for this in Kubeflow discussed in <<model_management>>.
+First, it's important to make sure your models are sufficiently accurate, and there are great tools for this in Kubeflow covered in <<model_management>>.
 Even the best tools will not save you from all mistakes, for example hyper-parameter tuning on the same dataset to report final cross-validation results.
 
 
 Even models with great predictive power can still have unintended effects and biases that may not show up during the regular training-evaluation phase.
 Unintended biases can be hard to discover, but there are many stories (e.g. link:$$https://www.reuters.com/article/us-amazon-com-jobs-automation-insight/amazon-scraps-secret-ai-recruiting-tool-that-showed-bias-against-women-idUSKCN1MK08G$$[Amazon's machine learning system which decided to only higher men]) that demonstrate the profound
 potential implications of our work.
+
+
+
 While this book does not have the tools to solve bias, we encourage you to think critically about potential biases in your system and explore solutions *before going into production*.
 If you don't know where to start, Katharine Jarmul has an excellent introductory talk at link:$$https://www.thestrangeloop.com/2018/privacy-the-last-stand-for-fair-algorithms.html$$[].
+One important step to helping reduce bias in your models is having a diverse team to notice potential issues early.
 
+// TODO -- follow up with Mr. Bigg's for the college project story
 
 [TIP]
 ====
-And it's important to note that none of these are a "one-stop" task, model performance can degrade, and biases can be introduced over time -- even if you don't change anything.
+And it's important to note that none of these tasks are a "one-stop", model performance can degrade, and biases can be introduced over time -- even if you don't personally change anything. footnote:[Remember the twitter bot that became a Nazi with reinforcement learning in less than a weekend?]
 ====
 
 
@@ -79,13 +84,14 @@ We will use warnings to indicate any situations where the resulting pipeline is 
 <!--PROD: Please reach out to author to find out if they will be uploading code examples to oreilly.com or their own site (e.g., GitHub). If there is no code download, delete this whole section. If there is, when you email digidist with the link, let them know what you filled in for title_title (should be as close to book title as possible, i.e., learning_python_2e). This info will determine where digidist loads the files.-->
 ++++
 
-Supplemental material (code examples, exercises, etc.) is available for download at link:$$https://github.com/intro-to-ml-with-kubeflow$$[]. These code examples are available under an Apache 2 license, or as described in <<Using Code Examples>> at your choice.
+Supplemental material (code examples, exercises, etc.) is available for download at link:$$https://github.com/intro-to-ml-with-kubeflow$$[]. These code examples are available under an Apache 2 license, or as described in <<using_code_examples>> at your choice.
 
 
 There are additional examples under their own respective licenses that you may find useful.
 The Kubeflow project it's self has an example repo at link:$$https://github.com/kubeflow/examples$$[], which at the time of the writing is available under an Apache 2 license.
 Canonical also has a set of resources at link:$$https://github.com/canonical-labs/kubeflow-tools$$[] which may be of special interest to MicroK8s users.
 
+[[using_code_examples]]
 ==== Using Code Examples
 
 This book is here to help you get your job done. In general, if example code is offered with this book, you may use it in your programs and documentation. You do not need to contact us for permission unless you’re reproducing a significant portion of the code. For example, writing a program that uses several chunks of code from this book does not require permission. Selling or distributing a CD-ROM of examples from O’Reilly books does require permission. Answering a question by citing this book and quoting example code does not require permission. Incorporating a significant amount of example code from this book into your product’s documentation does require permission.
