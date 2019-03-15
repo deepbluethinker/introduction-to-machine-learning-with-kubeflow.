@@ -31,7 +31,7 @@ Kubeflow provides a unified system with repeatable components power by container
 
 === Why Containerization?
 
-Containerization means no more "it worked on my machine" or "oh yeah we you need package this extra package."
+Containerization means no more "it worked on my machine" or "oh yeah, we forgot about just one, you need package this extra package."
 Containerized applications are isolated from the rest of your machine, and have all of their requirements included (from the operating system up).
 A common worry about using containers is overhead, but containers can be built in layers allowing you to use another container description as its base.
 This means that if, for example, you have a new NLP library you want to use in your pipeline you can add it on top of the existing container and you don't have to start from scratch each time.
@@ -134,6 +134,18 @@ A machine learning pipeline can be seen as a graph, where each node is a stage i
 image::images/1_kubeflow_pipeline.png[A Kubeflow pipeline]
 
 Each building block in a pipeline is a self-contained step in a machine learning workflow, such as preprocessing, transformation, training, or cross-validation. In Kubeflow, each of these blocks is built as a Docker image. This allows users to share and reuse individual components with ease.
+
+==== Dataprep
+
+Machine learning requires good data to be effective, and often special tools are used to get the data.
+Just getting the data can be part of the challenge, often you also need to do extra work to filter, normalize and prepare your data for machine learning.
+Kubeflow supports a few different tools for this:
+
+* Apache Spark (one of the most popular big data tools)
+
+* Pachyderm
+
+* Tensorflow Transform (easy integration into model serving)
 
 === Getting Set Up with Kubeflow
 
