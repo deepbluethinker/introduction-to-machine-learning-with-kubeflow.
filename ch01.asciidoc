@@ -12,17 +12,13 @@ The <<brief_alternatives_to_kubeflow>> introduces some options you may wish to e
 Despite common misconception, Kubeflow is more than just Kubernetes and TensorFlow -- you can use it for all sorts of machine learning models.
 ====
 
-[WARNING]
-====
-Kubeflow is rapidly evolving, this book is written for $KUBEFLOW_VERSION, if you are using a newer version of Kubeflow you will want to pay close attention to the release notes for things which may have changed.
-====
 
 
 
 === Who is Kubeflow for?
 
 Kubeflow is for both data scientists and data engineers looking to build production machine learning pipelines.
-Kubeflow packages components for all the different stages of a model's lifecycle (data exploration, feature preparation, model training, model serving, and model testing); allowing users to build integrated end-to-end pipelines from these components.
+Kubeflow packages components for all the different stages of a model's lifecycle (data exploration, feature preparation, model training, model serving, and model testing); allowing users to build integrated end-to-end pipelines.
 
 
 Kubeflow can be run either locally in your development environment or on a production cluster once the pipelines are ready.

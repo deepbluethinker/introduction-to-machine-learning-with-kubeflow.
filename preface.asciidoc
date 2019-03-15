@@ -1,7 +1,8 @@
 [preface]
 == Preface
 
-We wrote this book for data engineers and data scientist who are building machine learning systems/models they want to productionize. If you've ever had the experience of training an excellent model only to ask your self how to deploy it into production or keep it up to date once it gets there, or if you've been handled an `Untitled_5.ipynb` and asked to "make it work" this is the book for you.
+We wrote this book for data engineers and data scientist who are building machine learning systems/models they want to productionize. If you've ever had the experience of training an excellent model only to ask your self how to deploy it into production or keep it up to date once it gets there, this is the book for you.
+We hope this gives you the tools to replace `Untitled_5.ipynb` with something that works relatively reliably in production.
 
 
 This book is not intended to serve as your first introduction to machine learning, <<assumptions_about_the_audience>> has pointers to some resources that may be useful if you are just getting started on your machine learning journey.
@@ -14,7 +15,8 @@ This book is not intended to serve as your first introduction to machine learnin
 This book assumes that you either understand how to train models locally, or are working with someone who does. If you don't, there are many excellent introduction books on machine learning to get you started, including link:$$https://amzn.to/2WPOGJj$$["Hands-On Machine Learning with Scikit-Learn and TensorFlow: Concepts, Tools, and Techniques to Build Intelligent Systems" by Aurélien Géron].
 
 
-We also assume you have the tools, or work with someone who does, to get the data needed for training your models. If you don't pass:[<a class="orm:hideurl" href="http://shop.oreilly.com/product/0636920028512.do"><em>Learning Spark</em> by Karau, Konwinski, Wendell, and Zaharia</a>] is an excellent introduction to Apache Spark, one of the most popular big data tools.footnote:[Though we may be biased.]
+We also assume you have the tools, or work with someone who does, to get the data needed for training your models. If you don't pass:[<a class="orm:hideurl" href="http://shop.oreilly.com/product/0636920028512.do"><em>Learning Spark</em> by Karau, Konwinski, Wendell, and Zaharia</a>] is an excellent introduction to Apache Spark, one of the most popular big data tools.footnote:[Though we may be biased.].
+
 
 // TODO -- More resources here
 
