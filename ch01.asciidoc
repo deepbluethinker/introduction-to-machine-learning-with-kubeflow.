@@ -29,9 +29,10 @@ Kubeflow provides a unified system with repeatable components power by container
 
 Containerization means no more "it worked on my machine" or "oh yeah, we forgot about just one, you need package this extra package."
 Containerized applications are isolated from the rest of your machine, and have all of their requirements included (from the operating system up).
+
+
 A common worry about using containers is overhead, but containers can be built in layers allowing you to use another container description as its base.
 This means that if, for example, you have a new NLP library you want to use in your pipeline you can add it on top of the existing container and you don't have to start from scratch each time.
-The isolation provided by containers allow our machine learning stages to be portable and reproducible.
 
 
 [TIP]
@@ -39,6 +40,9 @@ The isolation provided by containers allow our machine learning stages to be por
 Data scientists with Python experience can think of containers as a heavy duty virtual environment, which includes the operating system, the packages, and everything in between.
 ====
 
+The isolation provided by containers allow our machine learning stages to be portable and reproducible.
+
+=== Why Kubernetes?
 
 Kubernetes allows our pipelines to be scalable without sacrificing portability, allowing us to avoid becoming locked into a specific cloud provider.
 In addition to being able to switch from a single machine to a distributed cluster, different stages of your machine learning pipeline can request different amounts and types of resources - for example, your data preparation step may benefit more from running on multiple machines, while your model training can benefit more from access GPUs.
@@ -91,7 +95,7 @@ In a later chapter we will examine how Kubeflow trains a TensorFlow model in gre
 
 After training your model, the next step is to serve the model in your cluster so it can handle prediction requests. Kubeflow makes it easy for data scientists to deploy machine learning models in production environments at scale. Currently Kubeflow supports TensorFlow Serving and SeldonCore.
 
-Serving a model on Kubeflow is fairly straightforward. There is no need to build or customize a container yourself - simply point Kubeflow to where your model is stored, and a server will be ready within seconds to service requests.
+Serving many types of models on Kubeflow is fairly straightforward. There is no need to build or customize a container yourself - simply point Kubeflow to where your model is stored, and a server will be ready within seconds to service requests.
 
 ==== Hyperparameter Tuning
 
@@ -197,7 +201,7 @@ If this fails to install minikube, don't worry we'll cover how to fix that up in
 
 [WARNING]
 ====
-These will modify your system packages installing and require root/super user permissions. If you wish you can instead run these commands on another host (e.g. dedicated KF development enviroment).
+These scripts will modify your system packages installing and require root/super user permissions. If you wish you can instead run these commands on another host (e.g. dedicated KF development enviroment).
 ====
 
 ===== Manually
@@ -510,7 +514,7 @@ The power of this API is that it can be leveraged in a standalone or notebook se
 MLflow Projects provides a standard format for packaging reusable data science code, defined by a yaml file that can leverage source-controlled code and dependency management via Anaconda.
 The project format makes it easy to share reproducible data science code, as reproduciblity is critical for machine learning practitioners.
 
-MLflow Models is a convention for packaging machine learning models in multiple format.
+MLflow Models is a convention for packaging machine learning models in multiple formats.
 Each MLflow Model is saved as a directory containing arbitrary files and an MLmodel descriptor file.
 
 MLflow is still in active development, but with the entire project being open-sourced, the visibility and community excitement around its development is enticing as well.
