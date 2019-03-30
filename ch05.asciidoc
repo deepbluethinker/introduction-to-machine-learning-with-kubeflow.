@@ -383,6 +383,17 @@ This policy is good for chief and workers.
   - Never means pods that terminate will never be restarted. This policy should rarely be used because Kubernetes will terminate pods for any number of reasons (e.g. node becomes unhealthy) and this will prevent the job from recovering.
 
 
+Once you have the TFJob spec written, simply deploy it to your Kubeflow cluster:
+```
+kubectl apply -f dist-mnist.yaml
+```
+
+You can then monitor the progress of the job:
+```
+kubectl describe tfjob dist-mnist-example
+```
+
+
 === Using Other Frameworks
 
 === Hyperparameter Tuning
