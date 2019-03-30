@@ -393,8 +393,44 @@ You can then monitor the progress of the job:
 kubectl describe tfjob dist-mnist-example
 ```
 
+Alternatively, you can use the TFJob dashboard to submit and monitor your distributed TFJobs.
+
+[insert steps here]
+
 
 === Using Other Frameworks
+
+Kubeflow is designed to be a framework-agnostic machine learning platform. That means the schema for distributed training can easily be extended to other frameworks. As of the time of this writing, there are a number of operators written to support other frameworks, including PyTorch and Caffe.
+
+As an example, here is how a PyTorch training job spec looks like:
+
+```
+apiVersion: "kubeflow.org/v1beta2"
+kind: "PyTorchJob"
+metadata:
+  name: "pytorch-dist"
+spec:
+  pytorchReplicaSpecs:
+    Master:
+      replicas: 1
+      restartPolicy: OnFailure
+      template:
+        spec:
+          containers:
+            - name: pytorch
+              image: gcr.io/kubeflow-ci/pytorch-dist-sendrecv-test:1.0
+    Worker:
+      replicas: 3
+      restartPolicy: OnFailure
+      template:
+        spec:
+          containers:
+            - name: pytorch
+              image: gcr.io/kubeflow-ci/pytorch-dist-sendrecv-test:1.0
+```
+
+As you can see, the format is very similar to that of TFJobs. The only difference is in the replica types.
+
 
 === Hyperparameter Tuning
 
