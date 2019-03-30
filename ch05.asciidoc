@@ -1,2 +1,8 @@
 [[tf_ch]]
 == Training a general TF + Serving a TF model
+
+=== Distributed Training
+
+=== Serving a Model
+
+=== Hyperparameter Tuning
