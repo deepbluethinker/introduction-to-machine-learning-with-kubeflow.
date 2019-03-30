@@ -360,13 +360,27 @@ The `apiVersion` field specifies which version of the TFJob custom resource you 
 
 The `metadata` field is common to all Kubernetes objects - you can add fields like name, namespace, and labels here.
 
-The most important part of the schema is `tfReplicaSpecs`. This is essentially a map, where the keys are:
+The most important part of the schema is `tfReplicaSpecs`. A replica can be one of the following types:
 
 * Chief - The chief is responsible for orchestrating training and performing tasks like checkpointing the model.
 * PS - The PS are parameter servers; these servers provide a distributed data store for the model parameters.
 * Worker - The workers do the actual work of training the model. In some cases, worker 0 might also act as the chief.
 * Evaluator - The evaluators can be used to compute evaluation metrics as the model is trained.
 
+A replica spec contains a number of properties that describe its behavior:
+* replicas - The number of replicas of this type to spawn for this TFJob.
+* template - A PodTemplateSpec that describes the pod to create for each replica.
+The pod must include a container named tensorflow.
+* restartPolicy Determines whether pods will be restarted when they exit. The allowed values are as follows:
+  - Always means the pod will always be restarted. This policy is good for parameter servers since they never exit and should always be restarted in the event of failure.
+  - OnFailure means the pod will be restarted if the pod exits due to failure. A non-zero exit code indicates a failure.
+An exit code of 0 indicates success and the pod will not be restarted.
+This policy is good for chief and workers.
+  - ExitCode means the restart behavior is dependent on the exit code of the tensorflow container as follows
+    - 0 indicates the process completed successfully and will not be restarted.
+    - 1-127 indicates a permanent error and the container will not be restarted.
+    - 128-255 indicates a retryable error and the container will be restarted. This policy is good for the chief and workers.
+  - Never means pods that terminate will never be restarted. This policy should rarely be used because Kubernetes will terminate pods for any number of reasons (e.g. node becomes unhealthy) and this will prevent the job from recovering.
 
 
 === Using Other Frameworks
