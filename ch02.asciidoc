@@ -3,10 +3,10 @@
 
 Welcome to your first steps into the exciting world of Kubeflow! This example will cover a lot of ground, and for a fair
 bit of it- it might seem like we are instructing you to mindlessly enter commands. For this example we just want to help you
-get you first model up and running.  We assume you're doing this on a local machine for testing, and that you have a bit of
+get your first model up and running.  We assume you're doing this on a local machine for testing, and that you have a bit of
 familiarity with Kubernetes.   While we will point you to the config files and Docker containers that are driving all of this,
 they are not the focus of this chapter.  The focus of this chapter is to provide an end to end example that you can follow along
-with at home.  In future chapters we will dig in to the "why" of everything we're doing in the chapters that follow, we promise.
+with at home.  In future chapters we will dig in to the "why" of everything we're doing, we promise.
 
 For now just enjoy the ride.
 
@@ -40,20 +40,21 @@ include::examples/ch2_seldon_examples/setup_example.sh[tags=generate_kf_app]
 
 [NOTE]
 ====
-If you haven't added the scripts directory to your path for easy access you will to use the full path to your Kubeflow install.
+If you haven't added the scripts directory to your path for easy access you will need to to use the full path to your Kubeflow install.
 ====
 
-[EDITOR]
+[NOTE]
 ====
-This fails with `ERROR handle object: patching object from cluster: merging object with existing state: unable to recognize "/tmp/ksonnet-mergepatch923988339": no matches for kind "Application" in version "app.k8s.io/v1beta1" `... But always works on round 2
+Trevor's note to himself on things that need to be checked, but not for final version: This fails with `ERROR handle object: patching object from cluster: merging object with existing state: unable to recognize "/tmp/ksonnet-mergepatch923988339": no matches for kind "Application" in version "app.k8s.io/v1beta1" `... But always works on round 2
 ====
 
 ==== Setting Up Components
 
 Kubeflow project's can have all kinds of different components.
-Many common ones, like seldon, are automatically installed by kfctl automatically.
+Many common ones, like seldon, are installed by kfctl automatically.
 In addition to the default components set up we will configure a few extra pieces:
 
+[[setup_components]]
 .Set up components
 ====
 [source, shell]
@@ -62,6 +63,9 @@ include::examples/ch2_seldon_examples/setup_example.sh[tags=setup_components]
 ----
 ====
 
+In <<setup_components>> are first setting up `helm` which is an application package manager on Kubernetes (`tiller` is the `helm`
+server).  Next we use `helm` to install `seldon-core-analytics` and the `grafana` charting package on Kubeflow. This will give
+us some pretty charting to real time manage our models.
 
 ==== Cloning the Example
 
@@ -87,7 +91,7 @@ container and served in a different container.  The actual trained model must be
 the model to the container that is serving it.  There are several ways to achieve this goal, but the easiest is a
 `PersistentVolume`.  A `PersistentVolume` is an allocation fo disk space that survives beyond a pods lifecycle.
 
-The original example used an https://kubernetes.io/docs/concepts/storage/volumes/#nfs[Network File System (NFS) Mount].
+The example we just cloned (<<get_seldon_example_source>>) used an https://kubernetes.io/docs/concepts/storage/volumes/#nfs[Network File System (NFS) Mount].
   While this is an ideal way to share information between systems in production, it is a bit complicated to set up "locally"
   (read `minikube` or `microk8s`).  We have updated the example to use a `local` mount. Please note, if you using GCP to
   do this example, you can skip this step.  This step is only to create a local `PersistentVolume` and
@@ -110,36 +114,34 @@ include::examples/ch2_seldon_examples/setup_example.sh[tags=createPV]
 
 
 
-The first command will create a `PersistentVolume`, which is an allocation of storage space from an administrator which
-independent of pod lifecycles.  The second command is for a `PersistentVolumeClaim` which is a request by a user for a
-piece of the storace allotted in the `PersistentVolume` which can then be mounted to a pod.  We must have a `PeristentVolume`
+The first command will create a `PersistentVolume`.  The second command is a request by a user for a
+piece of the storage allotted in the `PersistentVolume` which can then be mounted to a pod.  We must have a `PeristentVolume`
 from which a `PersistentVolumeClaim` can be made.
 
 If that whole paragraph feels like I'm talking in circles- that's OK for now. Here is the important thing you need to
 understand:
 
-IMPORTANT: The `PeristentVolumeClaim` is where the trained model is stored, and then loaded for serving.
+NOTE: The `PeristentVolumeClaim` is where the trained model is stored, and then loaded for serving.
 
 
 === Training and Deploying a Model
 
-In traditional "machine learning" texts, this phase is the one that most of the book is dedicated to, with a few simple
+In traditional "machine learning" texts, this phase is the one that is given the most attention, with a few simple
 examples on deployment, and very little treatment on model management.  In this text however, we assume chosing what
-algorithm/model to use is either something the practitioner is very familiar with or not the practitioners job, and so
-they don't really care.  We will point out where the reader may see the training code as we drive by and not dive into it at all.
+algorithm/model to use is either something the practitioner is very familiar with or not the practitioners job.
 
 ==== Building a Training Image
 
 Let's head back to the
 `example-seldon/models/sk_mnist/train` directory.  In this directory you'll see a Dockerfile, and `create_model.py`.
-`create_model.py` downloads the MNIST dataset, train a RandomForrestClassifier on the data within, and saves
+`create_model.py` download the MNIST dataset, train a RandomForrestClassifier on the data within, and save
 the trained model to `/data/sk.pkl`, which is our `PersistentVolumeClaim`.   The Dockerfile installs `requirements.txt`
 and waits for `/data` to be mounted before running `create_model.py`.
 
 While this process is intersting, and worth taking a look at, it is not required for this simple example.  We only point
 it out to show that there is no magic happening here, and to give the reader a preview of things to come.
 
-==== Training and Monitoring Training Progress
+==== Training and Monitoring Progress
 
 The next step is to train the model.  This is done via an `argo` workflow.  This will take the training container we just
 discussed, and launch it in the cluster. There are various reasons for wanting to conduct training on a cluster instead
@@ -157,7 +159,7 @@ include::examples/ch2_seldon_examples/tagable_bs.sh[tags=createTrainingWorkflow]
 ----
 ====
 
-There are two ways to "monitor" the progress of training.  The simplest is to do so via the CLI. If the later GUI methods
+There are two ways to "monitor" the progress of training.  The simplest is to do so via the CLI (Command Line Interface). If the later GUI methods
 don't work for you, please don't fret- simply 'watch' the progress via the command line interface as is shown in
 <<monitor_training_workflow_cli>>.
 
@@ -170,11 +172,11 @@ include::examples/ch2_seldon_examples/tagable_bs.sh[tags=cliTrainingCheck]
 ----
 ====
 
-The CLI (Command Line Interface) is a perfectly acceptable way to monitor a job, but there is a prettier option available.
+The CLI is a perfectly acceptable way to monitor a job, but there is a prettier option available.
 
-IMPORTANT: There are as many ways for this next part to go wrong as their are places to deploy Kubernetes (i.e. as there
+CAUTION: There are as many ways for this next part to go wrong as their are places to deploy Kubernetes (i.e. as there
 are stars in the sky).  The important thing is that your model trains.  Try this next part but if it doesn't work, that
-is OK. Don't get hung up here if it doesn't work out perfect.
+is OK. Don't get hung up here.
 
 You can go to the `ambassador` UI, and add `/argo/` to the end of the URL. If you are running Kubernetes in `minikube` or
 `microk8s`, you will need your IP address (or your VMs IP address), and the `ambassador` port.  To get your `ambassador`
@@ -189,23 +191,24 @@ include::examples/ch2_seldon_examples/tagable_bs.sh[tags=getAmbassadorPort]
 ----
 ====
 
-The URI you want is http://<machine_ip>:<ambassador_port>/argo/
+The URL you want is http://<machine_ip>:<ambassador_port>/argo/
 
 For me that is http://10.53.148.167:30134/argo/  The observent reader will notice, that the `ambassador` IP address listed
 in the prior example, is not the same as the machine IP address.
-
-WARNING: The machine IP address is not the same as the ambassador IP address.
 
 If everything goes correctly (and it's OK for now if it doesn't), you will see something like this.
 
 .Argo WebUI
 [#img-argo]
 [caption="Figure 1: "]
-image::images/ch2_argo_screenshot.png[argo-ui,909,510]
+image::images/ch2_argo_screenshot.png[argo-ui,width=909,height=510]
+
+The `argo` web user interface (UI) is a way to monitory how your model training is progressing. In future chapters we will introduce
+you to `pipelines`, which are a wrapper around `argo`.  The web UI isn't super helpful at diagnosing why training failed,
+but it is a thing you can look at to monitor weather or not a job has succeeded.
 
 
-
-==== Building and Deploying Serving Images (I'mt here)
+==== Building and Deploying Model Serving Images
 
 As stated earlier, Kubeflow decouples model training and serving.  Consider the following scenarios:
 
@@ -240,7 +243,7 @@ include::examples/ch2_seldon_examples/tagable_bs.sh[tags=submitSeldon]
 ====
 
 
-TIP: `-p deploy-model=true` is a feature of this particular workflow, but not nessicary for all kubeflow serving.
+TIP: `-p deploy-model=true` is a feature of this particular workflow, but not necessary for all kubeflow serving.
 
 To check that the serving layer is running you can follow the same steps as in checking the progress of the training model
 (last section)
@@ -263,11 +266,10 @@ configured wrong.
 The model will be available at http://<MACHINE_IP>:<AMBASSADOR_PORT>/seldon/mnist-classifier/api/v0.1/predictions .
 
 There is a python https://git.atlas.oreilly.com/oreillymedia/introduction-to-machine-learning-with-kubeflow/raw/master/examples/ch2/query-endpoint.py[script available]
- for pulling an image from the MNIST dataset, turning
-into a vector, displaying the image, and sending to to the model.  The <<model_serving>> is a fairly clear python example
- of how one can query the model. The model returns a json of the 10 digits and the
-probabiltiy that submitted image is what digit.  Specifically we need an image of a handwritten digit which we can turn
-into an array of values.
+ for pulling an image from the MNIST dataset, turning it into a vector, displaying the image, and sending it to the model.
+  The <<model_serving>> is a fairly clear python example  of how one can query the model. The model returns a json of
+  the 10 digits and the probabiltiy of weather the submitted vector represents a specific digit.  Specifically we need
+  an image of a handwritten digit which we can turn into an array of values.
 
 .Model Query Example
 [[model_serving]]
