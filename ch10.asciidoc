@@ -6,6 +6,8 @@
 === Scheduling
 === Versioning / Storing
 === Model Testing
+[[validating_training_data]]
+==== Validating Training Data
 ==== Canary / Stand-out deployments
 ==== A/B Testing new models
 ==== Multi-Armed-Bandit Testing

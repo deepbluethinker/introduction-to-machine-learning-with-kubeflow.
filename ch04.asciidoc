@@ -1,2 +1,87 @@
-[[spark_ch]]
-== Training a Spark model + Serving a Spark model
+[[data_and_feature_prep]]
+==  Data and Feature Preparation
+
+Machine Learning, especially deep learning, depends on large amounts of data to create models.
+While different types of machine learning techniques can handle different kinds of features (e.g. a linear regression model isn't going to be able to work directly with binary image data), data and feature preparation will be an important part of your machine learning.
+
+
+Data preparation generally refers to X/Y/Z.
+
+
+Feature preparation (sometimes also called feature engineering) refers to the act of transforming the raw input data into features which your machine learning model can use.
+
+
+One of the classic problems facing both data and feature preparation is the challenge of taking the logic and 
+
+
+=== Data Preparation
+
+Data preparation can generally be viewed as two distinct stages: collecting the data, and cleaning/filtering the data.
+Often this can be an iterative process later on in the process we may notice the unexpected behaviour in the model, which can be traced back to bad data in our input.
+Putting in the effort here to collect both more records and more information about each record here can make huge improvements in your model footnote:[See: The Unreasonable Effectiveness of Data by Halevy, norvid and Pereira, More Data beats Better Algorithms by Tyler Schnoebelen, and many more].
+
+[TIP]
+====
+Once you've got your data ready, it's important to make sure that future iterations do not have new errors in data introduced. See <<validating_training_data>> for a discussion.
+====
+
+If your input data size is relatively small, a single machine offers you all of the tools you are familiar with.
+Often using a parallel system, like Apache Spark, Flink, or Beam, can do data preparation faster, but requires distinct tools.
+
+==== Using a single machine
+
+// Which dataset is the smallest? Let's do the example with that on a single machine.
+// Or put in the GH data but from one day
+
+
+==== Using multiple machines / a distributed system
+
+
+Using a distributed platform make it faster to ingest and process very large data sources.
+In Kubeflow, at present, the three data parallel distributed systems available for data preparation are: Apache Spark, Google's Dataflow (via Apache Beam), and link:$http://docs.pachyderm.io/en/latest/fundamentals/distributed_computing.html$[Pachyderm].
+For now we will focus on Apache Spark, but many of these data parallel systems have similar concepts if different syntax.
+
+
+
+There are two different ways to get use Spark inside of Kubeflow,
+one is with the spark operator component inside of Kubeflow,
+and the other is by using a Jupyter notebook with Spark.
+In my opinion, a Jupyter notebook is a great place to start to understand your data,
+however Jupyter notebooks make important activities like testing and version management more
+challenging and can quickly become difficult to maintain.
+
+// TODO: holden -- add an example of using a Jupyter notebook with Spark in Kubeflow
+
+
+===== Reading the Input Data
+
+Apache Spark has APIs available in Python, R, Scala, Java; with some 3rd party support for other languages.
+We'll use the Python interface due to it's popularity in the machine learning community.
+Spark supports a wide variety of data sources, including (but not limited to):
+Parquet, JDBC, ORC, JSON, Hive, CSV, ElasticSearch, MongoDB, Neo4j, Cassandra, Snowflake, Redis, Riak Time Series, BigQuery* etc.
+
+
+
+Different data sources have different levels of support in Apache Spark and require different ammounts of work.
+
+
+
+
+===== Handling Bad Records
+
+
+
+
+=== Feature Preparation
+
+==== Using Tensorflow Transform
+
+==== Using Apache Spark
+
+
+[TIP]
+====
+While we've looked at using Apache Spark for feature prep you can also use it for training and serving a variety of machine learning models we explore in <<spark_ch>>
+====
+
+

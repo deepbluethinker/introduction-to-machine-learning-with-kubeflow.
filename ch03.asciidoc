@@ -1,4 +1,4 @@
-[[case_studies_and_feature_prep_ch]]
+[[case_studies]]
 ==  Introducing our case studies
 
 
@@ -13,8 +13,12 @@ GitHub is one of the largest open collections of source code, and the wonderful 
 This data has been used for many interesting machine learning projects, including
 link:$https://towardsdatascience.com/how-to-create-data-products-that-are-magical-using-sequence-to-sequence-models-703f86a231f8$[issue summarization] and
 link:$https://githubengineering.com/towards-natural-language-semantic-code-search/$[semantic language code search] both with Kubeflow.
-Using the GitHub dataset we will explore training two different models: one to generate "good" commit messages and another to predict chunks of code likely to result in a comment.
+Using the public link:$https://www.gharchive.org/$[GitHub archive dataset] we will explore training two different models: one to generate "good" commit messages and another to predict chunks of code likely to result in a comment.
 
+
+This dataset is available to us in two different ways.
+The raw dataset is stored as json records on `data.gharchive.org`, and also loaded into link:$https://developers.google.com/bigquery/$[Google BigQuery]
+as a link:$https://bigquery.cloud.google.com/table/githubarchive:day.20150101$[public dataset] we can write SQL expressions against.
 
 
 === Financial Data (Order Book)
