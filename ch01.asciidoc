@@ -496,13 +496,13 @@ The model selection layer is quite sophisticated in that it uses an adaptive onl
 from models that can span multiple machine learning frameworks. Since you are continuously learning from feedback throughout the lifetime of your application, the model selection layer self-calibrates failed model without needing to interact directly with the policy layer.
 The two different selection policies that are implemented allow for single-model selection, using a multi-armed bandit algorithm, and ensemble-model selection, using bootstrap aggregation (or bagging).
 
-The model abstraction layer provides an implementable interface for providing pluggability in terms of custom machine learning frameworks.
+The model abstraction layer provides an interface for providing pluggability in terms of custom machine learning frameworks.
 The layer is comprised of a prediction cache, an adaptive query-batching component, and model containers that are communicable through RPC.
 These model containers are built as Docker containers, so it was intended that Clipper may run on Kubernetes seamlessly.
 
-Clipper's modular architecture and focus on containerization, similar to Kubeflow, enables caching and batching mechanisms to be shared across frameworks while also reaping the gains of scalability, concurrency, and flexibility in adding new model frameworks.
+Clipper's modular architecture and focus on containerization, similar to Kubeflow, enables caching and batching mechanisms to be shared across frameworks while also reaping the benefits of scalability, concurrency, and flexibility in adding new model frameworks.
 
-Graduating from just scientific theory into a functional end-to-end system, Clipper has gained traction within the scientific community and has had various parts of its architectural designs incorporated into recently introduced machine learning systems; nonetheless, we have yet to see if it will be adopted in industry at scale.
+Graduating from theory into a functional end-to-end system, Clipper has gained traction within the scientific community and has had various parts of its architectural designs incorporated into recently introduced machine learning systems; nonetheless, we have yet to see if it will be adopted in industry at scale.
 
 ==== MLflow (Databricks)
 
@@ -523,14 +523,14 @@ MLflow is still in active development, but with the entire project being open-so
 ==== Others
 
 Because of the challenges presented in machine learning development, many organizations have started to build internal machine learning platforms to manage their machine learning lifecycle.
-For example: Bloomberg, Facebook, Google, Uber have built the Data Science Platform, FBLearner Flow, TFX, and Michelangelo to manage data preparation, model training and deployment.
+For example: Bloomberg, Facebook, Google, Uber respectively have built the Data Science Platform, FBLearner Flow, TFX, and Michelangelo to manage data preparation, model training and deployment.
 With the machine learning infrastructure landscape always evolving and maturing, we are excited to see how open-source projects, like Kubeflow, will bring much-needed simplicity and abstraction to machine learning development.
 
 === Getting Help / Community Resources
 
 We are so glad you've decided to use this book to start your adventures into Kubeflow.
 However, like all adventures, there may come a point when your guide book isn't enough to carry you through.
-Thankfully there are a collection of community resources where you can interact with others on similar adventures to your own.
+Thankfully there are a collection of community resources where you can interact with others on similar adventures.
 We encourage you to sign up for the link:$$http://kubeflow.slack.com$$[Kubeflow slack at http://kubeflow.slack.com], one of the more active areas of discussion, now since account approval is semi-manual.
 // TODO(holden): Check and see if we split the user/dev list out from discuss@
 While less active than slack, there is also a mailing list at link:$$https://groups.google.com/forum/#!forum/kubeflow-discuss$$[].
@@ -544,4 +544,4 @@ If you want to quickly explore Kubeflow end-to-end there are some link:$$https:/
 === Conclusion
 
 At this point you have everything you need to get started on your Kubeflow adventure: a Kubernetes cluster, Kubeflow and its core dependencies, and a desire to have fun.
-In the next chapter <<simple_training_ch>>, we'll train and serve a relatively simple machine learning model together to give you an idea of how the basics of how to use Kubeflow.
+In the next chapter <<simple_training_ch>>, we'll train and serve a relatively simple machine learning model to give you an idea of how the basics of how to use Kubeflow.
