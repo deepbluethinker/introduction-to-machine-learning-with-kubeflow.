@@ -105,7 +105,8 @@ With Kubeflow, users can begin with a training model that they are unsure about,
 
 ==== Jupyter Notebooks
 
-Jupyter notebook is an open-source web application that allows users to create and share data, code snippets, and experiments at scale. They are popular among machine learning practitioners due to their simplicity and portability.
+Jupyter notebook is an open-source web application that allows users to create and share data, code snippets, and experiments at scale.
+They are popular among machine learning practitioners due to their simplicity and portability <<#1_jupyter_notebook>>.
 
 .A Jupyter notebook running in Kubeflow
 [#1_jupyter_notebook]
