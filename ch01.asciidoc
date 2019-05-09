@@ -1,33 +1,33 @@
 [[who_is_kubeflow_for_ch]]
-== What does Kubeflow solve & who’s it for, and how to get started
+== Kubeflow: What it is, who is it for & getting started
 
-
-Kubeflow solves the problem of needing to build portable, reliable, scalable machine learning pipelines and using the results.
+Kubeflow solves the problem of how to take machine learning labs from research to production.
+Kubeflow does this by giving you the tools to build portable, reliable, scalable machine learning pipelines and using the results.
+Despite common misconception, Kubeflow is more than just Kubernetes and TensorFlow -- you can use it for all sorts of machine learning models.
 We hope Kubeflow is the right tool for you, although it may not be especially if your organization does not have Kubernetes deployed.
 The <<brief_alternatives_to_kubeflow>> introduces some options you may wish to explore.
 
 
-[TIP]
-====
-Despite common misconception, Kubeflow is more than just Kubernetes and TensorFlow -- you can use it for all sorts of machine learning models.
-====
+This chapter aims to help you decide if Kubeflow is the right tool for your problem.
+We'll cover the benefits you can expect from Kubeflow, some of the alternatives, and some of the costs of using kubeflow.
+Once you've decided on Kubeflow, or at least exploring it, we'll show you how to get started quickly on your local computer,
+and direct you to the correct appendix for the cloud or Kubernetes provider of your choice for scaling.
 
 
 
+=== What is Kubeflow for & who should use it?
 
-=== Who is Kubeflow for?
-
-Kubeflow is for both data scientists and data engineers looking to build production machine learning pipelines.
+Kubeflow is for both data scientists and data engineers looking to build production-grade machine learning pipelines.
 Kubeflow packages components for all the different stages of a model's lifecycle (data exploration, feature preparation, model training, model serving, and model testing); allowing users to build integrated end-to-end pipelines.
 
 
 Kubeflow can be run either locally in your development environment or on a production cluster once the pipelines are ready.
-Kubeflow provides a unified system with repeatable components power by containerization and scalability by leveraging Kubernetes.
+Kubeflow provides a unified system leveraging Kubernetes for scalability and containerization for portability and repeatability of pipelines.
 
 
 === Why Containerization?
 
-Containerization means no more "it worked on my machine" or "oh yeah, we forgot about just one, you need package this extra package."
+Containerization means no more "it worked on my machine" or "oh yeah, we forgot about just one, you need this extra package."
 Containerized applications are isolated from the rest of your machine, and have all of their requirements included (from the operating system up).
 
 
@@ -53,18 +53,13 @@ You can, of course, build your own containerized machine learning pipelines on K
 Kubeflow provides a partially-standardized interface to the tools you would be likely to use on your own adventure, as well making it easier to configure your pipeline to use cloud accelerations like TPUs (tensor processing units).
 
 
-[TIP]
-====
-We talk about who this book is for in <<assumptions_about_the_audience>> as well as the required background and resources to get up to speed if you need them.
-====
-
 
 [[breif_kubeflow_design_and_core_components]]
 === Kubeflow’s Design & Core Components
 
 In the machine learning landscape, there are many diverse tool sets and frameworks. Kubeflow does not seek to reinvent the wheel or provide a "one size fits all" solution - instead, it allows machine learning practitioners to compose and customize their own stacks based on specific needs. It is designed to simplify the process of building and deploying machine learning at scale; allowing data scientists to do their jobs without worrying about the "boring parts" of building the infrastructure.
 
-Kubeflow seeks to tackle the problem of simplifying machine learning through three aspects: composability, portability, and scalability.
+Kubeflow seeks to tackle the problem of simplifying machine learning through three features: composability, portability, and scalability.
 
 * Composability - the core components come from data science tools that are already familiar to machine learning practictioners. They can be used independently to facilitate specific stages of machine learning, or composed together to form end-to-end pipelines.
 
