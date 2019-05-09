@@ -109,7 +109,7 @@ Jupyter notebook is an open-source web application that allows users to create a
 They are popular among machine learning practitioners due to their simplicity and portability <<#1_jupyter_notebook>>.
 
 .A Jupyter notebook running in Kubeflow
-[#1_jupyter_notebook]
+[[#1_jupyter_notebook]]
 image::images/1_jupyter_notebook.png[A Jupyter notebook running in Kubeflow]
 
 In Kubeflow, you can spin up instances of Jupyter notebooks that directly interact with your cluster and its other components. For example, you can write snippets of TensorFlow distributed training code in your laptop, and bring up a training cluster with just a few clicks.
@@ -173,7 +173,7 @@ Regardless of if you use a local or remote Kubernetes cluster, having the develo
 ====
 
 
-===== Automatically
+===== Automatic installation
 
 Kubeflow's dependencies can be automatically installed along with, optional, Minikube by running the install shell script <<mini_kube_setup_sh>>.
 If you prefer MicroK8s, Canonical Labs has their own auto-install script covered in <<setting_up_microk8s>>.
@@ -197,10 +197,10 @@ If this fails to install minikube, don't worry we'll cover how to fix that up in
 
 [WARNING]
 ====
-These scripts will modify your system packages installing and require root/super user permissions. If you wish you can instead run these commands on another host (e.g. dedicated KF development enviroment).
+These scripts will modify your system packages and require root/super user permissions. If you wish you can instead run these commands on another host (e.g. dedicated KF development enviroment).
 ====
 
-===== Manually
+===== Manual Installation
 
 // TODO(holden): This is going to change
 
@@ -210,7 +210,7 @@ Ksonnet is on github, with its release posted at link:$$https://github.com/ksonn
 
 [NOTE]
 ====
-Even if you have these installed, you will want to check that you have the right versions installed for your version of Kubeflow.
+Even if you have ksonnet installed, you will want to check that you have the right version installed for your version of Kubeflow.
 ====
 
 [[install_ksonnet_sh]]
@@ -228,7 +228,7 @@ Kubectl is more widely packaged, with the different installation options covered
 If you want to use a package manager to install kubectl,
 Ubuntu users can use snap <<install_kubectl_snap>> and
 Homebrew users can install Kubectl <<install_kubectl_homebrew>>,
-the simplest with package manager for this, with others covered in link:$$https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl$$[the guide].
+the simplest package manager for this, with others covered in link:$$https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl$$[the guide].
 Kubectl can also be installed outside of your package manager <<install_kubectl_curl>>, although this requires manual updating.
 
 [[install_kubectl_snap]]
@@ -293,7 +293,7 @@ You don't need to have a local Kubernetes cluster, but many data scientists and 
 
 This part is optional, however you may find it easier to have a throw away system to do your learning in.
 Multipass (https://github.com/CanonicalLtd/multipass) is a system for orchestrating virtual machines in Linux or OSX.
-If you don't want multi-pass, feel free to skip ahead.
+If you don't want multipass, feel free to skip ahead.
 
 [TIP]
 ====
@@ -328,7 +328,7 @@ Now that you have this VM created you can get a shell to it and start following 
 multipass shell kubeflow
 ```
 
-To allow your machine to be able to connect to the web ui and other parts of the console you will need to change the iptables rules with:
+To allow your machine to connect to the web ui and other parts of the console you will need to change the iptables rules with:
 
 ```
 sudo iptables -P FORWARD ACCEPT
@@ -345,8 +345,8 @@ The set up script for Kubeflow we showed earlier will attempt to install Minikub
 
 
 
-The most common reason for the automatic set up of Minikube as part of the set-up scripts failing is missing a hypervisor or Docker install.
-The regardless of your OS you should be able to use link:$$https://www.virtualbox.org/wiki/Downloads$$[VirtualBox], however other options like KVM on Linux, Hyper-V on Windows, and HyperKit on MacOs all work as well.
+The most common failure of the automatic set up of Minikube is missing a hypervisor or Docker.
+Regardless of your OS you should be able to use link:$$https://www.virtualbox.org/wiki/Downloads$$[VirtualBox], however other options like KVM on Linux, Hyper-V on Windows, and HyperKit on MacOs all work as well.
 There are installation guides for Minikube on the main Kubernetes website link:$$https://kubernetes.io/docs/tasks/tools/install-minikube/$$[] as well as the Kubeflow specific one at link:$$https://www.kubeflow.org/docs/started/getting-started-minikube/$$[].
 
 
@@ -385,7 +385,7 @@ include::examples/dev-setup/install-microk8s.sh[tags=setupmicrok8s]
 ----
 ====
 
-Once you're done using MicroK8s, or you otherwise want to access the regular versions of the commands you remove the alias as in <<unalias_microk8s>>.
+Once you're done using MicroK8s, or you otherwise want to access the regular versions of the commands, remove the alias as in <<unalias_microk8s>>.
 
 [[unalias_microk8s]]
 .Set up MicroK8s components and aliases
@@ -429,7 +429,8 @@ This part is optional, if it ends up being frustrating or slowing you down feel 
 
 
 Inside the Kubeflow project, the Jsonnet library is used to automatically format Ksonnet into a standard layout. This autoformatter can also catch syntax errors or other simple errors earlier on in the deploy.
-You can install from jsonnet package link:$$https://github.com/google/jsonnet/releases$$[releases are available on GitHub] <<jsonnet_manual>>, link:$$https://snapcraft.io/$$[Snap] <<jsonnet_snap>> (from Canonical).
+You can install from jsonnet packages from the link:$$https://github.com/google/jsonnet/releases$$[releases on GitHub] <<jsonnet_manual>>,
+or with link:$$https://snapcraft.io/$$[Snap] <<jsonnet_snap>>.
 
 [WARNING]
 ====
@@ -473,17 +474,21 @@ If you get stuck here, or if your permissions/policies don't allow you to use mi
 
 
 Within the research community, various alternatives exist that provide uniquely different functionality to that of Kubeflow.
-In recent research cadences, model development or training has received much attention and support with regards to advancements in infrastructure, theory, and systems.
-Prediction serving, on the other hand, has received relatively less attention.
+Most recent research has focused around model development and training, with large improvements in infrastructure, theory, and systems.
+Prediction & model serving, on the other hand, has received relatively less attention.
+
+
 As such, it is commonly seen that data science practitioners end up hacking together an amalgam of critical systems components that are integrated to support serving and inference across various workloads and continuously evolving frameworks.
 However, given the demand for constant availability and horizontal scalability, solutions like Kubeflow and various others are gaining traction through industry as powerful architectural abstraction tools and as convincing research scopes.
 
 ==== Clipper (RiseLabs)
 
-[#6_clipper]
-image::images/6_clipper.png[Clipper and its modular architecture]
-One interesting alternative to Kubeflow, is a general-purpose low-latency prediction serving system that came out of RiseLabs, titled Clipper. In an attempt to simplify deployment, optimization, and inference, Clipper has developed a layered architecture system like the one seen above.
+One interesting alternative to Kubeflow, is a general-purpose low-latency prediction serving system that came out of RiseLabs, titled Clipper. In an attempt to simplify deployment, optimization, and inference, Clipper has developed a layered architecture system like the one seen <<#6_clipper>>.
 Through various optimizations and its modular design, Clipper, in its seminal paper, has achieved low latency and high throughput predictions at comparable levels to TensorFlow Serving, on three TensorFlow models of varying inference costs.
+
+[[#6_clipper]]
+image::images/6_clipper.png[Clipper and its modular architecture]
+
 
 Clipper is divided across two abstractions, aptly named: model selection and model abstraction layers.
 
