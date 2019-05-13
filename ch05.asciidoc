@@ -1,8 +1,324 @@
 [[tf_ch]]
-== Training a general TF + Serving a TF model
+== Training and Serving a TensorFlow Model
 
-=== Distributed Training
+TensorFlow is an open-source framework for data flow computations developed by the Google Brain team. It is currently one of the most popular libraries for machine learning and deep learning applications. TensorFlow has great support for computational tasks on CPUs, GPUs, and TPUs.
+
+In this chapter we'll look at how to use Kubeflow to train and serve a TensorFlow model.
+
+
+=== TensorFlow Training
+
+Kubeflow makes it easy to configure TensorFlow jobs by representing the latter as a `custom resource`. In this case, let's take a closer look at the TFJob resource.
+
+
+[NOTE]
+====
+Custom resources are extensions to the core Kubernetes API that store collections of API objects. By usng custom resources, developers only need to provide a "desired state" of their applcations, and the underlying controllers will take care of the rest.
+====
+
+We'll start with a simple MNist example with distributed training. The TensorFlow training code is provided for you at https://github.com/kubeflow/tf-operator/blob/master/examples/v1beta1/dist-mnist/dist_mnist.py.
+
+Let's take a look at the yaml file for the distributed TensorFlow job:
+
+```
+apiVersion: "kubeflow.org/v1"
+kind: "TFJob"
+metadata:
+  name: "dist-mnist-example"
+spec:
+  tfReplicaSpecs:
+    PS:
+      replicas: 2
+      restartPolicy: Never
+      template:
+        spec:
+          containers:
+            - name: tensorflow
+              image: kubeflow/tf-dist-mnist-test:1.0
+    Worker:
+      replicas: 4
+      restartPolicy: Never
+      template:
+        spec:
+          containers:
+            - name: tensorflow
+              image: kubeflow/tf-dist-mnist-test:1.0
+```
+
+The `apiVersion` field specifies which version of the TFJob custom resource you are using. The corresponding version (in this case `v1`) needs to be installed in your Kubeflow cluster. 
+
+The `kind` field identifies the type of the custom resource - in this case a `TFJob`.
+
+The `metadata` field is common to all Kubernetes objects and is used to uniquely identify the object in the cluster - you can add fields like name, namespace, and labels here.
+
+The most important part of the schema is `tfReplicaSpecs`. This is the actual description of your TensorFlow training cluster and its desired state. In a typical TensorFlow training cluster, there are a few possible processes:
+
+* Chief - Responsible for orchestrating computational tasks, emitting events, and checkpointing the model.
+* Parameter Servers (PS) - Provide a distributed data store for the model parameters.
+* Worker - This is where the computations and trainins actually happen. When a Chief node is not explicitly defined (as in the above example), one of the workers acts as the Chief node.
+* Evaluator - The evaluators can be used to compute evaluation metrics as the model is trained.
+
+A replica spec contains a number of properties that describe its desired state:
+
+* replicas - How many replicas should be spawned for this replica type.
+
+* template - A `PodTemplateSpec` that describes the pod to create for each replica.
+
+* restartPolicy - Determines whether pods will be restarted when they exit. The allowed values are as follows:
+
+** `Always` means the pod will always be restarted. This policy is good for parameter servers since they never exit and should always be restarted in the event of failure.
+
+** `OnFailure` means the pod will be restarted if the pod exits due to failure. A non-zero exit code indicates a failure.
+An exit code of 0 indicates success and the pod will not be restarted.
+This policy is good for chief and workers.
+
+** `ExitCode` means the restart behavior is dependent on the exit code of the tensorflow container as follows
+
+*** 0 indicates the process completed successfully and will not be restarted.
+*** 1-127 indicates a permanent error and the container will not be restarted.
+*** 128-255 indicates a retryable error and the container will be restarted. This policy is good for the chief and workers.
+
+** `Never` means pods that terminate will never be restarted. This policy should rarely be used because Kubernetes will terminate pods for any number of reasons (e.g. node becomes unhealthy) and this will prevent the job from recovering.
+
+There are a few other optional configurations for your TFJob, including:
+
+* `activeDeadlineSeconds` - How long to keep this job active before the system can terminate it
+* `backoffLimit` - How many times to keep retrying this job before marking it as failed.
+* `cleanPodPolicy` - Configures whether or not clean up the Kubernetes pods after the job completes. Setting this policy can be useful to keep pods for debugging purposes.
+
+Once you have the TFJob spec written, simply deploy it to your Kubeflow cluster:
+```
+kubectl apply -f dist-mnist.yaml
+```
+
+You can then monitor the progress of the job:
+```
+kubectl describe tfjob dist-mnist-example
+```
+
+This should output something like:
+```
+Status:
+  Completion Time:  2019-05-12T00:58:27Z
+  Conditions:
+    Last Transition Time:  2019-05-12T00:57:31Z
+    Last Update Time:      2019-05-12T00:57:31Z
+    Message:               TFJob dist-mnist-example is created.
+    Reason:                TFJobCreated
+    Status:                True
+    Type:                  Created
+    Last Transition Time:  2019-05-12T00:58:21Z
+    Last Update Time:      2019-05-12T00:58:21Z
+    Message:               TFJob dist-mnist-example is running.
+    Reason:                TFJobRunning
+    Status:                False
+    Type:                  Running
+    Last Transition Time:  2019-05-12T00:58:27Z
+    Last Update Time:      2019-05-12T00:58:27Z
+    Message:               TFJob dist-mnist-example successfully completed.
+    Reason:                TFJobSucceeded
+    Status:                True
+    Type:                  Succeeded
+  Replica Statuses:
+    Worker:
+      Succeeded:  4
+    PS:
+      Active: 2
+```
+
+Notice that the status of the TFJob is returned in the `JobStatus` field. Specifically, you can see a list of all the observed job conditions so far, as well as a detailed break-down of the statuses of each replica in the cluster.
+
+Alternatively, you can use the TFJob dashboard to submit and monitor your distributed TFJobs.
+
+[insert steps here]
+
+==== Using GPUs
+
+To use GPUs for training, your Kubeflow cluster needs to be pre-configured to enable GPUs. Refer to the appendix section to see how to do this for your preferred cloud provider.
+
+
+After enabing GPUs on the cluster, you can enable GPUs on the specific replica type in the training spec by modifying the command-line arguments, for example:
+
+```
+    Worker:
+      replicas: 4
+      restartPolicy: Never
+      template:
+        spec:
+          containers:
+            - name: tensorflow
+              image: kubeflow/tf-dist-mnist-test:1.0
+              args:
+            - python
+            - /var/tf_dist_mnist/dist_mnist.py
+            - --num_gpus=1
+```
+
+
+==== Using Other Frameworks
+
+Kubeflow is designed to be a framework-agnostic machine learning platform. That means the schema for distributed training can easily be extended to other frameworks. As of the time of this writing, there are a number of operators written to support other frameworks, including PyTorch and Caffe2.
+
+As an example, here is how a PyTorch training job spec looks like:
+
+```
+apiVersion: "kubeflow.org/v1"
+kind: "PyTorchJob"
+metadata:
+  name: "pytorch-dist"
+spec:
+  pytorchReplicaSpecs:
+    Master:
+      replicas: 1
+      restartPolicy: OnFailure
+      template:
+        spec:
+          containers:
+            - name: pytorch
+              image: gcr.io/kubeflow-ci/pytorch-dist-sendrecv-test:1.0
+    Worker:
+      replicas: 3
+      restartPolicy: OnFailure
+      template:
+        spec:
+          containers:
+            - name: pytorch
+              image: gcr.io/kubeflow-ci/pytorch-dist-sendrecv-test:1.0
+```
+
+As you can see, the format is very similar to that of TFJobs. The only difference is in the replica types.
+
 
 === Serving a Model
 
-=== Hyperparameter Tuning
+TensorFlow Serving is a production-grade system design for scalability and high performance. It comes packaged with integration with TensorFlow models (such as the one you just trained), and can be extended to serve other models as well.
+
+Kubeflow enables TensorFlow Serving through two component prototypes - `tf-serving-service` and `tf-serving-deployment`. The `tf-serving-service` prototype represents a model, and the `tf-serving-deployment` prototype represents a version of the model. This allows users to concurrently serve multiple versions of the model, which is useful for experimentation and gradual rollouts.
+
+To generate a `tf-serving-service`, run the following:
+
+```
+ks generate tf-serving-service mnist-service
+// This must be the same as your deployment model name
+ks param set mnist-service modelName mnist
+// optional
+ks param set mnist-service trafficRule v1:100
+// optional, change type to LoadBalancer to expose external IP
+ks param set mnist-service serviceType LoadBalancer
+```
+
+
+And to enerate the a `tf-serving-deployment`:
+
+```
+MODEL_COMPONENT=mnist-v1
+ks generate tf-serving-deployment-gcp ${MODEL_COMPONENT}
+ks param set ${MODEL_COMPONENT} modelName mnist
+ks param set ${MODEL_COMPONENT} versionName v1   // optional, it's the default value
+ks param set ${MODEL_COMPONENT} modelBasePath gs://kubeflow-examples-data/mnist
+ks param set ${MODEL_COMPONENT} gcpCredentialSecretName user-gcp-sa
+```
+
+Note that in this example, we are pointing the model to `gs://kubeflow-examples-data/mnist`. To serve your own model, simply change the `modelBasePath` parameter value and the corresponding credentials (refer to the appendix for more details).
+
+Finally, deploy your model:
+```
+export KF_ENV=default
+ks apply ${KF_ENV} -c mnist-service
+ks apply ${KF_ENV} -c ${MODEL_COMPONENT}
+```
+
+Now that your serving component is up and running, you can actually start sending prediction queries to it. 
+
+Fisrt, get the external IP (assuming that LoadBalancer is set as the service type):
+```
+kubectl get svc mnist-service
+```
+
+Then verify that everything works by sending a prediction request:
+```
+curl -X POST -d @input.json http://EXTERNAL_IP:8500/v1/models/mnist:predict
+
+```
+
+Congratulations - if you followed this chapter this far, you have successfully trained and service your first TensorFlow model using Kubeflow.
+
+
+=== Batch Prediction
+
+So far, we have seen an example of deploying an online prediction service in Kubeflow. Alternatively, you can also servie a trained model through batch prediction. Instead of returning prediction results in the HTTP response body, batch prediction outputs predictions to a specified storage location. Compared to online prediction, there are some situations where using batch prediction makes more sense. For example:
+
+* You don't need predictions immediately (in other words, asynchronous responses are acceptable);
+* You need to handle a large volume of instances;
+* You are dealing with periodic jobs, for example processing predictions on data accumulated over the past 24 hours.
+
+Kubeflow allows users to run batch predictions as an Apache Beam job on the Kubernetes cluster. 
+
+[NOTE]
+====
+Apache Beam is a general-purpose framework for parallel processing pipelines. Its model and architecture are heavily infuenced by Google's data processing models, such as MapReduce and Flume.
+====
+
+First, configure your storage credentials and model paths:
+
+```
+MY_BATCH_PREDICT_JOB=my_batch_predict_job
+GCP_CREDENTIAL_SECRET_NAME=user-gcp-sa
+INPUT_FILE_PATTERNS=gs://my_data_bucket/my_file_pattens
+MODEL_PATH=gs://my_model_bucket/my_model
+OUTPUT_RESULT_PREFIX=gs://my_data_bucket/my_result_prefix
+OUTPUT_ERROR_PREFIX=gs://my_data_bucket/my_error_prefix
+BATCH_SIZE=4
+INPUT_FILE_FORMAT=my_format
+```
+
+Then, install the `tf-batch-predict` prototype from GitHub:
+```
+ks registry add kubeflow-git github.com/kubeflow/kubeflow/tree/${VERSION}/kubeflow
+ks pkg install kubeflow-git/examples
+```
+
+Now generate the batch prediction component:
+```
+ks generate tf-batch-predict ${MY_BATCH_PREDICT_JOB}
+  --gcpCredentialSecretName=${GCP_CREDENTIAL_SECRET_NAME} \
+  --inputFilePatterns=${INPUT_FILE_PATTERNS} \
+  --inputFileFormat=${INPUT_FILE_FORMAT} \
+  --modelPath=${MODEL_PATH} \
+  --outputResultPrefix=${OUTPUT_RESULT_PREFIX} \
+  --outputErrorPrefix=${OUTPUT_ERROR_PREFIX} \
+  --batchSize=${BATCH_SIZE}
+```
+
+The parameters to the component are:
+
+* `inputFilePatterns`: The list of input files or file patterns, separated by commas.
+
+* `inputFileFormat`: Can be one of json, tfrecord, or tfrecord_gzip.
+
+* `modelPath`: The path containing the model files in SavedModel format.
+
+* `batchSize`: Number of prediction instances in one batch. This is dependent on how many instances can be held and processed simultaneously in memory.
+
+* `outputResultPrefix`: Output path to save the prediction results.
+
+* `outputErrorPrefix`: Output path to save the prediction errors.
+
+* `numGpus`: Number of GPUs to use per machine. This assumes that your cluster is enabled to use GPUs.
+
+* `gcpCredentialSecretName`: Secret name if used on GCP.
+
+
+Now you can submit your batch prediction job:
+```
+export KF_ENV=default
+ks apply ${KF_ENV} -c ${MY_BATCH_PREDICT_JOB_NAME}
+
+```
+
+You can check the job's status by running the following command:
+```
+kubectl describe pod ${MY_BATCH_PREDICT_JOB_NAME}
+```
+
+When the job completes, the prediction results will be saved at the output path specified.
