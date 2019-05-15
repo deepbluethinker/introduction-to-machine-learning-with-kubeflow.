@@ -5,11 +5,15 @@ Machine Learning, especially deep learning, depends on large amounts of data to 
 While different types of machine learning techniques can handle different kinds of features (e.g. a linear regression model isn't going to be able to work directly with binary image data), data and feature preparation will be an important part of your machine learning.
 
 
-Data preparation generally refers to X/Y/Z.
+Data preparation refers to the act of sourcing the data and handling missing/bad/partial records.
 
 
 Feature preparation (sometimes also called feature engineering) refers to the act of transforming the raw input data into features which your machine learning model can use.
+Feature preparation often depends on knowledge of both the data and the kind of machine learning algorithms you plan to use.
+For example, when training a linear regression model, a common part of feature engineering may be encoding explicit interactions we suspect may be useful, however it is unlikely doing this would benefit a deep-learning model to the same degree.
 
+
+Both of these processes are best approached iteratively, revisiting them as your understanding of the problem and model changes.
 
 One of the classic problems facing both data and feature preparation is the challenge of taking the logic and 
 
@@ -25,16 +29,47 @@ Putting in the effort here to collect both more records and more information abo
 Once you've got your data ready, it's important to make sure that future iterations do not have new errors in data introduced. See <<validating_training_data>> for a discussion.
 ====
 
+
+=== Deciding on the correct tooling
+
+With two very distinct paths of tooling, making the wrong decision hear can involve substantail changes.
 If your input data size is relatively small, a single machine offers you all of the tools you are familiar with.
 Often using a parallel system, like Apache Spark, Flink, or Beam, can do data preparation faster, but requires distinct tools.
 
-==== Using a single machine
+
+Beyond solely considering the size, other important considerations are where the data your pulling from exists.
+
+==== Where to put your data between steps
+
+Data preparation in and off its self is not enough for a machine learning solution, so we need to be able to put the output of our data preparation somewhere that it can be consumed later.
+In many of the Kubeflow examples, persistant volumes are used to store the data between the data preparation and the next stage.
+This is beneficial since it does not depend on a specific storage vendor, however in many situations persistant volumes can be:
+// TODO(holden)
+slow (TODO link), difficult to scale (TODO link), may require additional set up (link to the mnist seldon example), and on many providers may not support multiple concurrent writers.
+While less common in the Kubeflow examples, using the object storage solution of your cloud (e.g. S3/Azure Blob Storage/GCS) may be more suitable.
+
+[WARNING]
+====
+Using non-kubernetes integrated storage layer does mean that moving your pipeline between clouds can require some changes.
+====
+
+
+==== Single Machine Data Preparation
 
 // Which dataset is the smallest? Let's do the example with that on a single machine.
 // Or put in the GH data but from one day
 
+Doing data preparation on a single machine limits the scale of data we are able to handle, but offers the widest range of tools.
+If you're an experienced Python programmer a common way to do data preparation is with Jupyter notebooks.
+To get started you can use the Jupyter Hub installation on Kubeflow to begin the development of your data ingestion step, and once it's finished 
 
-==== Using multiple machines / a distributed system
+
+Alternatively if you don't want to use a notebook you can go ahead and directly build your data preparation stage into a container to be run:
+
+
+
+
+==== Using Apache Spark
 
 
 Using a distributed platform make it faster to ingest and process very large data sources.
@@ -52,6 +87,7 @@ challenging and can quickly become difficult to maintain.
 
 // TODO: holden -- add an example of using a Jupyter notebook with Spark in Kubeflow
 
+The other way to do this is build your 
 
 ===== Reading the Input Data
 
@@ -74,9 +110,23 @@ Different data sources have different levels of support in Apache Spark and requ
 
 === Feature Preparation
 
-==== Using Tensorflow Transform
+==== Using TFX / Tensorflow Transform
+
+
+The Tensorflow community has created an excellent set of integrated tools for doing data preparation.
+At present these tools are all built on top of Apache Beam and have limited support for distributed processing outside of Google Cloud.
+However if you have relatively small datasets these tools can be used regardless of where your Kubernetes cluster is deployed.
+
+
+[TIP]
+====
+Apache Beam's support for Apache Flink is under active development and _could_ mean that future versions are able to work outside of Google Cloud.
+====
+
 
 ==== Using Apache Spark
+
+Apache Spark has a large number of built in feature preparation stages that you can use
 
 
 [TIP]
