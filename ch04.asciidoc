@@ -3,9 +3,13 @@
 
 Machine Learning, especially deep learning, depends on large amounts of data to create models.
 While different types of machine learning techniques can handle different kinds of features (e.g. a linear regression model isn't going to be able to work directly with binary image data), data and feature preparation will be an important part of your machine learning.
+If you ask machine learning partictioners, many of them spend the majourity of their time working on a combination of data and feature preparation.
 
 
-Data preparation refers to the act of sourcing the data and handling missing/bad/partial records.
+Data preparation refers to the act of sourcing the data, augmenting with other datasets, and handling missing/bad/partial records.
+This part of the machine learning process can consume a large amount of time, and is often much less fun than the other steps.
+That being said, just because this part is not enjoyable does not mean you should give it short shift, high quality data can be the difference
+between a successful ML project and a dissapointment.
 
 
 Feature preparation (sometimes also called feature engineering) refers to the act of transforming the raw input data into features which your machine learning model can use.
@@ -14,8 +18,10 @@ For example, when training a linear regression model, a common part of feature e
 
 
 Both of these processes are best approached iteratively, revisiting them as your understanding of the problem and model changes.
+While we examine data preparation and feature preparation seperately, it is not uncommon for these to exist as a single integrated component,
+especially in situations where the datasets are less complex.
 
-One of the classic problems facing both data and feature preparation is the challenge of taking the logic and 
+
 
 
 === Data Preparation
@@ -30,7 +36,7 @@ Once you've got your data ready, it's important to make sure that future iterati
 ====
 
 
-=== Deciding on the correct tooling
+==== Deciding on the correct tooling
 
 With two very distinct paths of tooling, making the wrong decision hear can involve substantail changes.
 If your input data size is relatively small, a single machine offers you all of the tools you are familiar with.
@@ -69,13 +75,18 @@ Alternatively if you don't want to use a notebook you can go ahead and directly 
 
 
 
-==== Using Apache Spark
+==== Distributed Data Preparation w/Apache Spark
 
 
 Using a distributed platform make it faster to ingest and process very large data sources.
 In Kubeflow, at present, the three data parallel distributed systems available for data preparation are: Apache Spark, Google's Dataflow (via Apache Beam), and link:$http://docs.pachyderm.io/en/latest/fundamentals/distributed_computing.html$[Pachyderm].
 For now we will focus on Apache Spark, but many of these data parallel systems have similar concepts if different syntax.
 
+[TIP]
+====
+We briefly introduce Spark's new Dataset/Dataframe APIs and the tools to load & save your data.
+If you want to go beyond the basics we recommend Learning Spark, Spark the Definitive Guide, or High Performance Spark as resources to improve your Spark skills.
+====
 
 
 There are two different ways to get use Spark inside of Kubeflow,
@@ -87,24 +98,55 @@ challenging and can quickly become difficult to maintain.
 
 // TODO: holden -- add an example of using a Jupyter notebook with Spark in Kubeflow
 
-The other way to do this is build your 
+The other way to do this is build a classic program to do your data preparation.
+If you've started with a notebook but found it difficult to maintain you can move your notebook into a traditional program.
 
 ===== Reading the Input Data
 
 Apache Spark has APIs available in Python, R, Scala, Java; with some 3rd party support for other languages.
 We'll use the Python interface due to it's popularity in the machine learning community.
 Spark supports a wide variety of data sources, including (but not limited to):
-Parquet, JDBC, ORC, JSON, Hive, CSV, ElasticSearch, MongoDB, Neo4j, Cassandra, Snowflake, Redis, Riak Time Series, BigQuery* etc.
+Parquet, JDBC, ORC, JSON, Hive, CSV, ElasticSearch, MongoDB, Neo4j, Cassandra, Snowflake, Redis, Riak Time Series, etc.
 
 
+Some of the most common data sources are built into Apache Spark and can be loaded directly as with:
 
-Different data sources have different levels of support in Apache Spark and require different ammounts of work.
+// TODO EXAMPLE
+
+However, some data sources (such as X*) require additional settings for Spark to download the data.
 
 
+Four our GitHub example, the data is stored in big query or as JSON dumps.
+Spark directly supports reading JSON, but we can do some pre-filtering in BigQuery SQL on the data to simplify our pipeline.
+To access the resulting BigQuery data
 
 
-===== Handling Bad Records
+===== Validating the schema
 
+
+===== Handling missing fields
+
+In many situations some of our data will be missing or need computing.
+Depending on our dataset we can either fill in those missing data fields with lower quality fields, or compute them, or
+if the field is core we can reject records which don't have the required field present.
+
+
+The GitHub example does a combination of all 3 of these.
+
+
+===== Filtering out bad data
+
+Detecting incorrect data can be challenging, however without it
+
+===== Joining and augmenting the data
+
+
+===== Saving the output
+
+Once you have your data ready it's often time to save the output. If you're going to use Apache Spark to do your feature preparation you can build a program to do both.
+If, after filtering, the amount of data is relatively small and you wish to use a persistant volume to save your data you can bring the data back to the driver program by calling `collect()` and saving it as a regular collection.
+If your data is large, or you otherwise want to use an object store, Spark can write out to many different format just as in the loading.
+The correct format will depend on the tool you intend to use for feature preparation.
 
 
 
@@ -134,4 +176,8 @@ Apache Spark has a large number of built in feature preparation stages that you 
 While we've looked at using Apache Spark for feature prep you can also use it for training and serving a variety of machine learning models we explore in <<spark_ch>>
 ====
 
+=== Conclusion
+
+Now you have the skills to get your data ready for doing machine learning on.
+As you approach the next chapters you will have a choice of choosing which kind of tools you want to build your model with.
 
