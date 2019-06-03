@@ -1,2 +1,2 @@
-[[argo_ch]]
-== Mixing components with Argo
+[[pipelines_ch]]
+== Building Repeatable Pipelines with Kubeflow Pipelines
