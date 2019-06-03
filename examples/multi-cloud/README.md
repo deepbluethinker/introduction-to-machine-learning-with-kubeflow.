@@ -10,6 +10,8 @@ If you don't already have a username and password for Google Cloud & Azure from 
 
 **Note:** There is no need to make a GKE cluster manually before starting this tutorial, we will configure one as we go along.
 
+**Note:** If you're super adventorious you can check out the 0.5.0 instructions [click chere](https://github.com/intro-to-ml-with-kubeflow/intro-to-ml-with-kubeflow-examples/blob/explore-upgrading-kf-multicloud-example-to-0.5.0/multi-cloud/README.md) (although it's going to be a little rough I did literally one run through on 0.5.0 and it seemed to work, but YDY).
+
 ## Motivation
 
 We've picked a relatively un-complicated machine learning example, the data is already prepared, so that you can focus on exploring Kubeflow and how to deploy Kubeflow on multiple clouds.
@@ -276,6 +278,12 @@ For now, we don't need to configure anything inside of seldon, so we can use the
 If you change the configuration of a component (or if it's the first time installing it), you need to regenerate the yaml files for that component. This is done `ks generate`. We'll do this using the seldon prototype and seldon component:
 
 ```bash
+ks generate seldon seldon
+```
+
+You can (re-)generate the config for any other component with a command like this:
+
+```bash
 ks generate [prototype] [component]
 ```
 
@@ -413,6 +421,10 @@ cd ~/
 git clone https://github.com/kubeflow/example-seldon
 ```
 
+#### *Required*: Tag the serving layer as read-only for the PV
+
+Go into `workflows/serving-sk-mnist-workflow.yaml` and underneath `claimName: "nfs-1"` your going to add the new line `readOnly: True`.
+This will allow our serving layer to read from the PV claim while allowing us to also access it from a second container and copy the results into a second cloud without shutting down our serving.
 
 #### Optional- Monkey with the existing model.
 
@@ -637,7 +649,7 @@ or the image that is shown.
 #### Getting the model ready for serving on another cloud
 
 This workflow saves the model results to a persistent-volume-claim, however we can't move this between clouds.
-To support this we will configure using GCS or another [S3 compatable backend credintals as in the IBM guide](https://github.com/intro-to-ml-with-kubeflow/ibm-install-guide/blob/master/once-cluster-is-up.sh).
+To support this we will configure using GCS or another [S3 compatible backend credentials as in the IBM guide](https://github.com/intro-to-ml-with-kubeflow/ibm-install-guide/blob/master/once-cluster-is-up.sh).
 
 
 Tensorflow has the ability to write to object stores, and the [tfjob operator component has been improved to make this easier](https://github.com/kubeflow/examples/pull/499/files) (however it's not in the current release)
@@ -650,6 +662,7 @@ Since this depends on which object store you want to put this in we'll talk abou
 
 **Note:** This is not great practice, longer term you'll want to use something like the update tfjob operator or otherwise store and fetch credentials rather than putting them in source.
 
+**Note2** If you're getting errors on `hacky-s3-copy` make sure GCP container repo is set to public. 
 
 #### Monitor the serving
 
@@ -690,13 +703,16 @@ kfctl.sh generate k8s
 kfctl.sh apply k8s
 ```
 
-For an IBM cluster it's very similar and covered in both the [IBM serving guides](https://github.com/intro-to-ml-with-kubeflow/intro-to-ml-with-kubeflow-examples/tree/master/multi-cloud/ibm/serving) and [IBM training](https://github.com/intro-to-ml-with-kubeflow/intro-to-ml-with-kubeflow-examples/tree/master/multi-cloud/ibm/training).
+For an IBM cluster it's very similar and covered in both the [IBM serving guides](https://github.com/intro-to-ml-with-kubeflow/intro-to-ml-with-kubeflow-examples/tree/master/multi-cloud/ibm/serving).
+
+
+For today we aren't going to [training on IBM](https://github.com/intro-to-ml-with-kubeflow/intro-to-ml-with-kubeflow-examples/tree/master/multi-cloud/ibm/training), since the free teir clusters aren't big enough to handle the overhead and training. If you do have your own IBM account feel free to go ahead.
 
 
 You don't need to retrain your model on IBM just to serve it, if you follow the IBM serving guide, step 3 covers how to set this up.
 
 
-For Azure, you are on your own. But it is largely the same idea (e.g. use something similar to boto to upload the result etc.)
+For Azure, things are very similar to the IBM guide, and however you're going to want to change the upload script, which we discuss in the [Azure serving guides](https://github.com/intro-to-ml-with-kubeflow/intro-to-ml-with-kubeflow-examples/tree/master/multi-cloud/azure/serving).
 
 ## Next steps and other resources
 
