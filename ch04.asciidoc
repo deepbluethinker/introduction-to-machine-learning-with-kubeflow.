@@ -79,39 +79,106 @@ To get started you can use the Jupyter Hub installation on Kubeflow to begin the
 you can package it into a repeatable container.
 
 
-The easist way to connect to Jupyter is through the Ambassador Web UI. If you've deployed on GCP a proxy should have been created with the name of your deployment // TODO link.
-Otherwise you can use kubernetes port forwarding to access the Ambassador as follows
+The easist way to connect to Jupyter is through the Ambassador Web UI. If you've deployed on GCP a proxy should have been created with the name of your deployment `${DEPLOYMENTNAME}.endpoints.${PROJECTNAME}.cloud.goog`.
+Otherwise you can use kubernetes port forwarding to access the Ambassador:
 
-[WARNING]
+.Ambassador port forward
 ====
-New version of Docker on Ubuntu default to non-privileged mode which restricts our ability to install packages. If you get permission denied errors re-run the command with `--privileged`.
+[source, bash]
+----
+include::examples/multi-cloud/solution1.sh[tags=connectambassador]
+----
 ====
 
-.Connect to the Ambassador
+Then connect to localhost on 8080.
 
-When you go to Jupyter Hub and launch a new notebook you'll be able to select from a list of containers. You'll want to make note of this so that when you're ready to productionize your pipeline you can use a compatible base container.
+.Ambassador Web UI
+[[#ambassador_web_ui]]
+image::images/4_kubeflow_ambassador.png
+
+From the ambassador web ui <<#ambassador_web_ui>> you can launch a new Jupyter hub server.
+When you launch a Jupyter Hub instance you'll be able to select from a list of containers to match the requirements you need.
 
 .Jupyter Launcher Page Image
+[[#jupyter_launcher_page_image]]
+image::images/4_newnotebook_server.png
 
-Once you have a working version of your data extraction pipeline in your notebook you should download it and create a container so it can be run later.
-
-===== Using a custom container
-
-Alternatively if you don't want to use a notebook you can go ahead and directly build your data preparation stage into a container to be run.
+The same containers can later be used as the basis productionize your pipeline you can use a compatible base contain.
 
 
-With the GitHub dataset we can get the data from Google's BigQuery, but there isn't currently a direct connector between Google's BigQuery and the other tooling we want to use.
-To allow the BigQuery to connect to the rest of the tools we want to use, we will create a container to run the BigQuery export into Google's cloud storage system.
-To do this we start with making a container which can take in a BigQuery command and dump it's output to a specified container.
+===== Building a Container
+
+Regardless of if you've started with a notebook, or have another data extraction program you can productionize it in a container.
+Containers are composable, which means we can build our container on top of each other.
+
+
+The containers that are used for Jupyter hub can be used to run your notebook programatically.
+The Dockerfile will look something like:
+
+.Dockerfile for Tensorflow Notebook
+
+
+.Building & uploading your container image
+
+.Writing a job
+
+While this job is fairly simple, we can also use `kustomize` to generate jobs based on templates.
+
+.Kustomize base template
+
+.Kustomize job
+
+
+
+This works well for a notebook, but when productionizing other workloads it can be a bit more complicated.
+For the GitHub dataset, we're sourcing our data from Google's BigQuery with a few simple queries, including <<github_push_events_bql>>.
+
+[[github_push_events_bql]]
+.Query Push Events
+====
+[source, sql]
+----
+include::/examples/data-extraction/github/extract_bq/github_push_events.bsql
+----
+====
+
+
+As with the notebook example, we can find a container to build on top of rather than starting from scratch.
+Since the only tool we need is Google's big query, we can use `google/cloud-sdk:247.0.0` as the basis, which includes most of what we need.
+On top of that we can add..
+
 
 
 Once we have our container created we then need to publish it to a container registry.
-We can run the container on Kubeflow with
+
+
+This job is a bit more complicated so we create a generator
 
 
 [NOTE]
 ====
 Google BigQuery is only available on Google cloud. The same result be accomplished on other providers by using Apache Spark directly on the raw JSON dumps.
+====
+
+These work well when we can find a base image with most of our needs.
+In addition to copying values in, you can also run commands to set up your container with `RUN`.
+I tend to prefer using Ubuntu based images as it's a distribution I'm familiar with, although others may prefer Alpine since it has less overhead.
+Instead of using `google/cloud-sdk:247.0.0` we could build a `Dockerfile` to install `google-cloud-sdk` on top of Ubuntu <<alt_dockerfile>>.
+
+[[alt_dockerfile]]
+.Dockerfile to install google-cloud-sdk on Ubuntu
+====
+[source, docker]
+----
+include::data-extraction/github/extract_bq/AltDockerfile[]
+----
+====
+
+
+
+[WARNING]
+====
+New version of Docker on Ubuntu default to non-privileged mode which restricts our ability to install packages. If you get permission denied errors re-run the command with `--privileged`.
 ====
 
 
