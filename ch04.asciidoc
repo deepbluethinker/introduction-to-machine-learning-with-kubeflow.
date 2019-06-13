@@ -116,6 +116,12 @@ The containers that are used for Jupyter hub can be used to run your notebook pr
 The Dockerfile will look something like:
 
 .Dockerfile for Tensorflow Notebook
+====
+[source, dockerfile]
+----
+include::/examples/data-extraction/iot/Dockerfile[tags=spec]
+----
+====
 
 
 .Building & uploading your container image
@@ -144,15 +150,144 @@ include::/examples/data-extraction/github/extract_bq/github_push_events.bsql
 
 
 As with the notebook example, we can find a container to build on top of rather than starting from scratch.
-Since the only tool we need is Google's big query, we can use `google/cloud-sdk:247.0.0` as the basis, which includes most of what we need.
-On top of that we can add..
+Since the only external tool we need is Google's big query, we can use `google/cloud-sdk:247.0.0` as the basis, which includes most of what we need.
+On top that we want to put our queries and a script to execute them into the container which we can specify in a Dockerfile <<github_run_queries_dockerfile>>.
+
+// TODO(holden): Should we include the shell script?
+
+[[github_run_queries_dockerfile]]
+====
+[source, dockerfile]
+----
+include::/examples/data-extraction/github/extract_bq/Dockerfile[tags=base]
+----
+====
+
+From this dockerfile we can build it with <<build_gh_container>>:
+
+[[build_gh_container]]
+====
+[source, dockerfile]
+----
+include::/examples/data-extraction/github/extract_bq/build_manual.sh[tags=build]
+----
+====
+
+Now if we want to verify our image outside of Kubeflow we can manually run the container <<run_gh_locally>>.
+
+[[run_gh_locally]]
+====
+[source, dockerfile]
+----
+include::/examples/data-extraction/github/extract_bq/build_manual.sh[tags=manualrun]
+----
+====
+
+
+Once we have our container created we then need to publish it to a container registry so Kubeflow can access it <<push_to_registry>>.
+
+[[push_to_registry]]
+====
+[source, dockerfile]
+----
+include::/examples/data-extraction/github/extract_bq/build_manual.sh[tags=push]
+----
+====
+
+
+To make this run-able in Kubernetes we need to write a controller, as with the Jupyter example we can use the `Job` type which is designed for running until completion.
+
+[[add_credentials]]
+====
+[source, dockerfile]
+----
+include::/examples/data-extraction/github/extract_bq/simple_job_no_perm.yaml[]
+----
+====
+
+
+The default Google container service account in Kubeflow doesn't have enough permissions to read from BigQuery and write to Google cloud service.
+Kubeflow creates a default `user-gcp-sa` account & secret which thankfully has the permissions we need.
+To configure our container & script to use this we need to mount a Kubernetes secret and set the `GOOGLE_APPLICATION_CREDENTIALS` enviroment variable to point to the correct secret.
+
+
+[[add_credentials]]
+====
+[source, dockerfile]
+----
+include::/examples/data-extraction/github/extract_bq/simple_job.yaml[]
+----
+====
+
+
+Our data extraction shell script reads the `PROJECT` & `BUCKET` environment variables which we may want to override from the default.
+To support this we add an `env` entries into our `job.yaml`:
+
+[[add_new_envs_for_project_and_bucket]]
+====
+[source, dockerfile]
+----
+include::/examples/data-extraction/github/extract_bq/simple_job_configured.yaml[tags=newenvs]
+----
+====
+
+
+Once we've made a manual job we can go ahead and make it configurable with kustomize.
+The first step is making a copy of `job.yaml` into a new directory giving it a name like `deployment.yaml` and making the elements we want to have replaced with `$(paramName)`.
+For the GitHub pipeline this looks like <<gh_template_bucket_example>>.
+
+[[gh_template_bucket_example]]
+====
+[source, dockerfile]
+----
+include::/examples/data-extraction/github/extract_bq/bucket_kustomize/deployment.yaml[]
+----
+====
+
+This gives us a template that we can use Kustomize on, but we need to tell configure Kustomize.
+
+[[gh_kustomize]]
+====
+[source, dockerfile]
+----
+include::/examples/data-extraction/github/extract_bq/bucket_kustomize/kustomization.yaml[]
+----
+====
 
 
 
-Once we have our container created we then need to publish it to a container registry.
+To tell Kustomize to substitute in specific values for the `$(paramName)` we add a `params.yaml` that specifies the paths of the different entries we want it to template.
 
+.Specifying Parameters
+[[specify_params]]
+====
+[source, yaml]
+----
+include::/examples/data-extraction/github/extract_bq/bucket_kustomize/params.yaml[]
+----
+====
 
-This job is a bit more complicated so we create a generator
+Now that the kustomize file is created, we can now build a specific job based on command line parameters and run it.
+
+.Configure and run the job
+[[run_gh_job]]
+====
+[source, sh]
+----
+include::/examples/data-extraction/github/extract_bq/build_manual.sh[tags=run]
+----
+====
+
+And we can verify the job result:
+
+.Look for the job
+[[verify_gh_job]]
+====
+[source, sh]
+----
+include::/examples/data-extraction/github/extract_bq/build_manual.sh[tags=verify]
+----
+====
 
 
 [NOTE]
@@ -160,9 +295,9 @@ This job is a bit more complicated so we create a generator
 Google BigQuery is only available on Google cloud. The same result be accomplished on other providers by using Apache Spark directly on the raw JSON dumps.
 ====
 
-These work well when we can find a base image with most of our needs.
-In addition to copying values in, you can also run commands to set up your container with `RUN`.
-I tend to prefer using Ubuntu based images as it's a distribution I'm familiar with, although others may prefer Alpine since it has less overhead.
+Sometimes you won't be able to find a container that so closely matches your needs as we did.
+In those cases you can take a generic base image, I prefer Ubuntu because I'm familiar with it others like Alpine, and build your requirements on top of it.
+In those situations, in addition to copying values in like in <<github_run_queries_dockerfile>>, you can also run commands to set up your container with `RUN`.
 Instead of using `google/cloud-sdk:247.0.0` we could build a `Dockerfile` to install `google-cloud-sdk` on top of Ubuntu <<alt_dockerfile>>.
 
 [[alt_dockerfile]]
@@ -189,7 +324,7 @@ New version of Docker on Ubuntu default to non-privileged mode which restricts o
 
 Using a distributed platform make it faster to ingest and process very large data sources.
 In Kubeflow, at present, the three data parallel distributed systems available for data preparation are: Apache Spark, Google's Dataflow (via Apache Beam), and link:$http://docs.pachyderm.io/en/latest/fundamentals/distributed_computing.html$[Pachyderm].
-For now we will focus on Apache Spark, but many of these data parallel systems have similar concepts if different syntax.
+For now we will focus on Apache Spark, but many of these data parallel systems have similar concepts if different syntax & system requirements.
 
 [TIP]
 ====
