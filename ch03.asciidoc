@@ -23,20 +23,20 @@ as a link:$https://bigquery.cloud.google.com/table/githubarchive:day.20150101$[p
 
 === Financial Data (Order Book)
 
-=== Connected City / IoT Data
+=== IoT Data (Sugar Creek Brewery)
 
-Connected cities are becoming more and more of a thing as we enter an Internet of Things World.  For this example we are
-going to look at the connected city of Chicago because they are one of the most connected cities in the world, and the
-pizza available there is orders of magnitude better than all other connected cities (in this author's totally unbiased
-opinion).
+Have you ever considered how much science and engineering goes into your favorite craft brew? Macro brewers have been
+to use finely tune the volume of liquid, CO2, temperature, and other variable to optimally fill a bottle with minimum
+waste, however for smaller craft brewers, having runs of only a week or less, this is somewhat more tricky.  Luckily,
+with the advent of cheap sensors, math, and buzzwords craft brewers are able to optimize their fills very quickly,
+reducing waste and allowing them to stay competitive with macro-brewers.
 
-In this example we will be considering a plethora of sources including
+In this example, we will be looking at data
+from link:$https://sugarcreekbrewing.com[Sugar Creek Brewing Company]'s production lines, looking at how we would
+determine optimal values of various input paramters for a new run of beer, and how to quickly detect if there was a fill
+error in a bottle downline. (Quickly detecting a fill error before the label is applied results in significant savings).
 
-- https://arrayofthings.docs.apiary.io/#[Array of Things]: Which are nodes throughout Chicago measuring temperature, humidity, light, and particulant matter.
-- https://www.divvybikes.com/system-data[Divvy Bike Shares] and https://www.transitchicago.com/data/[The Chicago Transit Authority] (data on busses and trains).
-- http://311api.cityofchicago.org[Chicago 311 Requests]: 311 is a non-emergency hotline.
-- https://dev.socrata.com/foundry/data.cityofchicago.org/n4j6-wkkf[Chicago Traffic Congestion]: Even though we have one of the best public trasportation systems in the country, suburbanites still love to drive.
-- And more!
+
 
 
 
