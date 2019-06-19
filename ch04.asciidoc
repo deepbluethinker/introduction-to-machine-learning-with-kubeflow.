@@ -113,7 +113,8 @@ Containers are composable, which means we can build our container on top of each
 
 
 The containers that are used for Jupyter hub can be used to run your notebook programatically.
-The Dockerfile will look something like:
+If you've got extra Python dependencies you've installed you can use the `RUN` directive to install what you need.
+For our IOT example, the Dockerfile would look like:
 
 .Dockerfile for Tensorflow Notebook
 ====
@@ -124,15 +125,27 @@ include::/examples/data-extraction/iot/Dockerfile[tags=spec]
 ====
 
 
-.Building & uploading your container image
+.Building and uploading your container
+====
+[source, bash]
+----
+include::/examples/data-extraction/iot/build.sh[tags=buildandpush]
+----
+====
 
-.Writing a job
+Putting this is a container is the first step, but then up next we'll want to run it in our Kubeflow cluster.
+We can use the `Job` type which is designed for running until completion.
+In Kubeflow it is common to need to bring in credentials, since the default permission on 
 
-While this job is fairly simple, we can also use `kustomize` to generate jobs based on templates.
 
-.Kustomize base template
+.Writing a Kubernetes job
+====
+[source, yaml]
+----
+include::/examples/data-extraction/iot/job.yaml[]
+----
+====
 
-.Kustomize job
 
 
 
@@ -195,33 +208,11 @@ include::/examples/data-extraction/github/extract_bq/build_manual.sh[tags=push]
 ====
 
 
-To make this run-able in Kubernetes we need to write a controller, as with the Jupyter example we can use the `Job` type which is designed for running until completion.
-
-[[add_credentials]]
-====
-[source, dockerfile]
-----
-include::/examples/data-extraction/github/extract_bq/simple_job_no_perm.yaml[]
-----
-====
+As with our Jupyter example, we can make a job entry, the only things we need to change are the image name and metadata.
 
 
-The default Google container service account in Kubeflow doesn't have enough permissions to read from BigQuery and write to Google cloud service.
-Kubeflow creates a default `user-gcp-sa` account & secret which thankfully has the permissions we need.
-To configure our container & script to use this we need to mount a Kubernetes secret and set the `GOOGLE_APPLICATION_CREDENTIALS` enviroment variable to point to the correct secret.
-
-
-[[add_credentials]]
-====
-[source, dockerfile]
-----
-include::/examples/data-extraction/github/extract_bq/simple_job.yaml[]
-----
-====
-
-
-Our data extraction shell script reads the `PROJECT` & `BUCKET` environment variables which we may want to override from the default.
-To support this we add an `env` entries into our `job.yaml`:
+To get a bit more advanced, our data extraction shell script reads the `PROJECT` & `BUCKET` environment variables which we may want to override from the default.
+To configure this you will add additional entries in the `env` list into our `job.yaml`:
 
 [[add_new_envs_for_project_and_bucket]]
 ====
@@ -232,7 +223,7 @@ include::/examples/data-extraction/github/extract_bq/simple_job_configured.yaml[
 ====
 
 
-Once we've made a manual job we can go ahead and make it configurable with kustomize.
+Once we've made a manual job we can go ahead and make it configurable with kustomize, which is the main tool used to generate jobs in Kubeflow.
 The first step is making a copy of `job.yaml` into a new directory giving it a name like `deployment.yaml` and making the elements we want to have replaced with `$(paramName)`.
 For the GitHub pipeline this looks like <<gh_template_bucket_example>>.
 
@@ -244,7 +235,8 @@ include::/examples/data-extraction/github/extract_bq/bucket_kustomize/deployment
 ----
 ====
 
-This gives us a template that we can use Kustomize on, but we need to tell configure Kustomize.
+This gives us a template that Kustomize can use to generate a job for us.
+In addition to the template, need to let kustomize know the resources its generating as well as specify the variables it should take:
 
 [[gh_kustomize]]
 ====
@@ -255,8 +247,7 @@ include::/examples/data-extraction/github/extract_bq/bucket_kustomize/kustomizat
 ====
 
 
-
-To tell Kustomize to substitute in specific values for the `$(paramName)` we add a `params.yaml` that specifies the paths of the different entries we want it to template.
+To tell Kustomize to substitute in specific values inside of our template  we add a `params.yaml` that specifies the paths of the different entries.
 
 .Specifying Parameters
 [[specify_params]]
@@ -265,6 +256,11 @@ To tell Kustomize to substitute in specific values for the `$(paramName)` we add
 ----
 include::/examples/data-extraction/github/extract_bq/bucket_kustomize/params.yaml[]
 ----
+====
+
+[NOTE]
+====
+If a field isn't listed in `params.yaml`, Kustomize will not perform string substitution on it.
 ====
 
 Now that the kustomize file is created, we can now build a specific job based on command line parameters and run it.
