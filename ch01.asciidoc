@@ -106,11 +106,13 @@ With Kubeflow, users can begin with a training model that they are unsure about,
 ==== Jupyter Notebooks
 
 Jupyter notebook is an open-source web application that allows users to create and share data, code snippets, and experiments at scale.
-They are popular among machine learning practitioners due to their simplicity and portability <<1_jupyter_notebook>>.
+They are popular among machine learning practitioners due to their simplicity and portability <<#1_jupyter_notebook>>.
+
 
 .A Jupyter notebook running in Kubeflow
-[[1_jupyter_notebook]]
+[[#1_jupyter_notebook]]
 image::images/1_jupyter_notebook.png[A Jupyter notebook running in Kubeflow]
+
 
 In Kubeflow, you can spin up instances of Jupyter notebooks that directly interact with your cluster and its other components. For example, you can write snippets of TensorFlow distributed training code in your laptop, and bring up a training cluster with just a few clicks.
 
