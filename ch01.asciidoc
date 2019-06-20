@@ -109,7 +109,6 @@ Jupyter notebook is an open-source web application that allows users to create a
 They are popular among machine learning practitioners due to their simplicity and portability <<#1_jupyter_notebook>>.
 
 
-.A Jupyter notebook running in Kubeflow
 [[#1_jupyter_notebook]]
 image::images/1_jupyter_notebook.png[A Jupyter notebook running in Kubeflow]
 
