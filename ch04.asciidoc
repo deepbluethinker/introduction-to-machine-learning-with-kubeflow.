@@ -90,11 +90,12 @@ include::examples/multi-cloud/solution1.sh[tags=connectambassador]
 ----
 ====
 
-Then connect to localhost on 8080.
+Then connect to localhost on 8080 <<#ambassador_web_ui>>.
 
 .Ambassador Web UI
-[[#ambassador_web_ui]]
-image::images/4_kubeflow_ambassador.png
+[#ambassador_web_ui]
+[caption="Kubeflow's ambassador web user interface"]
+image::images/4_kubeflow_ambassador.png[]
 
 From the ambassador web ui <<#ambassador_web_ui>> you can launch a new Jupyter hub server.
 When you launch a Jupyter Hub instance you'll be able to select from a list of containers to match the requirements you need.
